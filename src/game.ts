@@ -1,5 +1,13 @@
 import { ToyAudio } from './audio.ts'
-import { PARENT_COPY, loadLang, saveLang, type Lang } from './languages.ts'
+import { decide, zoneFromTarget, type Action, type Phase } from './input.ts'
+import {
+  LANG_LABEL,
+  PARENT_COPY,
+  loadLang,
+  nextLang,
+  saveLang,
+  type Lang,
+} from './languages.ts'
 import { ToySpeech } from './speech.ts'
 import {
   VISITOR_IDS,
@@ -9,12 +17,10 @@ import {
   type VisitorId,
 } from './visitors.ts'
 
-type Phase = 'boot' | 'closed' | 'knocking' | 'waiting' | 'opening' | 'open' | 'closing'
-
 const OPEN_MS = 1080
 const CLOSE_MS = 920
 const SPEAK_AFTER_OPEN_MS = 420
-const HOLD_OPEN_MS = 7800
+const HOLD_OPEN_MS = 4000
 const BETWEEN_VISITS_MS = 1300
 const FIRST_KNOCK_MS = 1100
 const REKNOCK_MS = 5600
@@ -42,6 +48,8 @@ export class Game {
   private unanswered = 0
   private lastGreet = 0
   private parentHold: number | null = null
+  private inputLock = false
+  private voicePrimed = false
   private readonly timers = new Set<number>()
 
   constructor(root: HTMLElement) {
@@ -52,7 +60,9 @@ export class Game {
     this.sheet = this.must(root, '#parent-sheet')
     this.live = this.must(root, '#live')
     this.parentHint = this.must(root, '#parent-hint')
-    this.langButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-lang]')]
+    this.langButtons = [
+      ...this.sheet.querySelectorAll<HTMLButtonElement>('[data-lang]'),
+    ]
   }
 
   start(): void {
@@ -65,27 +75,34 @@ export class Game {
   }
 
   private bind(): void {
-    this.world.addEventListener('pointerdown', (event) => {
-      void this.onPointerDown(event)
+    const lamp = this.must(this.world, '#lamp')
+    lamp.addEventListener('pointerdown', (event) => {
+      event.stopPropagation()
+      if (this.sheet.classList.contains('is-open')) return
+      this.beginParentHold()
     })
-    this.world.addEventListener('pointerup', () => this.cancelParentHold())
-    this.world.addEventListener('pointercancel', () => this.cancelParentHold())
-    this.world.addEventListener('pointerleave', () => this.cancelParentHold())
+    lamp.addEventListener('pointercancel', () => this.cancelParentHold())
+    lamp.addEventListener('click', (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+      this.cancelParentHold()
+      if (this.sheet.classList.contains('is-open')) return
+      this.run(decide(this.phase, 'lamp', this.hasVisitor()))
+    })
+
+    this.world.addEventListener('pointerdown', (event) => {
+      void this.onPlayPointer(event)
+    })
 
     this.door.addEventListener('click', (event) => {
       event.preventDefault()
-    })
-
-    this.slot.addEventListener('pointerdown', (event) => {
-      event.stopPropagation()
-      void this.onVisitorTap()
     })
 
     for (const button of this.langButtons) {
       button.addEventListener('click', () => {
         const next = button.dataset.lang
         if (next === 'ru' || next === 'de' || next === 'en') {
-          this.applyLang(next, true)
+          this.chooseLang(next)
           this.hideParent()
         }
       })
@@ -112,39 +129,75 @@ export class Game {
     document.addEventListener('gesturestart', (event) => event.preventDefault())
   }
 
-  private async onPointerDown(event: PointerEvent): Promise<void> {
-    const target = event.target
-    if (!(target instanceof Element)) return
+  private async onPlayPointer(event: PointerEvent): Promise<void> {
     if (this.sheet.classList.contains('is-open')) return
+    const zone = zoneFromTarget(event.target)
+    if (zone === 'lamp') return
+    event.preventDefault()
+    if (this.inputLock) return
 
-    if (target.closest('#sconce')) {
-      this.beginParentHold()
-      return
-    }
-
-    await this.unlockVoice()
-
-    if (this.phase === 'open') {
-      if (this.current) this.greet(this.current)
-      this.scheduleClose()
-      return
-    }
-
-    if (this.phase === 'waiting' || this.phase === 'knocking') {
-      this.openDoor()
-      return
-    }
-
-    if (this.phase === 'closed') {
-      this.knock()
+    const action = decide(this.phase, zone, this.hasVisitor())
+    if (action === 'ignore') return
+    this.inputLock = true
+    try {
+      await this.unlockVoice()
+      this.run(action)
+    } finally {
+      this.inputLock = false
     }
   }
 
-  private async onVisitorTap(): Promise<void> {
-    if (this.phase !== 'open' || !this.current) return
-    await this.unlockVoice()
-    this.greet(this.current)
-    this.scheduleClose()
+  private hasVisitor(): boolean {
+    return this.current !== null && (this.phase === 'open' || this.phase === 'opening')
+  }
+
+  private run(action: Action): void {
+    switch (action) {
+      case 'ignore':
+        return
+      case 'knock':
+        this.knock()
+        return
+      case 'open':
+        this.openDoor()
+        return
+      case 'close':
+        this.closeDoor()
+        return
+      case 'greet':
+        if (this.current) {
+          this.greet(this.current)
+          this.scheduleClose()
+        }
+        return
+      case 'cycle-lang-name':
+        this.applyLang(nextLang(this.lang), true)
+        void this.unlockVoice().then(() => {
+          if (this.hasVisitor()) {
+            this.lastGreet = 0
+            if (this.current) this.greet(this.current)
+            return
+          }
+          if (
+            this.phase !== 'boot' &&
+            this.phase !== 'closed' &&
+            this.phase !== 'knocking' &&
+            this.phase !== 'waiting'
+          ) {
+            return
+          }
+          this.speech.speak(LANG_LABEL[this.lang], this.lang)
+        })
+        return
+      case 'cycle-lang-word':
+        this.applyLang(nextLang(this.lang), true)
+        void this.unlockVoice().then(() => {
+          if (!this.hasVisitor() || !this.current) return
+          this.lastGreet = 0
+          this.greet(this.current)
+        })
+        return
+    }
   }
 
   private beginParentHold(): void {
@@ -160,6 +213,18 @@ export class Game {
       window.clearTimeout(this.parentHold)
       this.parentHold = null
     }
+  }
+
+  private chooseLang(lang: Lang): void {
+    this.applyLang(lang, true)
+    void this.unlockVoice().then(() => {
+      if (this.hasVisitor() && this.current) {
+        this.lastGreet = 0
+        this.greet(this.current)
+        return
+      }
+      this.speech.speak(LANG_LABEL[this.lang], this.lang)
+    })
   }
 
   private showParent(): void {
@@ -195,10 +260,11 @@ export class Game {
 
   private knock(): void {
     if (this.phase === 'knocking' || this.phase === 'opening' || this.phase === 'open') return
+    this.speech.silence()
     this.setPhase('knocking')
     this.doorway.classList.add('is-knocking')
     this.audio.knocks()
-    this.later(620, () => {
+    this.later(480, () => {
       this.doorway.classList.remove('is-knocking')
       if (this.phase !== 'knocking') return
       this.setPhase('waiting')
@@ -219,6 +285,7 @@ export class Game {
     const visitor = this.nextVisitor()
     this.current = visitor
     this.renderVisitor(visitor)
+    this.speech.silence()
     this.setPhase('opening')
     this.doorway.classList.add('is-open')
     this.audio.latch()
@@ -241,6 +308,7 @@ export class Game {
   private closeDoor(): void {
     if (this.phase !== 'open' && this.phase !== 'opening') return
     this.clearTimers()
+    this.speech.silence()
     this.setPhase('closing')
     this.doorway.classList.remove('is-open')
     this.slot.classList.add('is-leaving')
@@ -249,6 +317,7 @@ export class Game {
     this.later(CLOSE_MS, () => {
       this.slot.replaceChildren()
       this.slot.className = 'visitor-slot'
+      delete this.slot.dataset.zone
       this.current = null
       this.setPhase('closed')
       this.later(BETWEEN_VISITS_MS, () => {
@@ -266,7 +335,11 @@ export class Game {
     this.slot.classList.add('is-greeting')
     this.audio.visitor(visitor.id)
     const word = visitor.word[this.lang]
-    this.later(280, () => this.speech.speak(word, this.lang))
+    const afterSound = Math.min(
+      2000,
+      Math.max(280, this.audio.duration(visitor.id) * 950),
+    )
+    this.later(afterSound, () => this.speech.speak(word, this.lang))
     this.live.textContent = word
   }
 
@@ -289,6 +362,7 @@ export class Game {
 
   private renderVisitor(visitor: Visitor): void {
     this.slot.className = `visitor-slot is-in visitor--${visitor.id}`
+    this.slot.dataset.zone = 'visitor'
     this.slot.innerHTML = visitor.svg
     this.slot.setAttribute('role', 'button')
     this.slot.setAttribute('aria-label', visitor.word[this.lang])
@@ -301,7 +375,10 @@ export class Game {
   }
 
   private async unlockVoice(): Promise<void> {
-    this.speech.prime()
+    if (!this.voicePrimed) {
+      this.speech.prime()
+      this.voicePrimed = true
+    }
     await this.audio.unlock()
     try {
       await navigator.wakeLock?.request('screen')
@@ -311,9 +388,9 @@ export class Game {
   }
 
   private onKey(event: KeyboardEvent): void {
-    if (event.key === '1') this.applyLang('ru', true)
-    if (event.key === '2') this.applyLang('de', true)
-    if (event.key === '3') this.applyLang('en', true)
+    if (event.key === '1') this.chooseLang('ru')
+    if (event.key === '2') this.chooseLang('de')
+    if (event.key === '3') this.chooseLang('en')
     if (event.key === 'l' || event.key === 'L') {
       if (this.sheet.classList.contains('is-open')) this.hideParent()
       else this.showParent()
@@ -322,15 +399,8 @@ export class Game {
     if (event.key === ' ' || event.key === 'Enter') {
       if (this.sheet.classList.contains('is-open')) return
       event.preventDefault()
-      void this.unlockVoice()
-      if (this.phase === 'open') {
-        if (this.current) this.greet(this.current)
-        this.scheduleClose()
-      } else if (this.phase === 'waiting' || this.phase === 'knocking') {
-        this.openDoor()
-      } else if (this.phase === 'closed') {
-        this.knock()
-      }
+      const action = decide(this.phase, 'door', this.hasVisitor())
+      void this.unlockVoice().then(() => this.run(action))
     }
   }
 

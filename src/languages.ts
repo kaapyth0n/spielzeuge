@@ -12,17 +12,22 @@ export const LANG_LABEL: Record<Lang, string> = {
 
 export const PARENT_COPY: Record<Lang, { hint: string; close: string }> = {
   ru: {
-    hint: 'Удерживайте лампу, чтобы сменить язык',
+    hint: 'Коснитесь лампы, чтобы сменить язык. Удерживайте — чтобы выбрать сразу.',
     close: 'Закрыть',
   },
   de: {
-    hint: 'Lampe gedrückt halten, um die Sprache zu ändern',
+    hint: 'Lampe antippen, um die Sprache zu wechseln. Gedrückt halten zum Auswählen.',
     close: 'Schließen',
   },
   en: {
-    hint: 'Hold the lamp to change language',
+    hint: 'Tap the lamp to change language. Hold it to pick one.',
     close: 'Close',
   },
+}
+
+export function nextLang(current: Lang): Lang {
+  const index = LANGS.indexOf(current)
+  return LANGS[(index + 1) % LANGS.length] ?? 'ru'
 }
 
 export const SPEECH_LOCALE: Record<Lang, string> = {

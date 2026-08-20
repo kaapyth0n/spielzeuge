@@ -23,22 +23,28 @@
   <body>
     <div id="app" class="app">
       <div class="world" data-phase="boot" data-lang="ru">
-        <div class="wallpaper" aria-hidden="true"></div>
+        <div class="wallpaper" data-zone="elsewhere" aria-hidden="true"></div>
         <div class="vignette" aria-hidden="true"></div>
         <div class="grain" aria-hidden="true"></div>
 
-        <button type="button" class="sconce" id="sconce" aria-label="Language">
+        <div class="sconce" aria-hidden="true">
           <span class="sconce-glow"></span>
           <span class="sconce-plate"></span>
           <span class="sconce-arm"></span>
           <span class="sconce-cup"></span>
-          <span class="sconce-glass">
+          <button
+            type="button"
+            class="sconce-glass"
+            id="lamp"
+            data-zone="lamp"
+            aria-label="Language"
+          >
             <span class="sconce-flame"></span>
-          </span>
-        </button>
+          </button>
+        </div>
 
         <div class="hall">
-          <div class="doorway" id="doorway">
+          <div class="doorway" id="doorway" data-zone="door">
             <div class="frame">
               <div class="lintel"></div>
               <div class="jamb jamb-left"></div>
@@ -52,7 +58,7 @@
                 </div>
                 <div class="visitor-slot" id="visitor-slot"></div>
               </div>
-              <button type="button" class="door" id="door" aria-label="Дверь">
+              <button type="button" class="door" id="door" data-zone="door" aria-label="Дверь">
                 <span class="door-leaf">
                   <span class="door-front">
                     <span class="panel panel-top">

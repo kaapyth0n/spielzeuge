@@ -6,13 +6,14 @@ The first toy is **Kuckuck**, for Miron (almost two): a wooden door, a knock, a 
 
 ## Kuckuck
 
-There is no menu. The door knocks. Tap it. It opens. A wooden animal is there. A voice says the word. Tap again to hear it again. The door closes. Another knock.
+There is no menu. The door knocks. Tap the door frame. It opens. A wooden animal is there. It makes its sound, then a voice says the word. Tap the visitor to hear that again; tap the frame to close. Hall and floor do nothing.
 
 - Default language: Russian
-- Change language: long-press the lamp (or press `L` on a keyboard, then `1` / `2` / `3`)
+- Change language: tap the lamp to cycle (or hold it, or press `L` then `1` / `2` / `3`)
+- The language name is spoken only when the lamp is tapped and nobody is in the doorway
 - No score, no fail, no written words on the child’s screen
 
-More in [docs/kuckuck.md](docs/kuckuck.md).
+Behaviour, tap table, sounds, and tests: [docs/kuckuck.md](docs/kuckuck.md). Sound licences: [public/sounds/CREDITS.md](public/sounds/CREDITS.md).
 
 ## Develop
 
@@ -21,11 +22,25 @@ npm install
 npm run dev
 ```
 
-Then open the printed local URL on a phone or iPad on the same network.
+Then open the printed local URL on a phone or iPad on the same network. The first tap unlocks audio on iOS.
 
 ```bash
+npm test                 # tap decision table (every phase × zone)
+npm run test:taps        # Playwright against the running dev server
 npm run build
 npm run preview
 ```
 
-Add the preview page to the iPhone/iPad home screen for a standalone toy.
+`?lang=ru|de|en` and `?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear` force the first sitting. Add the preview page to the iPhone/iPad home screen for a standalone toy.
+
+## Public site
+
+Live at [https://spielzeuge.kapitonov.su](https://spielzeuge.kapitonov.su).
+
+```bash
+./deploy/deploy.sh
+```
+
+That builds and rsyncs `dist/` to `root@46.62.166.228:/opt/spielzeuge/`. The shared Caddy on that host serves the files and renews the certificate. First-time Caddy/compose changes are in `deploy/Caddyfile.snippet`.
+
+Hashed `/assets/*` are cached forever. Everything else, including `/sounds/*`, is `no-cache`. After changing a sound or icon, bump `CACHE` in `public/sw.js` so home-screen copies drop the old files.

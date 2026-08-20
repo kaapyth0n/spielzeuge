@@ -126,18 +126,19 @@ button {
   position: absolute;
   top: var(--safe-top);
   left: var(--safe-left);
-  width: 108px;
-  height: 118px;
-  z-index: 6;
+  width: 72px;
+  height: 64px;
+  z-index: 8;
   touch-action: manipulation;
+  pointer-events: none;
 }
 
 .sconce-glow {
   position: absolute;
-  left: 18px;
+  left: 8px;
   top: 0;
-  width: 96px;
-  height: 96px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -150,10 +151,10 @@ button {
 
 .sconce-plate {
   position: absolute;
-  left: 10px;
-  top: 38px;
-  width: 18px;
-  height: 26px;
+  left: 6px;
+  top: 20px;
+  width: 14px;
+  height: 22px;
   border-radius: 3px;
   background: linear-gradient(90deg, #6a4a14, #e2c46a 55%, #8a6418);
   box-shadow: 1px 2px 0 #2a1a08;
@@ -161,10 +162,10 @@ button {
 
 .sconce-arm {
   position: absolute;
-  left: 22px;
-  top: 28px;
-  width: 36px;
-  height: 28px;
+  left: 12px;
+  top: 16px;
+  width: 24px;
+  height: 20px;
   border: 7px solid #c9a24a;
   border-left: 0;
   border-bottom: 0;
@@ -174,20 +175,21 @@ button {
 
 .sconce-cup {
   position: absolute;
-  left: 52px;
-  top: 46px;
-  width: 18px;
-  height: 8px;
+  left: 32px;
+  top: 36px;
+  width: 16px;
+  height: 7px;
   border-radius: 0 0 8px 8px;
   background: linear-gradient(#e6c86e, #8a6418);
 }
 
 .sconce-glass {
   position: absolute;
-  left: 46px;
-  top: 12px;
-  width: 42px;
-  height: 42px;
+  left: 22px;
+  top: 4px;
+  width: 44px;
+  height: 44px;
+  pointer-events: auto;
   border-radius: 50%;
   background: radial-gradient(circle at 38% 34%, #fffaf0, #f6d078 42%, #e0a040 78%, #a86818);
   box-shadow:
@@ -333,14 +335,15 @@ button {
 
 .visitor-slot {
   position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 16%;
-  bottom: 6%;
+  left: 18%;
+  right: 2%;
+  top: 12%;
+  bottom: 4%;
   display: grid;
   place-items: end center;
+  pointer-events: none;
   opacity: 0;
-  transform: translateY(10px) scale(0.96);
+  transform: translate(12%, 10px) scale(0.94);
   transition:
     opacity 0.45s ease,
     transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -360,18 +363,19 @@ button {
   width: min(108%, 300px);
   height: auto;
   filter: drop-shadow(0 12px 8px rgba(20, 8, 6, 0.4));
+  pointer-events: auto;
 }
 
 .visitor--mouse .toy {
-  width: min(78%, 200px);
+  width: min(88%, 240px);
 }
 
 .visitor--bird .toy {
-  width: min(90%, 230px);
+  width: min(100%, 270px);
 }
 
 .visitor--bunny .toy {
-  width: min(90%, 230px);
+  width: min(96%, 260px);
 }
 
 .door {
@@ -395,7 +399,7 @@ button {
 }
 
 .doorway.is-open .door-leaf {
-  transform: rotateY(-64deg);
+  transform: rotateY(-86deg);
 }
 
 .door-front,
@@ -648,8 +652,25 @@ button {
   }
 }
 
+.part-tail,
+.part-paw,
+.part-ear-l,
+.part-ear-r,
+.part-wing {
+  transform-box: fill-box;
+}
+
 .part-tail {
-  transform-origin: 140px 156px;
+  transform-origin: left center;
+}
+
+.part-paw {
+  transform-origin: center;
+}
+
+.part-ear-l,
+.part-ear-r {
+  transform-origin: bottom center;
 }
 
 @keyframes paw {
@@ -701,9 +722,7 @@ button {
   }
 }
 
-.part-paw {
-  transform-origin: 70px 180px;
-}
+
 
 .parent-sheet {
   position: absolute;
@@ -714,12 +733,14 @@ button {
   background: rgba(16, 8, 10, 0.55);
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
 .parent-sheet.is-open {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .parent-card {
