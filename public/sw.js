@@ -1,4 +1,4 @@
-const CACHE = 'kuckuck-v8'
+const CACHE = 'kuckuck-v9'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

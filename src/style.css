@@ -379,7 +379,11 @@ button {
 }
 
 .visitor--capybara .toy {
-  width: min(112%, 310px);
+  width: min(118%, 340px);
+  height: auto;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .door {

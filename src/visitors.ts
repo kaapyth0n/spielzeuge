@@ -318,71 +318,8 @@ export const VISITORS: Visitor[] = [
     id: 'capybara',
     word: { ru: 'капибара', de: 'Capybara', en: 'capybara' },
     svg: `
-      <svg class="toy" viewBox="0 0 200 240" aria-hidden="true">
-        <ellipse cx="108" cy="224" rx="66" ry="7" fill="rgba(28,14,10,.3)"/>
-        <g class="part-body">
-          <!-- long low cylinder body -->
-          <ellipse cx="122" cy="180" rx="58" ry="28" fill="#c49a6c"/>
-          <ellipse cx="124" cy="188" rx="40" ry="16" fill="#e0bc90"/>
-          <!-- hind quarter + leg -->
-          <ellipse cx="160" cy="182" rx="24" ry="22" fill="#b88958"/>
-          <path d="M154 190c8 8 12 22 4 28-8 2-16-4-18-14z" fill="#a87a48"/>
-          <ellipse cx="156" cy="214" rx="13" ry="7" fill="#8f6538"/>
-          <!-- front leg -->
-          <path d="M96 190c-1 10 2 22 10 24 7 0 10-8 8-18z" fill="#a87a48"/>
-          <ellipse cx="102" cy="214" rx="12" ry="7" fill="#8f6538"/>
-          <!-- stub tail -->
-          <ellipse cx="178" cy="176" rx="6" ry="5" fill="#a87a48"/>
-          <g class="part-head">
-            <!--
-              One continuous profile head: a long horizontal rounded slab.
-              Flat crown, blunt nose, eye set back, tiny ear at the rear top.
-            -->
-            <path
-              d="M12 118
-                 Q12 100 28 96
-                 L118 92
-                 Q136 92 140 108
-                 L142 138
-                 Q142 152 126 154
-                 L30 156
-                 Q12 156 12 138
-                 Z"
-              fill="#d2ad7a"
-            />
-            <!-- muzzle plane, still part of the same slab -->
-            <path
-              d="M18 120
-                 L18 142
-                 Q18 148 28 148
-                 L86 146
-                 Q94 146 94 138
-                 L94 122
-                 Q94 116 86 116
-                 L28 118
-                 Q18 118 18 120z"
-              fill="#e6c8a0"
-            />
-            <!-- square blunt nose -->
-            <rect x="8" y="122" width="18" height="16" rx="6" fill="#3a2a22"/>
-            <ellipse cx="14" cy="130" rx="3.2" ry="2.4" fill="#1a1210"/>
-            <!-- calm eye about 1/3 back from nose along the head -->
-            <g class="part-eyes">
-              <ellipse cx="78" cy="118" rx="5" ry="5.4" fill="#f6f0d8"/>
-              <circle cx="79" cy="118" r="3" fill="#2a1b14"/>
-              <circle cx="80.2" cy="116.7" r="1" fill="#fff"/>
-            </g>
-            <path d="M68 112c8-2 16-2 22 1" fill="none" stroke="#9a7048" stroke-width="1.4" stroke-linecap="round"/>
-            <!-- small ear on rear crown -->
-            <g class="part-ear-r">
-              <ellipse cx="128" cy="98" rx="8" ry="10" fill="#a87a48"/>
-              <ellipse cx="128" cy="98" rx="4" ry="5.5" fill="#f0b2a4"/>
-            </g>
-            <!-- soft neck blend into body -->
-            <ellipse cx="134" cy="152" rx="18" ry="14" fill="#c49a6c"/>
-          </g>
-        </g>
-      </svg>`,
+      <img class="toy" src="./visitors/capybara.png" alt="" draggable="false" aria-hidden="true" />
+    `,
   },
 ]
 
