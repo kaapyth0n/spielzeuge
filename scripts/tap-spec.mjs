@@ -39,6 +39,12 @@ const failIfLangName = (label, log) => {
 await page.locator('#door').click({ force: true })
 await page.waitForTimeout(1600)
 failIfLangName('after opening the door', await spoken())
+{
+  const log = await spoken()
+  if (!log.includes('кошка')) {
+    throw new Error(`opening the door should name the cat, got ${JSON.stringify(log)}`)
+  }
+}
 
 const openPhase = await phase()
 if (openPhase !== 'open' && openPhase !== 'opening') {
@@ -70,9 +76,18 @@ if (!(await page.locator('.toy').count())) {
 await page.locator('.toy').waitFor({ timeout: 3000 })
 failIfLangName('second open', await spoken())
 
+await page.waitForTimeout(1000)
+const catsBeforeTap = (await spoken()).filter((text) => text === 'кошка').length
 await page.locator('.toy').click({ force: true })
-await page.waitForTimeout(400)
+await page.waitForTimeout(900)
 failIfLangName('tap on the guest', await spoken())
+{
+  const log = await spoken()
+  const cats = log.filter((text) => text === 'кошка')
+  if (cats.length < catsBeforeTap + 1) {
+    throw new Error(`tapping the guest should name it again, got ${JSON.stringify(log)}`)
+  }
+}
 
 await page.locator('#lamp').click({ force: true })
 await page.waitForTimeout(600)
@@ -93,5 +108,19 @@ if (!LANG_NAMES.has(afterClosedLamp.at(-1) ?? '')) {
 }
 
 console.log('spoken log', afterClosedLamp)
+
+await page.goto('http://localhost:5173/?lang=ru&visitor=cow', {
+  waitUntil: 'networkidle',
+})
+await page.waitForTimeout(1400)
+await page.locator('#door').click({ force: true })
+await page.waitForTimeout(2800)
+{
+  const log = await spoken()
+  if (!log.includes('корова')) {
+    throw new Error(`a long clip must still be named after it ends, got ${JSON.stringify(log)}`)
+  }
+}
+
 console.log('tap spec ok')
 await browser.close()

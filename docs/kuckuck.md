@@ -60,7 +60,7 @@ Tap the lamp to cycle русский → Deutsch → English. If a visitor is in
 
 Animal and door sounds are short mono MP3s (Safari on iOS does not play OGG). Credits and licences are in `public/sounds/CREDITS.md`.
 
-A greet plays the animal clip, then the spoken word once the clip is almost finished, so a long moo is not talked over or cut off. Speech uses the browser’s voices. On an iPhone the first tap unlocks both Web Audio and speech. Recorded family voices can replace the speech later.
+A greet plays the animal clip, then the spoken word once the clip is almost finished, so a long moo is not talked over or cut off. Refreshing the auto-close timer (tapping the visitor again, or the door finishing its open) must not cancel that pending word — otherwise only the short clips (cat, bunny, mouse) get a name and the rest stay silent. Speech uses the browser’s voices. On an iPhone each tap unlocks speech; canceling the engine between visits makes the next word fail. The sitting’s language has to be installed as a Spoken Content voice — a German iPhone often has no Russian voice, and then the word is silent. Recorded family voices can replace the speech later.
 
 Duck is the mallard quacks from XC62258, not the silent head of that file. Cow is the full Single Cow Moo with a fade, not a mid-call trim. Mouse is a rubber-toy squeak. Bear is a short Fish & Wildlife growl.
 

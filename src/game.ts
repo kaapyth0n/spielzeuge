@@ -49,7 +49,7 @@ export class Game {
   private lastGreet = 0
   private parentHold: number | null = null
   private inputLock = false
-  private voicePrimed = false
+  private closeTimer: number | null = null
   private readonly timers = new Set<number>()
 
   constructor(root: HTMLElement) {
@@ -78,6 +78,7 @@ export class Game {
     const lamp = this.must(this.world, '#lamp')
     lamp.addEventListener('pointerdown', (event) => {
       event.stopPropagation()
+      this.speech.prime()
       if (this.sheet.classList.contains('is-open')) return
       this.beginParentHold()
     })
@@ -91,6 +92,7 @@ export class Game {
     })
 
     this.world.addEventListener('pointerdown', (event) => {
+      this.speech.prime()
       void this.onPlayPointer(event)
     })
 
@@ -172,30 +174,28 @@ export class Game {
         return
       case 'cycle-lang-name':
         this.applyLang(nextLang(this.lang), true)
-        void this.unlockVoice().then(() => {
-          if (this.hasVisitor()) {
-            this.lastGreet = 0
-            if (this.current) this.greet(this.current)
-            return
-          }
-          if (
-            this.phase !== 'boot' &&
-            this.phase !== 'closed' &&
-            this.phase !== 'knocking' &&
-            this.phase !== 'waiting'
-          ) {
-            return
-          }
-          this.speech.speak(LANG_LABEL[this.lang], this.lang)
-        })
+        void this.unlockVoice()
+        if (this.hasVisitor()) {
+          this.lastGreet = 0
+          if (this.current) this.greet(this.current)
+          return
+        }
+        if (
+          this.phase !== 'boot' &&
+          this.phase !== 'closed' &&
+          this.phase !== 'knocking' &&
+          this.phase !== 'waiting'
+        ) {
+          return
+        }
+        this.speech.speak(LANG_LABEL[this.lang], this.lang)
         return
       case 'cycle-lang-word':
         this.applyLang(nextLang(this.lang), true)
-        void this.unlockVoice().then(() => {
-          if (!this.hasVisitor() || !this.current) return
-          this.lastGreet = 0
-          this.greet(this.current)
-        })
+        void this.unlockVoice()
+        if (!this.hasVisitor() || !this.current) return
+        this.lastGreet = 0
+        this.greet(this.current)
         return
     }
   }
@@ -217,14 +217,14 @@ export class Game {
 
   private chooseLang(lang: Lang): void {
     this.applyLang(lang, true)
-    void this.unlockVoice().then(() => {
-      if (this.hasVisitor() && this.current) {
-        this.lastGreet = 0
-        this.greet(this.current)
-        return
-      }
-      this.speech.speak(LANG_LABEL[this.lang], this.lang)
-    })
+    this.speech.prime()
+    void this.unlockVoice()
+    if (this.hasVisitor() && this.current) {
+      this.lastGreet = 0
+      this.greet(this.current)
+      return
+    }
+    this.speech.speak(LANG_LABEL[this.lang], this.lang)
   }
 
   private showParent(): void {
@@ -285,7 +285,6 @@ export class Game {
     const visitor = this.nextVisitor()
     this.current = visitor
     this.renderVisitor(visitor)
-    this.speech.silence()
     this.setPhase('opening')
     this.doorway.classList.add('is-open')
     this.audio.latch()
@@ -301,8 +300,8 @@ export class Game {
   }
 
   private scheduleClose(): void {
-    this.clearTimers()
-    this.later(HOLD_OPEN_MS, () => this.closeDoor())
+    this.clearCloseTimer()
+    this.closeTimer = this.later(HOLD_OPEN_MS, () => this.closeDoor())
   }
 
   private closeDoor(): void {
@@ -375,10 +374,7 @@ export class Game {
   }
 
   private async unlockVoice(): Promise<void> {
-    if (!this.voicePrimed) {
-      this.speech.prime()
-      this.voicePrimed = true
-    }
+    this.speech.prime()
     await this.audio.unlock()
     try {
       await navigator.wakeLock?.request('screen')
@@ -404,17 +400,27 @@ export class Game {
     }
   }
 
-  private later(ms: number, fn: () => void): void {
+  private later(ms: number, fn: () => void): number {
     const id = window.setTimeout(() => {
       this.timers.delete(id)
+      if (this.closeTimer === id) this.closeTimer = null
       fn()
     }, ms)
     this.timers.add(id)
+    return id
+  }
+
+  private clearCloseTimer(): void {
+    if (this.closeTimer === null) return
+    window.clearTimeout(this.closeTimer)
+    this.timers.delete(this.closeTimer)
+    this.closeTimer = null
   }
 
   private clearTimers(): void {
     for (const id of this.timers) window.clearTimeout(id)
     this.timers.clear()
+    this.closeTimer = null
   }
 
   private must(root: ParentNode, selector: string): HTMLElement {
