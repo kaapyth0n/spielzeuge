@@ -378,6 +378,10 @@ button {
   width: min(96%, 260px);
 }
 
+.visitor--capybara .toy {
+  width: min(112%, 310px);
+}
+
 .door {
   position: absolute;
   inset: 7.2% 6.5% 4.4%;

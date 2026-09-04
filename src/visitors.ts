@@ -319,38 +319,57 @@ export const VISITORS: Visitor[] = [
     word: { ru: 'капибара', de: 'Capybara', en: 'capybara' },
     svg: `
       <svg class="toy" viewBox="0 0 200 240" aria-hidden="true">
-        <ellipse cx="100" cy="226" rx="58" ry="7" fill="rgba(28,14,10,.3)"/>
+        <ellipse cx="104" cy="224" rx="62" ry="7" fill="rgba(28,14,10,.3)"/>
         <g class="part-body">
-          <ellipse cx="104" cy="170" rx="62" ry="42" fill="#c49a6c"/>
-          <ellipse cx="104" cy="178" rx="34" ry="24" fill="#e6c8a0"/>
-          <g class="part-tail">
-            <ellipse cx="158" cy="178" rx="10" ry="8" fill="#a87a48"/>
-          </g>
-          <ellipse cx="54" cy="168" rx="18" ry="16" fill="#a87a48"/>
-          <ellipse cx="148" cy="186" rx="16" ry="14" fill="#a87a48"/>
+          <!-- barrel body, low and long -->
+          <ellipse cx="108" cy="168" rx="58" ry="36" fill="#c49a6c"/>
+          <ellipse cx="112" cy="176" rx="40" ry="22" fill="#e0bc90"/>
+          <!-- stubby back leg -->
+          <path d="M142 176c10 8 14 28 2 34-8 2-16-4-18-14z" fill="#a87a48"/>
+          <ellipse cx="144" cy="208" rx="14" ry="8" fill="#8f6538"/>
+          <!-- front leg -->
+          <path d="M78 176c-2 14 2 30 12 32 8 0 10-12 8-24z" fill="#a87a48"/>
+          <ellipse cx="86" cy="208" rx="13" ry="8" fill="#8f6538"/>
+          <!-- tiny tail nub -->
+          <ellipse cx="164" cy="172" rx="7" ry="6" fill="#a87a48"/>
           <g class="part-head">
-            <ellipse cx="78" cy="112" rx="40" ry="34" fill="#d2ad7a"/>
-            <ellipse cx="58" cy="118" rx="18" ry="14" fill="#e6c8a0"/>
-            <g class="part-ear-l">
-              <ellipse cx="62" cy="84" rx="10" ry="12" fill="#a87a48"/>
-              <ellipse cx="62" cy="84" rx="5" ry="6" fill="#f0b2a4"/>
-            </g>
-            <g class="part-ear-r">
-              <ellipse cx="96" cy="80" rx="9" ry="11" fill="#a87a48"/>
-              <ellipse cx="96" cy="80" rx="4.5" ry="5.5" fill="#f0b2a4"/>
-            </g>
+            <!-- long blocky snout in profile, calm face -->
+            <path
+              d="M42 118
+                 c0-22 10-36 34-40
+                 18-4 34-2 46 10
+                 10 10 12 26 8 40
+                 -4 16-16 28-40 30
+                 -28 2-46-8-48-22
+                 -1-6 0-12 0-18z"
+              fill="#d2ad7a"
+            />
+            <!-- square blunt muzzle tip -->
+            <path
+              d="M38 120
+                 c-2-10 2-18 12-22
+                 8-2 14 0 16 8
+                 2 10-2 22-12 26
+                 -10 2-16-2-16-12z"
+              fill="#e6c8a0"
+            />
+            <rect x="34" y="118" width="18" height="10" rx="4" fill="#3a2a22"/>
+            <!-- small calm eye -->
             <g class="part-eyes">
-              <circle cx="68" cy="104" r="4.6" fill="#2a1b14"/>
-              <circle cx="90" cy="100" r="4.6" fill="#2a1b14"/>
-              <circle cx="69.4" cy="102.4" r="1.3" fill="#f6eee0"/>
-              <circle cx="91.4" cy="98.4" r="1.3" fill="#f6eee0"/>
+              <ellipse cx="86" cy="112" rx="5" ry="5.4" fill="#f6f0d8"/>
+              <circle cx="87" cy="112" r="3.2" fill="#2a1b14"/>
+              <circle cx="88.2" cy="110.6" r="1.1" fill="#fff"/>
             </g>
-            <ellipse cx="48" cy="120" rx="12" ry="8" fill="#3a2a22"/>
-            <path d="M40 124c8 6 16 6 24 0" fill="none" stroke="#5a3a28" stroke-width="1.6" stroke-linecap="round"/>
+            <!-- soft cheek / brow, no smile -->
+            <ellipse cx="74" cy="126" rx="14" ry="9" fill="#e0bc90" opacity=".7"/>
+            <path d="M78 108c6-2 14-2 18 2" fill="none" stroke="#9a7048" stroke-width="1.4" stroke-linecap="round"/>
+            <!-- little rounded ear on crown -->
+            <g class="part-ear-r">
+              <ellipse cx="118" cy="92" rx="9" ry="11" fill="#a87a48"/>
+              <ellipse cx="118" cy="92" rx="4.5" ry="6" fill="#f0b2a4"/>
+            </g>
           </g>
         </g>
-        <ellipse cx="78" cy="208" rx="18" ry="11" fill="#a87a48"/>
-        <ellipse cx="126" cy="210" rx="18" ry="11" fill="#8f6538"/>
       </svg>`,
   },
 ]
