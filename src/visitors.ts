@@ -7,6 +7,7 @@ export const VISITOR_IDS = [
   'mouse',
   'cow',
   'bear',
+  'frog',
 ] as const
 
 export type VisitorId = (typeof VISITOR_IDS)[number]
@@ -275,6 +276,41 @@ export const VISITORS: Visitor[] = [
         <ellipse cx="150" cy="176" rx="17" ry="15" fill="#8f5a30"/>
         <ellipse cx="78" cy="208" rx="16" ry="11" fill="#8f5a30"/>
         <ellipse cx="124" cy="208" rx="16" ry="11" fill="#8f5a30"/>
+      </svg>`,
+  },
+  {
+    id: 'frog',
+    word: { ru: 'лягушка', de: 'Frosch', en: 'frog' },
+    svg: `
+      <svg class="toy" viewBox="0 0 200 240" aria-hidden="true">
+        <ellipse cx="100" cy="224" rx="50" ry="7" fill="rgba(28,14,10,.3)"/>
+        <g class="part-body">
+          <ellipse cx="100" cy="168" rx="58" ry="40" fill="#7fbf5a"/>
+          <ellipse cx="100" cy="176" rx="34" ry="24" fill="#c8e89a"/>
+          <g class="part-leg-l">
+            <path d="M52 168c-18 8-28 28-10 40 8 4 18 0 22-8z" fill="#5f9a3e"/>
+            <ellipse cx="48" cy="206" rx="16" ry="9" fill="#c8e89a"/>
+          </g>
+          <g class="part-leg-r">
+            <path d="M148 168c18 8 28 28 10 40-8 4-18 0-22-8z" fill="#5f9a3e"/>
+            <ellipse cx="152" cy="206" rx="16" ry="9" fill="#b8d88a"/>
+          </g>
+          <circle cx="100" cy="112" r="36" fill="#8fd06a"/>
+          <g class="part-eyes">
+            <circle cx="78" cy="92" r="16" fill="#8fd06a"/>
+            <circle cx="122" cy="92" r="16" fill="#8fd06a"/>
+            <circle cx="78" cy="90" r="8" fill="#f6f0d8"/>
+            <circle cx="122" cy="90" r="8" fill="#f6f0d8"/>
+            <circle cx="80" cy="90" r="4.4" fill="#2a1b14"/>
+            <circle cx="124" cy="90" r="4.4" fill="#2a1b14"/>
+            <circle cx="81.4" cy="88.4" r="1.3" fill="#fff"/>
+            <circle cx="125.4" cy="88.4" r="1.3" fill="#fff"/>
+          </g>
+          <ellipse cx="100" cy="122" rx="18" ry="10" fill="#c8e89a"/>
+          <path d="M88 128c8 8 16 8 24 0" fill="none" stroke="#3a5a28" stroke-width="2" stroke-linecap="round"/>
+        </g>
+        <ellipse cx="72" cy="198" rx="14" ry="10" fill="#7fbf5a"/>
+        <ellipse cx="128" cy="198" rx="14" ry="10" fill="#5f9a3e"/>
       </svg>`,
   },
 ]

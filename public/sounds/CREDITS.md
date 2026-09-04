@@ -15,3 +15,4 @@ All clips are free to use. Encoded as short mono MP3s (Safari on iOS does not pl
 | `mouse.mp3` | OpenGameArt [Squeak toy sounds](https://opengameart.org/content/squeak-toy-sounds) by bart (`squeak1`) | CC0 |
 | `bunny.mp3` | Kenney Impact Sounds (`impactSoft_medium_000`) | CC0 |
 | `bear.mp3` | OpenGameArt [Bear growls](https://opengameart.org/content/bear-growls) from the U.S. Fish & Wildlife Service (`bear_01`) | CC0 |
+| `frog.mp3` | OpenGameArt [Frog Croaks](https://opengameart.org/content/frog-croaks) by EZduzziteh (`croak_01`) | CC0 |
