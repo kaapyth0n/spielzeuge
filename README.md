@@ -31,7 +31,7 @@ npm run build
 npm run preview
 ```
 
-`?lang=ru|de|en` and `?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog` force the first sitting. Add the preview page to the iPhone/iPad home screen for a standalone toy.
+`?lang=ru|de|en` and `?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara` force the first sitting. Add the preview page to the iPhone/iPad home screen for a standalone toy.
 
 ## Public site
 

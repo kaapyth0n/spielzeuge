@@ -16,3 +16,4 @@ All clips are free to use. Encoded as short mono MP3s (Safari on iOS does not pl
 | `bunny.mp3` | Kenney Impact Sounds (`impactSoft_medium_000`) | CC0 |
 | `bear.mp3` | OpenGameArt [Bear growls](https://opengameart.org/content/bear-growls) from the U.S. Fish & Wildlife Service (`bear_01`) | CC0 |
 | `frog.mp3` | OpenGameArt [Frog Croaks](https://opengameart.org/content/frog-croaks) by EZduzziteh (`croak_01`) | CC0 |
+| `capybara.mp3` | Freesound [Squeaking Guinea Pigs](https://freesound.org/people/Breviceps/sounds/583078/) by Breviceps — short loud cut, normalized | CC0 |

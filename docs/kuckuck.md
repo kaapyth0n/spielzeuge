@@ -17,7 +17,7 @@ It is a toy, not a lesson. Sitting together and saying the word with the voice i
 
 1. The hallway waits. After a breath, the door knocks.
 2. A tap on the door frame opens it wide.
-3. One of nine wooden visitors steps into the opening, makes its sound, and is named. The whole animal is visible — the closed door is the peekaboo, not a half-hidden guest.
+3. One of ten wooden visitors steps into the opening, makes its sound, and is named. The whole animal is visible — the closed door is the peekaboo, not a half-hidden guest.
 4. Tap the visitor to hear the sound and the word again.
 5. Tap the door frame (not the guest, not the hall) to close. If nobody taps the frame, it closes after about four seconds.
 
@@ -52,10 +52,11 @@ One language per sitting. Switching mid-play is how words fail to stick.
 | cow | корова | Kuh | cow |
 | bear | мишка | Bär | bear |
 | frog | лягушка | Frosch | frog |
+| capybara | капибара | Capybara | capybara |
 
 Tap the lamp to cycle русский → Deutsch → English. If a visitor is in the doorway, it says its name in the new language right away. If the door is closed, it says the language’s name. Hold the lamp to pick from the sheet. The choice is stored on the device.
 
-`?lang=ru|de|en` sets the sitting. `?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog` forces the first guest (useful for checking a clip).
+`?lang=ru|de|en` sets the sitting. `?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara` forces the first guest (useful for checking a clip).
 
 ## Sounds
 
@@ -63,7 +64,7 @@ Animal and door sounds are short mono MP3s (Safari on iOS does not play OGG). Cr
 
 A greet plays the animal clip, then the spoken word once the clip is almost finished, so a long moo is not talked over or cut off. Refreshing the auto-close timer (tapping the visitor again, or the door finishing its open) must not cancel that pending word — otherwise only the short clips (cat, bunny, mouse) get a name and the rest stay silent. Speech uses the browser’s voices. On an iPhone each tap unlocks speech; canceling the engine between visits makes the next word fail. The sitting’s language has to be installed as a Spoken Content voice — a German iPhone often has no Russian voice, and then the word is silent. Recorded family voices can replace the speech later.
 
-Duck is the mallard quacks from XC62258, not the silent head of that file. Cow is the full Single Cow Moo with a fade, not a mid-call trim. Mouse is a rubber-toy squeak. Bear is a short Fish & Wildlife growl. Frog is a short CC0 croak from OpenGameArt.
+Duck is the mallard quacks from XC62258, not the silent head of that file. Cow is the full Single Cow Moo with a fade, not a mid-call trim. Mouse is a rubber-toy squeak. Bear is a short Fish & Wildlife growl. Frog is a short CC0 croak from OpenGameArt. Capybara is a short loud CC0 rodent squeak (Freesound guinea-pig recording; close cousin, clear and toy-safe).
 
 When replacing a clip, bump `CACHE` in `public/sw.js`. Home-screen copies cache sounds with a cache-first worker.
 
