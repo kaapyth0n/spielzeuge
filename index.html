@@ -20,12 +20,17 @@
     <link rel="apple-touch-icon" href="/icons/app-180.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
   </head>
-  <body class="catalog-body">
+  <body class="catalog-body" data-lang="ru">
     <div id="catalog" class="catalog">
+      <button type="button" class="lang-toggle" id="lang-toggle" aria-label="Язык">
+        <span class="lang-toggle-glow" aria-hidden="true"></span>
+        <span class="lang-toggle-core" aria-hidden="true"></span>
+      </button>
+
       <header class="catalog-head">
-        <p class="catalog-kicker">Spielzeuge</p>
-        <h1 class="catalog-title">Выбери игру</h1>
-        <p class="catalog-sub">Спокойные игрушки. Без счёта. Без проигрыша.</p>
+        <p class="catalog-kicker" data-i18n="kicker">Spielzeuge</p>
+        <h1 class="catalog-title" data-i18n="title">Выбери игру</h1>
+        <p class="catalog-sub" data-i18n="sub">Спокойные игрушки. Без счёта. Без проигрыша.</p>
       </header>
 
       <nav class="catalog-grid" aria-label="Игры">
@@ -34,8 +39,8 @@
             <span class="toy-card-door"></span>
           </span>
           <span class="toy-card-body">
-            <span class="toy-card-name">Kuckuck</span>
-            <span class="toy-card-blurb">Дверь стучит. Открой — там гость.</span>
+            <span class="toy-card-name" data-i18n="kuckuck-name">Kuckuck</span>
+            <span class="toy-card-blurb" data-i18n="kuckuck-blurb">Дверь стучит. Открой — там гость.</span>
           </span>
         </a>
 
@@ -44,12 +49,27 @@
             <span class="toy-card-soft"></span>
           </span>
           <span class="toy-card-body">
-            <span class="toy-card-name">Чуняшка</span>
-            <span class="toy-card-blurb">Скоро. Пока только имя на двери.</span>
+            <span class="toy-card-name" data-i18n="chunyashka-name">Чуняшка</span>
+            <span class="toy-card-blurb" data-i18n="chunyashka-blurb">Скоро. Пока только имя на двери.</span>
           </span>
         </a>
       </nav>
     </div>
+
+    <div class="lang-sheet" id="lang-sheet" hidden>
+      <div class="lang-card" role="dialog" aria-modal="true">
+        <p class="lang-card-title" data-i18n="sheet-title">Язык</p>
+        <div class="lang-card-langs">
+          <button type="button" data-lang="ru" aria-pressed="true">русский</button>
+          <button type="button" data-lang="de" aria-pressed="false">Deutsch</button>
+          <button type="button" data-lang="en" aria-pressed="false">English</button>
+        </div>
+        <p class="lang-card-hint" data-i18n="sheet-hint">
+          Удерживайте кнопку языка, чтобы выбрать сразу.
+        </p>
+      </div>
+    </div>
+
     <script type="module" src="/src/catalog.ts"></script>
   </body>
 </html>

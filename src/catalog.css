@@ -232,3 +232,107 @@ a {
   font-weight: 700;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
 }
+
+
+/* Hidden language control — corner lamp, not a menu for the child */
+.lang-toggle {
+  position: fixed;
+  top: calc(var(--safe-top) + 10px);
+  right: calc(var(--safe-right) + 12px);
+  z-index: 30;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0.42;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.lang-toggle:focus-visible,
+.lang-toggle:hover {
+  opacity: 0.9;
+}
+
+.lang-toggle:active {
+  transform: scale(0.94);
+}
+
+.lang-toggle-glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(243, 197, 106, 0.35), transparent 70%);
+  pointer-events: none;
+}
+
+.lang-toggle-core {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffd98a, #f3c56a 45%, #c9a24a 80%);
+  box-shadow:
+    0 0 12px rgba(243, 197, 106, 0.55),
+    inset 0 -2px 3px rgba(90, 50, 10, 0.25);
+}
+
+.lang-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(20, 10, 14, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.lang-sheet[hidden] {
+  display: none !important;
+}
+
+.lang-sheet.is-open {
+  display: grid;
+}
+
+.lang-card {
+  width: min(100%, 320px);
+  padding: 22px 20px 18px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, #3d2430, #24141c);
+  border: 1px solid rgba(201, 162, 74, 0.22);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.lang-card-title {
+  margin: 0 0 14px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.lang-card-langs {
+  display: grid;
+  gap: 8px;
+}
+
+.lang-card-langs button {
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+}
+
+.lang-card-langs button.is-active {
+  border-color: rgba(201, 162, 74, 0.55);
+  box-shadow: inset 3px 0 0 var(--brass);
+  background: rgba(201, 162, 74, 0.08);
+}
+
+.lang-card-hint {
+  margin: 14px 2px 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  opacity: 0.65;
+}

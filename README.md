@@ -4,6 +4,8 @@ A small catalog of calm toys for children. Web first, later on iPad.
 
 Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуняшка** (coming soon).
 
+Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`.
+
 ## Toys
 
 | Path | Toy |

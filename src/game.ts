@@ -37,6 +37,7 @@ export class Game {
   private readonly live: HTMLElement
   private readonly langButtons: HTMLButtonElement[]
   private readonly parentHint: HTMLElement
+  private readonly parentHome: HTMLAnchorElement | null
 
   private readonly audio = new ToyAudio()
   private readonly speech = new ToySpeech()
@@ -60,6 +61,7 @@ export class Game {
     this.sheet = this.must(root, '#parent-sheet')
     this.live = this.must(root, '#live')
     this.parentHint = this.must(root, '#parent-hint')
+    this.parentHome = root.querySelector<HTMLAnchorElement>('.parent-home a')
     this.langButtons = [
       ...this.sheet.querySelectorAll<HTMLButtonElement>('[data-lang]'),
     ]
@@ -244,6 +246,7 @@ export class Game {
     document.documentElement.lang = lang === 'ru' ? 'ru' : lang === 'de' ? 'de' : 'en'
     this.world.dataset.lang = lang
     this.parentHint.textContent = PARENT_COPY[lang].hint
+    if (this.parentHome) this.parentHome.textContent = PARENT_COPY[lang].home
     for (const button of this.langButtons) {
       const active = button.dataset.lang === lang
       button.classList.toggle('is-active', active)
