@@ -12,7 +12,7 @@ async function shot(name, viewport, fn) {
     deviceScaleFactor: 2,
     hasTouch: true,
   })
-  await page.goto('http://localhost:5173/?lang=ru', { waitUntil: 'networkidle' })
+  await page.goto('http://localhost:5173/kuckuck/?lang=ru', { waitUntil: 'networkidle' })
   await fn(page)
   await page.screenshot({ path: new URL(`${name}.png`, out).pathname })
   await page.close()
@@ -34,7 +34,7 @@ for (const visitor of ['cat', 'dog', 'bird', 'duck', 'bunny', 'mouse', 'cow', 'b
     deviceScaleFactor: 2,
     hasTouch: true,
   })
-  await page.goto(`http://localhost:5173/?lang=ru&visitor=${visitor}`, {
+  await page.goto(`http://localhost:5173/kuckuck/?lang=ru&visitor=${visitor}`, {
     waitUntil: 'networkidle',
   })
   await page.waitForTimeout(1300)

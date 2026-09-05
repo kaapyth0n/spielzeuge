@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
+    />
+    <meta name="theme-color" content="#2a1620" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Kuckuck" />
+    <meta
+      name="description"
+      content="Kuckuck — a quiet door, a knock, a visitor who says its name. For the smallest hands."
+    />
+    <title>Kuckuck</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/app-180.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+  </head>
+  <body>
+    <div id="app" class="app">
+      <div class="world" data-phase="boot" data-lang="ru">
+        <div class="wallpaper" data-zone="elsewhere" aria-hidden="true"></div>
+        <div class="vignette" aria-hidden="true"></div>
+        <div class="grain" aria-hidden="true"></div>
+
+        <div class="sconce" aria-hidden="true">
+          <span class="sconce-glow"></span>
+          <span class="sconce-plate"></span>
+          <span class="sconce-arm"></span>
+          <span class="sconce-cup"></span>
+          <button
+            type="button"
+            class="sconce-glass"
+            id="lamp"
+            data-zone="lamp"
+            aria-label="Language"
+          >
+            <span class="sconce-flame"></span>
+          </button>
+        </div>
+
+        <div class="hall">
+          <div class="doorway" id="doorway" data-zone="door">
+            <div class="frame">
+              <div class="lintel"></div>
+              <div class="jamb jamb-left"></div>
+              <div class="jamb jamb-right"></div>
+              <div class="threshold"></div>
+              <div class="aperture">
+                <div class="room">
+                  <div class="room-paper"></div>
+                  <div class="room-glow"></div>
+                  <div class="rug"></div>
+                </div>
+                <div class="visitor-slot" id="visitor-slot"></div>
+              </div>
+              <button type="button" class="door" id="door" data-zone="door" aria-label="Дверь">
+                <span class="door-leaf">
+                  <span class="door-front">
+                    <span class="panel panel-top">
+                      <span class="spyhole"></span>
+                    </span>
+                    <span class="panel panel-mid"></span>
+                    <span class="panel panel-bot"></span>
+                    <span class="handle-set">
+                      <span class="handle-plate"></span>
+                      <span class="handle"></span>
+                      <span class="keyhole"></span>
+                    </span>
+                    <span class="door-sheen"></span>
+                  </span>
+                  <span class="door-edge"></span>
+                  <span class="door-back"></span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="wainscot" aria-hidden="true"></div>
+        <div class="floor" aria-hidden="true"></div>
+      </div>
+
+      <div class="parent-sheet" id="parent-sheet" hidden>
+        <div class="parent-card">
+          <p class="parent-title">Kuckuck</p>
+          <div class="parent-langs">
+            <button type="button" data-lang="ru" aria-pressed="true">русский</button>
+            <button type="button" data-lang="de" aria-pressed="false">Deutsch</button>
+            <button type="button" data-lang="en" aria-pressed="false">English</button>
+          </div>
+          <p class="parent-hint" id="parent-hint">
+            Удерживайте лампу, чтобы сменить язык
+          </p>
+          <p class="parent-home">
+            <a href="../">Все игрушки</a>
+          </p>
+        </div>
+      </div>
+
+      <p class="sr-only" id="live" aria-live="polite"></p>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

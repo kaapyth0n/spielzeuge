@@ -2,9 +2,17 @@
 
 A small catalog of calm toys for children. Web first, later on iPad.
 
-The first toy is **Kuckuck**, for Miron (almost two): a wooden door, a knock, a visitor who says its name in Russian, German, or English.
+Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуняшка** (coming soon).
 
-## Kuckuck
+## Toys
+
+| Path | Toy |
+| --- | --- |
+| `/` | Catalog |
+| `/kuckuck/` | Kuckuck — door, knock, visitor, spoken name |
+| `/chunyashka/` | Чуняшка — placeholder until the game is ready |
+
+### Kuckuck
 
 There is no menu. The door knocks. Tap the door frame. It opens. A wooden animal is there. It makes its sound, then a voice says the word. Tap the visitor to hear that again; tap the frame to close. Hall and floor do nothing.
 
@@ -31,7 +39,7 @@ npm run build
 npm run preview
 ```
 
-`?lang=ru|de|en` and `?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara` force the first sitting. Add the preview page to the iPhone/iPad home screen for a standalone toy.
+Kuckuck query helpers: `/kuckuck/?lang=ru|de|en` and `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara`.
 
 ## Public site
 

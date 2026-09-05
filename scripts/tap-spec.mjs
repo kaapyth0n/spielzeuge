@@ -22,7 +22,7 @@ await page.addInitScript(() => {
   }
 })
 
-await page.goto('http://localhost:5173/?lang=ru&visitor=cat', {
+await page.goto('http://localhost:5173/kuckuck/?lang=ru&visitor=cat', {
   waitUntil: 'networkidle',
 })
 await page.waitForTimeout(1400)
@@ -109,7 +109,7 @@ if (!LANG_NAMES.has(afterClosedLamp.at(-1) ?? '')) {
 
 console.log('spoken log', afterClosedLamp)
 
-await page.goto('http://localhost:5173/?lang=ru&visitor=cow', {
+await page.goto('http://localhost:5173/kuckuck/?lang=ru&visitor=cow', {
   waitUntil: 'networkidle',
 })
 await page.waitForTimeout(1400)

@@ -56,7 +56,7 @@ One language per sitting. Switching mid-play is how words fail to stick.
 
 Tap the lamp to cycle русский → Deutsch → English. If a visitor is in the doorway, it says its name in the new language right away. If the door is closed, it says the language’s name. Hold the lamp to pick from the sheet. The choice is stored on the device.
 
-`?lang=ru|de|en` sets the sitting. `?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara` forces the first guest (useful for checking a clip).
+`?lang=ru|de|en` sets the sitting. `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara` forces the first guest (useful for checking a clip).
 
 ## Sounds
 

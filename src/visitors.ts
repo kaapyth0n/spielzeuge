@@ -318,7 +318,7 @@ export const VISITORS: Visitor[] = [
     id: 'capybara',
     word: { ru: 'капибара', de: 'Capybara', en: 'capybara' },
     svg: `
-      <img class="toy" src="./visitors/capybara.png" alt="" draggable="false" aria-hidden="true" />
+      <img class="toy" src="/visitors/capybara.png" alt="" draggable="false" aria-hidden="true" />
     `,
   },
 ]

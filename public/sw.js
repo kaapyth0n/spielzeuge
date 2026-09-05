@@ -1,4 +1,4 @@
-const CACHE = 'kuckuck-v9'
+const CACHE = 'spielzeuge-v1'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -6,6 +6,10 @@ self.addEventListener('install', (event) => {
       cache.addAll([
         './',
         './index.html',
+        './kuckuck/',
+        './kuckuck/index.html',
+        './chunyashka/',
+        './chunyashka/index.html',
         './manifest.webmanifest',
         './icons/app-192.png',
         './icons/app-512.png',

@@ -1,7 +1,7 @@
 {
-  "name": "Kuckuck",
-  "short_name": "Kuckuck",
-  "description": "A quiet door. A knock. A visitor who says its name.",
+  "name": "Spielzeuge",
+  "short_name": "Spielzeuge",
+  "description": "Quiet toys for small hands. A small catalog of calm games.",
   "start_url": "./",
   "display": "standalone",
   "orientation": "any",

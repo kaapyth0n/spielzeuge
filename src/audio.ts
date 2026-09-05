@@ -1,19 +1,19 @@
 import type { VisitorId } from './visitors.ts'
 
 const FILES = {
-  knock: './sounds/knock.mp3',
-  creak: './sounds/creak.mp3',
-  latch: './sounds/latch.mp3',
-  cat: './sounds/cat.mp3',
-  dog: './sounds/dog.mp3',
-  bird: './sounds/bird.mp3',
-  duck: './sounds/duck.mp3',
-  bunny: './sounds/bunny.mp3',
-  mouse: './sounds/mouse.mp3',
-  cow: './sounds/cow.mp3',
-  bear: './sounds/bear.mp3',
-  frog: './sounds/frog.mp3',
-  capybara: './sounds/capybara.mp3',
+  knock: '/sounds/knock.mp3',
+  creak: '/sounds/creak.mp3',
+  latch: '/sounds/latch.mp3',
+  cat: '/sounds/cat.mp3',
+  dog: '/sounds/dog.mp3',
+  bird: '/sounds/bird.mp3',
+  duck: '/sounds/duck.mp3',
+  bunny: '/sounds/bunny.mp3',
+  mouse: '/sounds/mouse.mp3',
+  cow: '/sounds/cow.mp3',
+  bear: '/sounds/bear.mp3',
+  frog: '/sounds/frog.mp3',
+  capybara: '/sounds/capybara.mp3',
 } as const
 
 type Clip = keyof typeof FILES

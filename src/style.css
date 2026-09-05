@@ -797,6 +797,17 @@ button {
   color: rgba(243, 230, 196, 0.62);
 }
 
+.parent-home {
+  margin: 18px 4px 0;
+  font-size: 14px;
+}
+
+.parent-home a {
+  color: rgba(243, 230, 196, 0.78);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
