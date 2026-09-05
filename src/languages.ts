@@ -103,8 +103,15 @@ export const CHUNYASHKA_COPY: Record<
     description: string
     back: string
     hair: string
-    dress: string
+    face: string
+    clothes: string
     shoes: string
+    style: string
+    color: string
+    eyes: string
+    brows: string
+    smile: string
+    cheeks: string
     ready: string
     again: string
     likes: string
@@ -118,8 +125,15 @@ export const CHUNYASHKA_COPY: Record<
     description: 'Чуняшка — детская одевалка. Всегда в одежде. Лайки только в игре.',
     back: '← Spielzeuge',
     hair: 'Волосы',
-    dress: 'Платье',
+    face: 'Лицо',
+    clothes: 'Одежда',
     shoes: 'Обувь',
+    style: 'Фасон',
+    color: 'Цвет',
+    eyes: 'Глаза',
+    brows: 'Брови',
+    smile: 'Улыбка',
+    cheeks: 'Щёки',
     ready: 'Готово',
     again: 'Ещё раз',
     likes: 'Сердечки',
@@ -132,8 +146,15 @@ export const CHUNYASHKA_COPY: Record<
     description: 'Чуняшка — Anziehspiel. Immer angezogen. Herzen nur im Spiel.',
     back: '← Spielzeuge',
     hair: 'Haare',
-    dress: 'Kleid',
+    face: 'Gesicht',
+    clothes: 'Kleidung',
     shoes: 'Schuhe',
+    style: 'Schnitt',
+    color: 'Farbe',
+    eyes: 'Augen',
+    brows: 'Brauen',
+    smile: 'Lächeln',
+    cheeks: 'Wangen',
     ready: 'Fertig',
     again: 'Nochmal',
     likes: 'Herzen',
@@ -146,8 +167,15 @@ export const CHUNYASHKA_COPY: Record<
     description: 'Chunyashka — a dress-up toy. Always clothed. Hearts stay in the game.',
     back: '← Spielzeuge',
     hair: 'Hair',
-    dress: 'Dress',
+    face: 'Face',
+    clothes: 'Clothes',
     shoes: 'Shoes',
+    style: 'Style',
+    color: 'Color',
+    eyes: 'Eyes',
+    brows: 'Brows',
+    smile: 'Smile',
+    cheeks: 'Cheeks',
     ready: 'Ready',
     again: 'Again',
     likes: 'Hearts',

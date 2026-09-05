@@ -6,12 +6,12 @@ import './chunyashka.css'
 import { renderChip, renderDoll } from './chunyashka-doll.ts'
 import {
   DEFAULT_OUTFIT,
-  DRESS_IDS,
-  HAIR_IDS,
+  GROUP_SLOTS,
   LIKES_ARE_LOCAL,
-  LIKE_TARGET,
-  SHOE_IDS,
+  SLOT_IDS,
+  likeTarget,
   withItem,
+  type Group,
   type Outfit,
   type Slot,
 } from './chunyashka-state.ts'
@@ -36,9 +36,16 @@ function applyCopy(lang: Lang): void {
   setText('[data-i18n="again"]', copy.again)
   setText('[data-i18n="sheet-title"]', copy.sheetTitle)
   setText('[data-i18n="sheet-hint"]', copy.sheetHint)
-  setText('[data-slot="hair"]', copy.hair)
-  setText('[data-slot="dress"]', copy.dress)
-  setText('[data-slot="shoes"]', copy.shoes)
+  setText('[data-group="hair"]', copy.hair)
+  setText('[data-group="face"]', copy.face)
+  setText('[data-group="clothes"]', copy.clothes)
+  setText('[data-group="shoes"]', copy.shoes)
+  setText('[data-slot="hair"]', copy.style)
+  setText('[data-slot="color"]', copy.color)
+  setText('[data-slot="eyes"]', copy.eyes)
+  setText('[data-slot="brows"]', copy.brows)
+  setText('[data-slot="smile"]', copy.smile)
+  setText('[data-slot="cheeks"]', copy.cheeks)
 
   const langBtn = document.querySelector<HTMLElement>('#lang-toggle')
   if (langBtn) langBtn.setAttribute('aria-label', copy.langAria)
@@ -52,37 +59,56 @@ function must(id: string): HTMLElement {
   return node
 }
 
+function isGroup(value: string | undefined): value is Group {
+  return value === 'hair' || value === 'face' || value === 'clothes' || value === 'shoes'
+}
+
+function isSlot(value: string | undefined): value is Slot {
+  return Boolean(value && value in SLOT_IDS)
+}
+
 const stage = must('#doll-stage')
 const chips = must('#chips')
 const photo = must('#photo')
 const photoStage = must('#photo-stage')
 const likeCount = must('#like-count')
+const subs = must('#subs')
 
 let outfit: Outfit = { ...DEFAULT_OUTFIT }
-let slot: Slot = 'hair'
+let group: Group = 'clothes'
+let slot: Slot = 'clothes'
 let likeTimer: number | null = null
 
 function paintDoll(): void {
   stage.innerHTML = renderDoll(outfit)
 }
 
+function paintSubs(): void {
+  const options = GROUP_SLOTS[group]
+  subs.hidden = options.length < 2
+  for (const button of subs.querySelectorAll<HTMLButtonElement>('[data-slot]')) {
+    const id = button.dataset.slot
+    button.hidden = !options.includes(id as Slot)
+    button.classList.toggle('is-on', id === slot)
+  }
+}
+
 function paintChips(): void {
-  const ids = slot === 'hair' ? HAIR_IDS : slot === 'dress' ? DRESS_IDS : SHOE_IDS
-  const selected = outfit[slot === 'shoes' ? 'shoes' : slot]
-  chips.style.setProperty('--chip-count', String(ids.length))
+  const ids = SLOT_IDS[slot]
   chips.innerHTML = ids
     .map(
       (id) =>
-        `<button type="button" class="chip${id === selected ? ' is-on' : ''}" data-item="${id}">${renderChip(slot, id)}</button>`,
+        `<button type="button" class="chip${id === outfit[slot] ? ' is-on' : ''}" data-item="${id}">${renderChip(slot, id, outfit)}</button>`,
     )
     .join('')
 }
 
 function paint(): void {
   paintDoll()
+  paintSubs()
   paintChips()
-  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-slot]')) {
-    button.classList.toggle('is-on', button.dataset.slot === slot)
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-group]')) {
+    button.classList.toggle('is-on', button.dataset.group === group)
   }
 }
 
@@ -116,6 +142,7 @@ function spawnHearts(): void {
 
 function openPhoto(): void {
   if (!LIKES_ARE_LOCAL) return
+  const target = likeTarget(outfit)
   photoStage.innerHTML = renderDoll(outfit)
   likeCount.textContent = '0'
   photo.hidden = false
@@ -123,12 +150,12 @@ function openPhoto(): void {
   document.body.classList.add('is-photo')
   spawnHearts()
   stopLikes()
+  const step = Math.max(1, Math.ceil(target / 28))
   let n = 0
   likeTimer = window.setInterval(() => {
-    n += 4
-    if (n >= LIKE_TARGET) {
-      n = LIKE_TARGET
-      likeCount.textContent = String(n)
+    n += step
+    if (n >= target) {
+      likeCount.textContent = String(target)
       stopLikes()
       return
     }
@@ -139,11 +166,19 @@ function openPhoto(): void {
 paint()
 bindQuietLang(applyCopy)
 
-document.querySelector('#slots')?.addEventListener('click', (event) => {
+document.querySelector('#groups')?.addEventListener('click', (event) => {
+  const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-group]')
+  if (!isGroup(button?.dataset.group)) return
+  group = button.dataset.group
+  slot = GROUP_SLOTS[group][0] ?? 'clothes'
+  paint()
+})
+
+subs.addEventListener('click', (event) => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-slot]')
-  const next = button?.dataset.slot
-  if (next !== 'hair' && next !== 'dress' && next !== 'shoes') return
-  slot = next
+  if (!isSlot(button?.dataset.slot)) return
+  if (!GROUP_SLOTS[group].includes(button.dataset.slot)) return
+  slot = button.dataset.slot
   paint()
 })
 

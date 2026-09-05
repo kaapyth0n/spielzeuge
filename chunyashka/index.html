@@ -28,10 +28,19 @@
       <div class="stage" id="doll-stage"></div>
 
       <div class="tray">
-        <div class="slots" id="slots">
-          <button type="button" class="slot is-on" data-slot="hair">Волосы</button>
-          <button type="button" class="slot" data-slot="dress">Платье</button>
-          <button type="button" class="slot" data-slot="shoes">Обувь</button>
+        <div class="slots" id="groups">
+          <button type="button" class="slot" data-group="hair">Волосы</button>
+          <button type="button" class="slot" data-group="face">Лицо</button>
+          <button type="button" class="slot is-on" data-group="clothes">Одежда</button>
+          <button type="button" class="slot" data-group="shoes">Обувь</button>
+        </div>
+        <div class="slots slots--sub" id="subs" hidden>
+          <button type="button" class="slot" data-slot="hair">Фасон</button>
+          <button type="button" class="slot" data-slot="color">Цвет</button>
+          <button type="button" class="slot" data-slot="eyes">Глаза</button>
+          <button type="button" class="slot" data-slot="brows">Брови</button>
+          <button type="button" class="slot" data-slot="smile">Улыбка</button>
+          <button type="button" class="slot" data-slot="cheeks">Щёки</button>
         </div>
         <div class="chips" id="chips"></div>
         <button type="button" class="ready" id="ready" data-i18n="ready">Готово</button>
