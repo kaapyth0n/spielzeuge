@@ -1,5 +1,5 @@
 export const PUPPY_KEY = 'spielzeuge.sobachka.v1'
-export const CARE = ['feed', 'walk', 'sleep', 'ball'] as const
+export const CARE = ['feed', 'walk', 'sleep', 'ball', 'toilet'] as const
 export type Care = (typeof CARE)[number]
 export interface PuppyState {
   hearts: number
@@ -10,7 +10,7 @@ export interface PuppyState {
 export const freshPuppy = (): PuppyState => ({
   hearts: 0,
   wall: 0,
-  care: { feed: 0, walk: 0, sleep: 0, ball: 0 },
+  care: { feed: 0, walk: 0, sleep: 0, ball: 0, toilet: 0 },
   sound: true,
 })
 const count = (value: unknown): number =>

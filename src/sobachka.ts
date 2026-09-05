@@ -29,6 +29,7 @@ const narration = new PuppyNarration(() => ({ lang, enabled: state.sound }))
 type Screen =
   | 'room'
   | 'kitchen'
+  | 'bathroom'
   | 'garden'
   | 'games'
   | 'fetch'
@@ -37,6 +38,7 @@ type Screen =
   | 'win'
 let screen: Screen = 'room'
 let mood = ''
+let pottyResult: 'pee' | 'poop' | null = null
 let busy = false
 let message = copy.welcome
 let progress = 0
@@ -127,6 +129,7 @@ function hint(): string {
         : copy.hint
   return {
     kitchen: copy.foodHint,
+    bathroom: pottyResult ? copy.toiletDone : copy.toiletHint,
     garden: copy.walkHint,
     games: unlockedGames(state.hearts) === 3 ? copy.allOpen : copy.gamesHint,
     fetch: copy.fetchHint,
@@ -138,11 +141,13 @@ function hint(): string {
 function scene(): string {
   const garden = screen === 'garden'
   const kitchen = screen === 'kitchen'
-  return `<div class="scene ${garden ? 'garden' : kitchen ? 'kitchen' : ''} ${mood}" data-wall="${state.wall}">
+  const bathroom = screen === 'bathroom'
+  return `<div class="scene ${garden ? 'garden' : kitchen ? 'kitchen' : bathroom ? 'bathroom' : ''} ${mood}" data-wall="${state.wall}">
     <div class="wall-art" aria-hidden="true">${garden ? '' : wallArt(state.wall)}</div>
     ${garden ? '<div class="sun" aria-hidden="true"></div><div class="hill hill-one"></div><div class="hill hill-two"></div><div class="garden-path"></div>' : '<div class="window" aria-hidden="true"><div class="window-sun"></div><div class="window-hill"></div><i></i></div><div class="floor"></div>'}
-    ${!garden ? '<div class="rug" aria-hidden="true"><div></div></div>' : ''}
+    ${!garden && !bathroom ? '<div class="rug" aria-hidden="true"><div></div></div>' : ''}
     ${screen === 'room' ? `<div class="wall-picker">${btn('wall', 'wall', copy.wall, 'wall-button', `aria-label="${copy.wall}: ${copy.walls[state.wall]}"`)}<div class="wall-dots" aria-hidden="true">${[0, 1, 2].map((i) => `<i class="${i === state.wall ? 'active' : ''}"></i>`).join('')}</div></div>` : ''}
+    ${bathroom ? `<div class="bathroom-sign" aria-hidden="true">${icon('walk')}</div><div class="potty-tray" role="img" aria-label="${copy.potty}"><div class="potty-pad"></div></div>${pottyResult ? `<div class="potty-result ${pottyResult}" aria-hidden="true">${pottyResult === 'poop' ? icon('poop') : ''}</div>` : ''}<div class="clean-sparkles" aria-hidden="true">✧ ✦ ✧</div>` : ''}
     <div class="dog-wrap">${btn('pet', '', '', 'puppy-button', `aria-label="${copy.pet}"`).replace(icon(''), puppy())}<div class="sleep-z" aria-hidden="true">z z Z</div><div class="love-puff" aria-hidden="true">♥</div></div>
     ${screen === 'room' ? `${btn('toy', 'toy', '', 'squeaky', `aria-label="${copy.toy}"`)}${btn('ball', 'ball', '', 'room-ball', `aria-label="${copy.ball}"`)}` : ''}
     ${kitchen ? `<div id="food-bowl" class="food-bowl" role="img" aria-label="${copy.bowl}">${icon('feed')}</div>` : ''}
@@ -205,6 +210,7 @@ function render(focusHeading = false): void {
       : {
           room: copy.room,
           kitchen: copy.kitchen,
+          bathroom: copy.bathroom,
           garden: copy.garden,
           games: copy.games,
           win: copy.games,
@@ -217,10 +223,11 @@ function render(focusHeading = false): void {
     <header class="topbar"><a href="/" class="catalog-back" aria-label="${copy.home}">${icon('back')}<span>${copy.home}</span></a><a class="wordmark" href="/">spielzeuge<span> / </span>${copy.name}</a><div class="settings">${btn('sound', state.sound ? 'sound' : 'mute', '', 'icon-button', `aria-label="${state.sound ? copy.soundOn : copy.soundOff}" aria-pressed="${state.sound}"`)}<select id="puppy-language" aria-label="${copy.language}">${(['ru', 'de', 'en'] as Lang[]).map((l) => `<option value="${l}" ${l === lang ? 'selected' : ''}>${l.toUpperCase()}</option>`).join('')}</select></div></header>
     <div class="page-heading"><div><p class="eyebrow">${copy.tagline}</p><h1>${copy.name}<span class="title-paw" aria-hidden="true">${icon('walk')}</span></h1></div><div class="friendship"><div><span>${copy.friendship}</span><strong>${icon('heart')} ${state.hearts}</strong></div><div class="friendship-track" aria-label="${copy.heartHint}: ${Math.min(6, state.hearts)} / 6">${Array.from({ length: 6 }, (_, i) => `<i class="${i < state.hearts ? 'filled' : ''}"></i>`).join('')}</div><small>${copy.heartHint}</small></div></div>
     <section class="play-panel" aria-labelledby="screen-title"><div class="panel-toolbar"><div class="scene-nav">${screen === 'room' ? btn('games', 'games', copy.games, 'games-button') : btn(mini ? 'games' : 'room', 'back', mini ? copy.games : copy.back, 'back-button')}</div><h2 id="screen-title" tabindex="-1">${title}</h2>${btn('help', 'help', '', 'icon-button', `aria-label="${copy.help}"`)}</div>
-    ${['room', 'kitchen', 'garden'].includes(screen) ? scene() : screen === 'games' ? gamesPage() : gamePage()}
+    ${['room', 'kitchen', 'garden', 'bathroom'].includes(screen) ? scene() : screen === 'games' ? gamesPage() : gamePage()}
     <div class="speech-row"><span class="speech-heart" aria-hidden="true">${icon('heart')}</span><p id="message" role="status" aria-live="polite">${message}</p></div>
-    ${screen === 'room' ? `<nav class="care-actions" aria-label="${copy.heartHint}">${(['walk', 'feed', 'sleep', 'ball'] as Care[]).map((action) => btn(action, action, mood === 'sleeping' && action === 'sleep' ? copy.wake : copy[action], `care-button care-${action} ${state.care[action] > 0 ? 'has-care' : ''} ${mood === 'sleeping' && action === 'sleep' ? 'selected' : ''}`, busy && !(action === 'sleep' && mood === 'sleeping') ? 'disabled' : '')).join('')}</nav>` : ''}
+    ${screen === 'room' ? `<nav class="care-actions" aria-label="${copy.heartHint}">${(['walk', 'feed', 'sleep', 'ball', 'toilet'] as Care[]).map((action) => btn(action, action, mood === 'sleeping' && action === 'sleep' ? copy.wake : copy[action], `care-button care-${action} ${state.care[action] > 0 ? 'has-care' : ''} ${mood === 'sleeping' && action === 'sleep' ? 'selected' : ''}`, busy && !(action === 'sleep' && mood === 'sleeping') ? 'disabled' : '')).join('')}</nav>` : ''}
     ${screen === 'kitchen' ? `<div class="food-tray">${['food', 'carrot', 'apple'].map((art, i) => btn(`food-${i}`, art, copy.foodNames[i], 'food-choice', `data-food="${i}" ${busy ? 'disabled' : ''}`)).join('')}</div>` : ''}
+    ${screen === 'bathroom' ? `<div class="toilet-actions">${pottyResult ? btn('clean-potty', 'clean', copy.clean, 'potty-choice', busy ? 'disabled' : '') : (['pee', 'poop'] as const).map((kind) => btn(`potty-${kind}`, kind, copy[kind], 'potty-choice', busy ? 'disabled' : '')).join('')}</div>` : ''}
     ${screen === 'garden' ? `<div class="bouquet" aria-label="${flowers.size} / 5">${positions.map((_, i) => `<span class="${i < flowers.size ? 'collected' : ''}">${icon('flower')}</span>`).join('')}</div>` : ''}
     </section><footer class="puppy-footer"><span>${hint()}</span><span>${persistent ? copy.saved : copy.notSaved}</span></footer>
   </main>`
@@ -241,6 +248,7 @@ function navigate(next: Screen): void {
   busy = false
   mood = ''
   screen = next
+  pottyResult = null
   progress = 0
   if (next === 'garden') flowers = new Set()
   if (next === 'memory') {
@@ -288,6 +296,32 @@ function feed(): void {
   render()
   tone()
   later(() => completeCare('feed', copy.fed), 1800)
+}
+function usePotty(kind: 'pee' | 'poop'): void {
+  if (screen !== 'bathroom' || busy || pottyResult) return
+  busy = true
+  mood = 'using-potty'
+  message = kind === 'pee' ? copy.peeing : copy.pooping
+  render()
+  later(() => {
+    pottyResult = kind
+    busy = false
+    mood = 'potty-done'
+    message = copy.toiletDone
+    render()
+    tone()
+  }, 2600)
+}
+function cleanPotty(): void {
+  if (screen !== 'bathroom' || busy || !pottyResult) return
+  busy = true
+  mood = 'cleaning-potty'
+  message = copy.cleaning
+  render()
+  later(() => {
+    pottyResult = null
+    completeCare('toilet', copy.toiletClean)
+  }, 1000)
 }
 function finishGame(): void {
   navigate('win')
@@ -355,6 +389,10 @@ function act(action: string): void {
     toy?.classList.add('squish')
   } else if (action === 'feed') navigate('kitchen')
   else if (action === 'walk') navigate('garden')
+  else if (action === 'toilet') navigate('bathroom')
+  else if (action === 'potty-pee') usePotty('pee')
+  else if (action === 'potty-poop') usePotty('poop')
+  else if (action === 'clean-potty') cleanPotty()
   else if (action === 'sleep') {
     busy = true
     mood = 'sleeping'

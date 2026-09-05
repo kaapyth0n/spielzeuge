@@ -9,6 +9,7 @@ Open `/sobachka/`. The catalog links to it. Russian, German and English use the 
 - Walk: collect the five flowers to make a bouquet.
 - Sleep: a 5.5-second nap; wake early or leave at any time.
 - Ball: the puppy runs back and forth for 3.6 seconds.
+- Toilet: enter the puppy’s bathroom and choose pee or poop. After a 2.6-second potty animation, clean the tray; a completed cleanup gives one care heart. Leaving cancels the activity without a penalty. Older saves keep their progress.
 - Wallpaper cycles between shapes, flowers and stars.
 
 Each completed care activity adds one permanent friendship heart. Interrupted activities give no heart. Repeated pointer events during an activity cannot award extra hearts. Nothing decays while away, and there is no hunger punishment, failing, advertising or purchase flow.
@@ -30,3 +31,5 @@ Original SVG artwork lives in `src/sobachka-art.ts`; all sound effects are synth
 - With `npm run dev` running: `npm run test:sobachka`. Uses locally installed Chrome through Playwright; covers the catalog, completed/interrupted care, drag feeding, mini-games, persistence, languages, touch, and viewport overflow. Screenshots are saved in `tmp/`.
 
 - `npm run test:sobachka-speech`: browser checks of narrated text, action labels, delayed feedback, interruption, mute and Russian/German/English utterance locales. Uses a speech API recorder to verify calls without depending on installed voices.
+
+- `PUPPY_TEST_URL=http://localhost:5184 node scripts/sobachka-toilet-spec.mjs`: pee/poop, cleanup rewards, cancelled actions, old saves, touch target sizes, mobile/tablet layouts and localized speech. Set the URL to your running dev server.

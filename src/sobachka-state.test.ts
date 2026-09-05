@@ -33,9 +33,23 @@ describe('puppy friendship', () => {
     ).toEqual({
       hearts: 0,
       wall: 2,
-      care: { feed: 0, walk: 999, sleep: 0, ball: 0 },
+      care: { feed: 0, walk: 999, sleep: 0, ball: 0, toilet: 0 },
       sound: false,
     })
+  })
+  it('adds toilet care to older saves without losing friendship', () => {
+    const legacy = {
+      hearts: 6,
+      wall: 2,
+      care: { feed: 2, walk: 1, sleep: 1, ball: 2 },
+      sound: false,
+    }
+    const restored = restorePuppy(JSON.stringify(legacy))
+    expect(restored).toEqual({ ...legacy, care: { ...legacy.care, toilet: 0 } })
+    const updated = careFor(restored, 'toilet')
+    expect(updated.hearts).toBe(7)
+    expect(updated.care.toilet).toBe(1)
+    expect(updated.care.feed).toBe(2)
   })
   it('caps counters while preserving earned unlocks', () => {
     const state = careFor({ ...freshPuppy(), hearts: 999 }, 'sleep')

@@ -497,7 +497,7 @@ h1 {
 }
 .care-actions {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   padding: 0 24px 22px;
 }
@@ -1789,5 +1789,203 @@ h1 {
     width: 180px;
     height: 155px;
     bottom: 75px;
+  }
+}
+
+/* The puppy's own potty room. */
+.care-toilet {
+  background: #e4eeee;
+}
+.scene.bathroom {
+  background-color: #e1ece6;
+  background-image:
+    linear-gradient(#fff7 2px, transparent 2px),
+    linear-gradient(90deg, #fff7 2px, transparent 2px);
+  background-size: 65px 65px;
+}
+.bathroom .wall-art {
+  display: none;
+}
+.bathroom .floor {
+  border-color: #c0d2c4;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 53px, #a5bcaf33 54px 55px),
+    #d4dfd0;
+}
+.bathroom .floor:after {
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0 115px,
+    #a5bcaf33 116px 117px
+  );
+}
+.bathroom-sign {
+  position: absolute;
+  left: 12%;
+  top: 18%;
+  width: 62px;
+  height: 62px;
+  padding: 12px;
+  border: 3px solid #b1c2ae;
+  border-radius: 16px;
+  background: #f5f4e4;
+  rotate: -5deg;
+}
+.potty-tray {
+  position: absolute;
+  width: 330px;
+  height: 95px;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 10px solid #8dabaa;
+  border-bottom-width: 18px;
+  border-radius: 50%;
+  background: #dae8d9;
+  box-shadow: 0 7px 0 #718e8a;
+}
+.potty-pad {
+  position: absolute;
+  inset: 4px 9px;
+  border-radius: 50%;
+  border: 2px dashed #b8cbaf;
+  background: #eef0db;
+}
+.bathroom .dog-wrap {
+  bottom: 37px;
+}
+.using-potty .dog-wrap {
+  animation: potty-squat 2.6s ease-in-out;
+}
+.using-potty .puppy-tail {
+  animation-duration: 2s;
+}
+.using-potty .puppy-tongue {
+  display: none;
+}
+.potty-result {
+  position: absolute;
+  bottom: 35px;
+  left: calc(50% + 60px);
+  z-index: 2;
+}
+.potty-result.pee {
+  width: 57px;
+  height: 17px;
+  background: #ddc372;
+  border: 2px solid #ceb468;
+  border-radius: 48% 60% 43% 65%;
+  opacity: 0.8;
+}
+.potty-result.poop {
+  width: 41px;
+  height: 41px;
+  bottom: 34px;
+}
+.toilet-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 0 18px 18px;
+}
+.potty-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 24px;
+  min-height: 66px;
+  min-width: 170px;
+  border: 1px solid #becfbe;
+  border-radius: 14px;
+  background: #e7efdf;
+  font-size: 13px;
+}
+.potty-choice svg {
+  width: 38px;
+  height: 38px;
+}
+.potty-choice:disabled {
+  opacity: 0.55;
+}
+.clean-sparkles {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  font-size: 31px;
+  color: #fffaf0;
+  z-index: 3;
+  letter-spacing: 20px;
+  pointer-events: none;
+}
+.cleaning-potty .clean-sparkles {
+  display: block;
+}
+.cleaning-potty .potty-result {
+  animation: potty-clean 1s forwards;
+}
+@keyframes potty-squat {
+  0%,
+  100% {
+    transform: translateX(-50%);
+  }
+  35%,
+  75% {
+    transform: translateX(-50%) translateY(12px) scaleY(0.9);
+  }
+}
+@keyframes potty-clean {
+  to {
+    opacity: 0;
+    scale: 0.3;
+  }
+}
+@media (max-width: 480px) {
+  .care-actions {
+    gap: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .care-button {
+    font-size: 9px;
+  }
+  .potty-tray {
+    width: 264px;
+    height: 82px;
+    bottom: 21px;
+    border-width: 8px;
+    border-bottom-width: 14px;
+  }
+  .bathroom .dog-wrap {
+    bottom: 39px;
+  }
+  .bathroom-sign {
+    left: 9%;
+    top: 15%;
+    width: 46px;
+    height: 46px;
+    padding: 8px;
+  }
+  .potty-choice {
+    min-width: 0;
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 12px;
+    gap: 6px;
+  }
+  .potty-result {
+    left: calc(50% + 48px);
+    bottom: 31px;
+  }
+  .potty-result.pee {
+    width: 44px;
+    height: 15px;
+  }
+  .potty-result.poop {
+    width: 33px;
+    height: 33px;
+    bottom: 32px;
   }
 }

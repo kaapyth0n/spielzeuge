@@ -26,6 +26,13 @@ export function puppy(): string {
 }
 export function icon(name: string): string {
   const paths: Record<string, string> = {
+    toilet:
+      '<path d="M5 25Q24 17 43 25L39 38Q24 45 9 38Z" fill="#a8c4be"/><ellipse cx="24" cy="25" rx="19" ry="7" fill="#eaf1dd"/><path d="M19 22Q16 17 21 16Q24 12 27 17Q33 16 31 22Q27 26 24 23Q20 26 19 22Z" fill="#91ab92"/>',
+    pee: '<path d="M24 5C21 14 10 22 10 30A14 14 0 0028 43C44 39 37 22 24 5Z" fill="#efd185"/><path d="M17 30Q16 36 21 38" stroke="#fff6d7" stroke-width="3"/>',
+    poop: '<path d="M16 21Q13 14 24 12Q30 10 25 5Q37 8 32 20Q41 22 37 29Q48 34 40 41H9Q1 34 11 29Q7 23 16 21Z" fill="#b18b69"/><path d="M13 29H35M17 21H30" stroke="#886a52"/>',
+    clean:
+      '<path d="M29 5L36 9L26 27L19 23Z" fill="#c6a781"/><path d="M16 22L29 28L22 43L6 35Z" fill="#abc3b5"/><path d="M13 31L10 37M19 34L16 40M37 23V33M32 28H42"/>',
+
     heart:
       '<path d="M24 40S5 29 5 16C5 4 20 3 24 13C28 3 43 4 43 16C43 29 24 40 24 40Z" fill="currentColor" stroke="none"/>',
     ball: '<circle cx="24" cy="24" r="18" fill="#df977d"/><path d="M9 14Q28 15 34 38M13 38Q25 19 39 14" stroke="#fff0cf" stroke-width="4"/>',
