@@ -1,4 +1,5 @@
-export type SlimeState = { coins: number; clean: number; energy: number; joy: number; record: number; color: string; costume: string; decor: string; owned: string[]; sound: boolean; friendship: number; baby: { color: string; cuddles: number } | null }
+import { VISITORS, isVisitor, type VisitorId } from './slime-visitors.ts'
+export type SlimeState = { coins: number; clean: number; energy: number; joy: number; record: number; color: string; costume: string; decor: string; owned: string[]; sound: boolean; friendship: number; friendships: Partial<Record<VisitorId,number>>; lastVisitor: VisitorId | null; visitorQueue: VisitorId[]; baby: { color: string; cuddles: number; parent: VisitorId } | null }
 export const ITEMS = [
   { id: 'mint', name: 'Мятный', icon: '🟢', price: 0, kind: 'color', value: '#99dfc0' },
   { id: 'berry', name: 'Ягодный', icon: '🟣', price: 20, kind: 'color', value: '#c4a4ed' },
@@ -12,7 +13,7 @@ export const ITEMS = [
   { id: 'flowers', name: 'Цветочный дом', icon: '🌼', price: 35, kind: 'decor', value: '🌼' },
   { id: 'stars', name: 'Звёздный дом', icon: '⭐', price: 50, kind: 'decor', value: '⭐' },
 ] as const
-export const fresh = (): SlimeState => ({ coins: 15, clean: 65, energy: 75, joy: 65, record: 0, color: 'mint', costume: 'none', decor: 'plain', owned: ['mint', 'none', 'plain'], sound: true, friendship: 0, baby: null })
+export const fresh = (): SlimeState => ({ coins: 15, clean: 65, energy: 75, joy: 65, record: 0, color: 'mint', costume: 'none', decor: 'plain', owned: ['mint', 'none', 'plain'], sound: true, friendship: 0, friendships: {}, lastVisitor: null, visitorQueue: [], baby: null })
 const bounded = (n: unknown, fallback: number, max = 100) => typeof n === 'number' && Number.isFinite(n) ? Math.max(0, Math.min(max, Math.round(n))) : fallback
 export function restore(raw: string | null): SlimeState {
   const base = fresh()
@@ -20,8 +21,14 @@ export function restore(raw: string | null): SlimeState {
     const p = JSON.parse(raw || '{}')
     if (!p || typeof p !== 'object') return base
     const owned = [...new Set([...base.owned, ...(Array.isArray(p.owned) ? p.owned.filter((id: unknown) => ITEMS.some(i => i.id === id)) : [])])] as string[]
-    return { sound: typeof p.sound === 'boolean' ? p.sound : true, friendship: bounded(p.friendship, 0, 3),
-      baby: p.baby && typeof p.baby === 'object' && ITEMS.some(i => i.kind === 'color' && i.id === p.baby.color) ? { color: p.baby.color, cuddles: bounded(p.baby.cuddles, 0, 999999) } : null,
+    const friendships: SlimeState['friendships'] = {}
+    for(const v of VISITORS) {
+      if(p.friendships && typeof p.friendships === 'object' && v.id in p.friendships) friendships[v.id]=bounded(p.friendships[v.id],0,3)
+    }
+    if(!p.friendships && p.friendship) friendships.mira=bounded(p.friendship,0,3)
+    return { friendships, lastVisitor: isVisitor(p.lastVisitor)?p.lastVisitor:null,
+      visitorQueue: Array.isArray(p.visitorQueue)?[...new Set(p.visitorQueue.filter(isVisitor))] as VisitorId[]:[], sound: typeof p.sound === 'boolean' ? p.sound : true, friendship: bounded(p.friendship, 0, 3),
+      baby: p.baby && typeof p.baby === 'object' && ITEMS.some(i => i.kind === 'color' && i.id === p.baby.color) ? { color: p.baby.color, cuddles: bounded(p.baby.cuddles, 0, 999999), parent: isVisitor(p.baby.parent)?p.baby.parent:'mira' } : null,
       coins: bounded(p.coins, base.coins, 999999), clean: bounded(p.clean, base.clean), energy: bounded(p.energy, base.energy), joy: bounded(p.joy, base.joy), record: bounded(p.record, 0, 400), owned,
       color: ITEMS.some(i => i.id === p.color && i.kind === 'color' && owned.includes(i.id)) ? p.color : base.color,
       costume: ITEMS.some(i => i.id === p.costume && i.kind === 'costume' && owned.includes(i.id)) ? p.costume : base.costume,
@@ -40,8 +47,8 @@ export function buy(s: SlimeState, id: string): boolean {
 }
 export const stretchLimit = (s: SlimeState) => Math.round(100 + (s.clean + s.energy + s.joy))
 
-export type Meeting = { permission: boolean; friendEnergy: number; agreed: boolean; pieces: number }
-export const newMeeting = (): Meeting => ({ permission: false, friendEnergy: 100, agreed: false, pieces: 0 })
+export type Meeting = { visitor: VisitorId; permission: boolean; friendEnergy: number; agreed: boolean; pieces: number }
+export const newMeeting = (visitor: VisitorId = 'mira'): Meeting => ({ visitor, permission: false, friendEnergy: 100, agreed: false, pieces: 0 })
 export function askOwner(s: SlimeState, m: Meeting): string {
   m.permission = s.clean >= 50 && s.energy >= 25
   return m.permission ? 'Мира: «Конечно! Облачко тоже хочет поиграть. Я буду рядом».' : s.clean < 50 ? 'Мира: «Сначала смойте грязь, а потом приходите играть. Мы подождём!»' : 'Мира: «Твой слайм устал. Пусть поспит, а потом поиграем!»'
@@ -49,13 +56,14 @@ export function askOwner(s: SlimeState, m: Meeting): string {
 export function playTogether(s: SlimeState, m: Meeting): boolean {
   if (!m.permission || s.energy < 15 || m.friendEnergy < 15) return false
   s.energy -= 8; m.friendEnergy -= 8; s.joy = Math.min(100, s.joy + 12)
-  s.friendship = Math.min(3, s.friendship + 1)
+  s.friendship = Math.min(3, friendshipWith(s,m) + 1)
+  s.friendships[m.visitor] = s.friendship
   m.agreed = false; m.pieces = 0
   return true
 }
 export function wishes(s: SlimeState, m: Meeting): [boolean, boolean] {
-  return [s.friendship >= 3 && s.clean >= 60 && s.energy >= 50 && s.joy >= 75,
-    s.friendship >= 3 && m.friendEnergy >= 50]
+  return [friendshipWith(s,m) >= 3 && s.clean >= 60 && s.energy >= 50 && s.joy >= 75,
+    friendshipWith(s,m) >= 3 && m.friendEnergy >= 50]
 }
 export function askSlimes(s: SlimeState, m: Meeting): boolean {
   m.agreed = m.permission && !s.baby && wishes(s, m).every(Boolean)
@@ -66,8 +74,29 @@ export function givePiece(s: SlimeState, m: Meeting): boolean {
   if (!m.agreed || !m.permission || s.baby || !wishes(s, m).every(Boolean)) { m.agreed = false; m.pieces = 0; return false }
   m.pieces += 1
   if (m.pieces === 2) {
-    s.baby = { color: s.color, cuddles: 0 }
+    s.baby = { color: s.color, cuddles: 0, parent: m.visitor }
     s.energy -= 5; m.friendEnergy -= 5; m.agreed = false; m.pieces = 0
   }
   return true
+}
+
+export function friendshipWith(s: SlimeState, m: Meeting): number {
+  return s.friendships[m.visitor] ?? (m.visitor === 'mira' && s.lastVisitor === null ? s.friendship : 0)
+}
+/** A shuffled bag visits everyone before cycling, without adjacent repeats. */
+export function nextMeeting(s: SlimeState, random: () => number = Math.random): Meeting {
+  if(!s.visitorQueue.length) {
+    s.visitorQueue=VISITORS.map(v=>v.id)
+    for(let i=s.visitorQueue.length-1;i>0;i--) {
+      const j=Math.floor(random()*(i+1)); [s.visitorQueue[i],s.visitorQueue[j]]=[s.visitorQueue[j],s.visitorQueue[i]]
+    }
+  }
+  if(s.visitorQueue[0]===s.lastVisitor && s.visitorQueue.length>1) [s.visitorQueue[0],s.visitorQueue[1]]=[s.visitorQueue[1],s.visitorQueue[0]]
+  // A restored partial bag must also avoid repeating the last encounter.
+  if(s.visitorQueue.length===1 && s.visitorQueue[0]===s.lastVisitor) {
+    s.visitorQueue=VISITORS.map(v=>v.id).filter(id=>id!==s.lastVisitor)
+  }
+  const id=s.visitorQueue.shift()!
+  s.lastVisitor=id; s.friendship=s.friendships[id] ?? 0
+  return newMeeting(id)
 }

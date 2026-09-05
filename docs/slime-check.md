@@ -13,18 +13,20 @@ Checks: `npm test`, `npm run build`, and `node scripts/slime-spec.mjs` against t
 
 ## Park friends and a baby
 
-Meet Mira (NPC) and her blue slime Cloud. Ask Mira before playing: she asks a muddy or exhausted slime to wash or rest first. Permission lasts for the current visit. Passing the ball builds friendship (three hearts), restores joy and uses both slimes’ energy.
+Meet six NPC/slime pairs: Mira & Cloud, Leo & Spark, Aya & Jellybean, Tim & Bounce, Nora & Blueberry, and Sam & Peach. They have distinct portraits, slime colors, accessories and introductions in all three languages. New walks draw from a persisted shuffled bag: everyone appears before the next cycle and consecutive encounters never repeat. “Walk further” finds another pair without going home. Language changes and care actions keep the current visitor. Ask the owner before playing: they ask a muddy or exhausted slime to wash or rest first. Permission lasts for the current visit. Passing the ball builds friendship (three hearts), restores joy and uses both slimes’ energy.
 
-Ask both slimes whether they want to make a baby. Each responds separately: friendship and their wellbeing determine the answer. Only two willing slimes can donate pieces. The player can cancel before the second piece; nothing is spent. Two pieces create Kapelka, a small slime combining the player's color at that moment with Cloud's blue. The current version has one baby, which appears around the house and on walks, can be hugged, and is saved with friendship. Existing saves upgrade automatically.
+Ask both slimes whether they want to make a baby. Each responds separately: friendship and their wellbeing determine the answer. Only two willing slimes can donate pieces. The player can cancel before the second piece; nothing is spent. Two pieces create Kapelka, a small slime combining the player's color at that moment with the actual donor slime’s color. The current version has one baby, which appears around the house and on walks, can be hugged, and is saved with its donor identity and friendship. Friendship is saved separately for each visitor; permissions and donated pieces reset at a new encounter. Old Cloud friendship and baby saves migrate to Mira/Cloud automatically.
 
 `node scripts/slime-friends-spec.mjs` verifies the owner permission/refusal, friendship, wishes, cancellation, both donations, baby persistence and mobile layout.
 
 ## Language, voice and sound
 
-The visible RU/DE/EN selector shares `spielzeuge.lang` with all games. All UI, shop labels, Mira/Cloud dialogue and accessible labels are translated. The catalog card follows the same language. Numeric captions compose from translated source phrases in `src/slime-copy.ts`; the game model keeps stable language-independent ids.
+The visible RU/DE/EN selector shares `spielzeuge.lang` with all games. All UI, shop labels, all visitor dialogue and accessible labels are translated. The catalog card follows the same language. Numeric captions compose from translated source phrases in `src/slime-copy.ts`; the game model keeps stable language-independent ids.
 
 Narration reuses Собачка’s `PuppyNarration`: a tap speaks its action followed by the resulting message. Both slimes’ answers are narrated when asking their wishes. Tap the message to repeat it. Sleeping/waking, records and the baby’s arrival also speak their messages; changing language cancels old speech and translates delayed feedback when it completes.
 
 `SlimeAudio` synthesizes gentle effects locally for touch, care, water, sleep, waking, stretch, muddy drops, ball play, purchases and a baby’s arrival. No external sound download is needed. The speaker toggle saves its setting with the slime, mutes speech and effects together and cancels pending sound. Browser gestures unlock audio; leaving/hiding the page stops playback. Actual speech depends on installed browser/device voices.
 
 Run `node scripts/slime-speech-spec.mjs` for speech/effect calls, mute, language persistence, translated story branches and mobile checks.
+
+`node scripts/slime-visitors-spec.mjs` checks all six encounters, no consecutive repeats across reloads, separate friendship, reset permissions and three-language mobile presentation. Set `SLIME_BASE_URL` to run this verification against production.

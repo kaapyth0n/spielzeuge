@@ -49,6 +49,11 @@ export const SLIME_COPY: [string, string, string][] = [
  ['Две крошечки соединились! Привет, малышка Капелька! ♡','Zwei Stückchen sind zusammengekommen! Hallo, kleines Tröpfchen! ♡','Two little pieces joined together! Hello, baby Droplet! ♡'],['Первая крошечка готова. Теперь подарок Облачка!','Das erste Stückchen ist da. Jetzt ist Wölkchen dran!','The first little piece is ready. Now for Cloud’s gift!'],['Давай сначала снова спросим обоих слаймов.','Fragen wir erst noch einmal beide Slimes.','Let’s ask both slimes again first.'],['Хорошо! Можно просто дружить и играть.','Gut! Wir können einfach Freunde sein und spielen.','Okay! We can just be friends and play.'],['Капелька: «Пи-пи! Обнимаю!» ♡','Tröpfchen: „Piep-piep! Eine Umarmung!“ ♡','Droplet: “Peep-peep! Hugs!” ♡'],
  ['Мира: «Конечно! Облачко тоже хочет поиграть. Я буду рядом».','Mira: „Natürlich! Wölkchen möchte auch spielen. Ich bleibe hier.“','Mira: “Of course! Cloud wants to play too. I’ll be right here.”'],['Мира: «Сначала смойте грязь, а потом приходите играть. Мы подождём!»','Mira: „Wascht erst den Matsch ab und kommt dann zum Spielen. Wir warten!“','Mira: “Wash off the mud first, then come and play. We’ll wait!”'],['Мира: «Твой слайм устал. Пусть поспит, а потом поиграем!»','Mira: „Dein Slime ist müde. Lass ihn schlafen, dann spielen wir!“','Mira: “Your slime is tired. Let it sleep, then we’ll play!”'],
  ['Капелька','Tröpfchen','Droplet'],['Облачко','Wölkchen','Cloud'],['Мира','Mira','Mira'],
+ ['Можно играть вместе','Wir dürfen zusammen spielen','We can play together'],
+ ['Пройти дальше','Weitergehen','Walk further'],
+ ['Давайте познакомимся!','Lernen wir uns kennen!','Let’s get to know each other!'],
+ ['Привет, маленькая Капелька!','Hallo, kleines Tröpfchen!','Hello, little Droplet!'],
+ ['Приятно снова встретиться!','Schön, dich wiederzusehen!','Lovely to see you again!'],
  ['Язык','Sprache','Language'],['Звук включён','Ton an','Sound on'],['Звук выключен','Ton aus','Sound off'],['Повторить сообщение','Nachricht wiederholen','Repeat message'],['см','cm','cm'],
 ]
 const escape = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -57,10 +62,10 @@ const pattern = new RegExp([...entries.keys()].sort((a,b)=>b.length-a.length).ma
 export function slimeText(text: string, lang: Lang): string {
  return lang === 'ru' ? text : text.replace(pattern, key => entries.get(key)![lang === 'de' ? 1 : 2])
 }
-export function localizeSlime(root: HTMLElement, lang: Lang): void {
+export function localizeSlime(root: HTMLElement, lang: Lang, personalize: (text: string) => string = text => text): void {
  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
- while(walker.nextNode()) { const node=walker.currentNode; node.textContent=slimeText(node.textContent ?? '',lang) }
+ while(walker.nextNode()) { const node=walker.currentNode; node.textContent=personalize(slimeText(node.textContent ?? '',lang)) }
  root.querySelectorAll<HTMLElement>('[aria-label], [title]').forEach(node => {
-  for(const attr of ['aria-label','title']) if(node.hasAttribute(attr)) node.setAttribute(attr,slimeText(node.getAttribute(attr)!,lang))
+  for(const attr of ['aria-label','title']) if(node.hasAttribute(attr)) node.setAttribute(attr,personalize(slimeText(node.getAttribute(attr)!,lang)))
  })
 }

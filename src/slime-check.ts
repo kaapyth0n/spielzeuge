@@ -1,9 +1,10 @@
 import './slime-check.css'
+import { visitorById, visitorText } from './slime-visitors.ts'
 import { loadLang, saveLang, type Lang } from './languages.ts'
 import { slimeText, localizeSlime } from './slime-copy.ts'
 import { PuppyNarration } from './sobachka-narration.ts'
 import { SlimeAudio, type SlimeSound } from './slime-audio.ts'
-import { ITEMS, restore, care, buy, stretchLimit, newMeeting, askOwner, playTogether, wishes, askSlimes, givePiece } from './slime-state.ts'
+import { ITEMS, restore, care, buy, stretchLimit, newMeeting, nextMeeting, friendshipWith, askOwner, playTogether, wishes, askSlimes, givePiece } from './slime-state.ts'
 const KEY = 'spielzeuge.slime-check.v1'
 let state = restore(null)
 try { state = restore(localStorage.getItem(KEY)) } catch { /* playable without storage */ }
@@ -26,16 +27,18 @@ function sceneArt() { return `<svg class="room-art" viewBox="0 0 900 480" preser
 ${room === 'outside' ? '<circle cx="700" cy="80" r="42" fill="#ffe4a0"/><path d="M0 330Q150 150 350 330Q650 130 900 330" fill="#bad2a7"/><ellipse cx="610" cy="419" rx="95" ry="23" fill="#a88a6c"/><text x="90" y="350" font-size="60">🌷</text>' : '<rect x="348" y="45" width="200" height="182" rx="90" fill="#d8caba"/><rect x="359" y="56" width="178" height="158" rx="79" fill="#d1e5e5"/><circle cx="476" cy="97" r="23" fill="#fff3c3"/><path d="M360 181q45-43 89 0q50-62 87-6v38H360" fill="#b3c7aa"/><path d="M448 57v159M360 151h176" stroke="#fffaf0" stroke-width="9"/><rect x="336" y="216" width="224" height="12" rx="6" fill="#c2ab91"/><path d="M90 340v-57h53v57" fill="#c8997d"/><path d="M115 288v-75m0 39q-50-55-39-68q47-2 39 68m0 13q51-66 56-39q-4 36-56 39" fill="#8cab8c" stroke="#789a7c" stroke-width="3"/><rect x="661" y="133" width="150" height="10" rx="5" fill="#c3aa8f"/><path d="M683 132v-44h20v44m8 0V79h16v53" fill="#baa6c9"/><rect x="750" y="99" width="29" height="33" rx="8" fill="#b2c3a0"/>'}
 ${room === 'bath' ? '<path d="M283 330h333l-25 96H310Z" fill="#fcfffc" stroke="#bdcece" stroke-width="5"/><ellipse cx="450" cy="330" rx="167" ry="23" fill="#bfe4e7"/><path d="M587 321v-88q0-30-35-23" fill="none" stroke="#9aabb7" stroke-width="12"/>' : room === 'bed' ? '<rect x="244" y="306" width="405" height="119" rx="22" fill="#b49c83"/><rect x="256" y="306" width="380" height="90" rx="20" fill="#c3b1da"/><rect x="267" y="313" width="97" height="65" rx="20" fill="#fff8e9"/><path d="M273 423v23m344-23v23" stroke="#a58c72" stroke-width="13"/>' : '<ellipse cx="450" cy="403" rx="210" ry="49" fill="#c4b3d1" opacity=".5"/><ellipse cx="450" cy="403" rx="189" ry="37" fill="none" stroke="#f9f3ed" stroke-width="2" opacity=".7"/>'}
 <text x="680" y="290" font-size="55">${item(state.decor).value}</text><text x="180" y="110" font-size="34">${item(state.decor).value}</text></svg>` }
-function littleSlime(color: string, baby = false) {
- return `<svg viewBox="0 0 160 145" aria-hidden="true"><path d="M80 28C104 0 128 18 117 47C157 43 171 78 133 91C151 126 120 150 92 120C69 156 36 145 40 109C1 121-5 82 29 67C4 36 42 13 62 37Z" fill="${color}" stroke="#fff9" stroke-width="3"/>${baby?'<path d="M80 28C104 0 128 18 117 47C157 43 171 78 133 91C151 126 120 150 92 120Z" fill="#a8d6ef" opacity=".65"/>':''}<ellipse cx="61" cy="75" rx="4" ry="6" fill="#46545c"/><ellipse cx="98" cy="75" rx="4" ry="6" fill="#46545c"/><path d="M72 89q8 10 16 0" fill="none" stroke="#46545c" stroke-width="3" stroke-linecap="round"/><ellipse cx="48" cy="89" rx="9" ry="5" fill="#f5aebb"/><ellipse cx="111" cy="89" rx="9" ry="5" fill="#f5aebb"/></svg>`
+function littleSlime(color: string, baby = false, secondColor = '#a8d6ef') {
+ return `<svg viewBox="0 0 160 145" aria-hidden="true"><path d="M80 28C104 0 128 18 117 47C157 43 171 78 133 91C151 126 120 150 92 120C69 156 36 145 40 109C1 121-5 82 29 67C4 36 42 13 62 37Z" fill="${color}" stroke="#fff9" stroke-width="3"/>${baby?`<path d="M80 28C104 0 128 18 117 47C157 43 171 78 133 91C151 126 120 150 92 120Z" fill="${secondColor}" opacity=".65"/>`:''}<ellipse cx="61" cy="75" rx="4" ry="6" fill="#46545c"/><ellipse cx="98" cy="75" rx="4" ry="6" fill="#46545c"/><path d="M72 89q8 10 16 0" fill="none" stroke="#46545c" stroke-width="3" stroke-linecap="round"/><ellipse cx="48" cy="89" rx="9" ry="5" fill="#f5aebb"/><ellipse cx="111" cy="89" rx="9" ry="5" fill="#f5aebb"/></svg>`
 }
 function companions() {
- return `${room==='outside'?`<div class="park-friends"><span class="owner" aria-hidden="true">👩🏻‍🌾</span><span class="owner-label">Мира</span><div class="cloud-slime">${littleSlime('#a8d6ef')}</div><span>Облачко</span></div><span class="play-ball" aria-hidden="true">⚽</span>`:''}${state.baby&&room!=='stretch'?`<button class="baby-slime" data-action="cuddle" aria-label="Обнять малыша Капельку">${littleSlime(item(state.baby.color).value,true)}<span>Капелька ♡</span></button>`:''}`
+ const visitor=visitorById(meeting.visitor)
+ return `${room==='outside'?`<div class="park-friends"><span class="owner" aria-hidden="true">${visitor.avatar}</span><span class="owner-label">Мира</span><div class="cloud-slime">${littleSlime(visitor.color)}<span class="visitor-accessory">${visitor.accessory}</span></div><span>Облачко</span></div><span class="play-ball" aria-hidden="true">⚽</span>`:''}${state.baby&&room!=='stretch'?`<button class="baby-slime" data-action="cuddle" aria-label="Обнять малыша Капельку">${littleSlime(item(state.baby.color).value,true,visitorById(state.baby.parent).color)}<span>Капелька ♡</span></button>`:''}`
 }
 function encounter() {
  if(room!=='outside') return ''
  const [mine, friend] = wishes(state,meeting)
- return `<section class="encounter" aria-label="Встреча на прогулке"><div><p class="eyebrow">ДРУЗЬЯ НА ПОЛЯНКЕ</p><h2>Мира и её слайм Облачко</h2><p>Мира — хозяйка Облачка. Давайте познакомимся!</p><p class="friendship">${'♥'.repeat(state.friendship)}${'♡'.repeat(3-state.friendship)} <span>${state.friendship}/3 · дружба</span></p></div><div class="meeting-actions">${!meeting.permission?'<button class="primary" data-action="ask-owner">Можно поиграть вместе?</button>':`<p class="permission">✓ Мира разрешила поиграть</p><button class="primary" data-action="play-friend">⚽ ${state.friendship?'Передать мяч Облачку':'Поиграть в мяч'}</button>${state.baby?'<p>Облачко: «Привет, наша Капелька!»</p>':meeting.agreed?`<p>Оба слайма хотят подарить по крошечке себя. Это совсем не больно!</p><button data-action="give-piece">${meeting.pieces===0?'✧ Мой слайм дарит кусочек':'✧ Облачко дарит кусочек'}</button><div class="pieces" aria-label="Подаренные кусочки">${meeting.pieces?`<i style="background:${item(state.color).value}"></i> + ◌`:'◌ + ◌'}</div><button data-action="later">Пока не будем</button>`:`<button data-action="ask-slimes">♡ Хотите сделать малыша?</button>${votesVisible?`<div class="wishes" role="status"><p>Мой слайм: «${mine?'Да, я хочу подарить кусочек!':state.friendship<3?'Давай сначала подружимся.':'Сначала хочу отдохнуть, умыться и порадоваться.'}»</p><p>Облачко: «${friend?'Я тоже хочу подарить кусочек!':state.friendship<3?'Давай ещё поиграем и узнаем друг друга.':'Я устал. Давай встретимся на следующей прогулке.'}»</p></div>`:''}`}`}</div></section>`
+ const visitor=visitorById(meeting.visitor), bond=friendshipWith(state,meeting)
+ return `<section class="encounter" data-visitor="${meeting.visitor}" aria-label="Встреча на прогулке"><div><p class="eyebrow">ДРУЗЬЯ НА ПОЛЯНКЕ</p><h2>Мира · Облачко</h2><p>${visitor.intro[lang]}</p><p>${bond?'Приятно снова встретиться!':'Давайте познакомимся!'}</p><p class="friendship">${'♥'.repeat(bond)}${'♡'.repeat(3-bond)} <span>${bond}/3 · дружба</span></p></div><div class="meeting-actions">${!meeting.permission?'<button class="primary" data-action="ask-owner">Можно поиграть вместе?</button>':`<p class="permission">✓ Можно играть вместе</p><button class="primary" data-action="play-friend">⚽ ${bond?'Передать мяч Облачку':'Поиграть в мяч'}</button>${state.baby?'<p>Облачко: «Привет, маленькая Капелька!»</p>':meeting.agreed?`<p>Оба слайма хотят подарить по крошечке себя. Это совсем не больно!</p><button data-action="give-piece">${meeting.pieces===0?'✧ Мой слайм дарит кусочек':'✧ Облачко дарит кусочек'}</button><div class="pieces" aria-label="Подаренные кусочки">${meeting.pieces?`<i style="background:${item(state.color).value}"></i> + ◌`:'◌ + ◌'}</div><button data-action="later">Пока не будем</button>`:`<button data-action="ask-slimes">♡ Хотите сделать малыша?</button>${votesVisible?`<div class="wishes" role="status"><p>Мой слайм: «${mine?'Да, я хочу подарить кусочек!':bond<3?'Давай сначала подружимся.':'Сначала хочу отдохнуть, умыться и порадоваться.'}»</p><p>Облачко: «${friend?'Я тоже хочу подарить кусочек!':bond<3?'Давай ещё поиграем и узнаем друг друга.':'Я устал. Давай встретимся на следующей прогулке.'}»</p></div>`:''}`}`}</div></section>`
 }
 function render() {
  const limit = stretchLimit(state)
@@ -44,7 +47,7 @@ function render() {
  document.body.dataset.lang=lang
  document.title=slimeText('Слайм Чек · игра Вероники',lang)
  document.querySelector('meta[name="description"]')?.setAttribute('content',slimeText('Игра Вероники. Заботься, наряжай и тяни!',lang))
- localizeSlime(root,lang)
+ localizeSlime(root,lang,text=>visitorText(text,lang,meeting.visitor))
  bind()
  narration.announce([spoken(root.querySelector('.speech')?.textContent ?? '')])
 }
@@ -52,7 +55,7 @@ function actions() {
  if(sleeping) return '<button class="primary" data-action="wake">☀ Проснуться</button>'
  if(room==='bath') return '<button class="primary" data-action="wash">🫧 Искупать</button><button data-action="hold">🤲 На ручки</button>'
  if(room==='bed') return '<button class="primary" data-action="sleep">☾ Уложить спать</button><button data-action="pet">♡ Погладить</button>'
- if(room==='outside') return `<button class="primary" data-action="hold">🤲 ${held?'Погулять на ручках':'Поднять на ручки'}</button><button data-room="bath">🛁 Пора купаться</button>`
+ if(room==='outside') return `<button class="primary" data-action="hold">🤲 ${held?'Погулять на ручках':'Поднять на ручки'}</button><button data-room="bath">🛁 Пора купаться</button><button data-action="next-visitor">🌳 Пройти дальше</button>`
  if(room==='stretch') return '<button class="primary" data-action="stretch">↔ Потянуть кнопкой</button><button data-room="home">♡ Отдохнуть дома</button>'
  return `<button class="primary" data-action="pet">♡ Погладить</button><button data-action="hold">🤲 ${held?'Поставить на коврик':'Взять на ручки'}</button><button data-room="bed">☾ Спать</button>`
 }
@@ -60,6 +63,11 @@ function shop() { return `<section class="shop"><div><p class="eyebrow">МАЛЕ
 function rewarded(stat:'clean'|'energy'|'joy', text:string) { const coins=care(state,stat); message=text+(coins?` +${coins} ✦`:''); save(); render() }
 function finishStretch(value:number) { audio.play('stretch'); const best=value>state.record; state.record=Math.max(state.record,value); state.energy=Math.max(0,state.energy-6); state.joy=Math.max(0,state.joy-4); message=best?`Новый рекорд: ${value} см! Ура-а-а!`:`Растянулись на ${value} см! Ещё раз?`; save(); render() }
 function act(action:string) {
+ if(action==='next-visitor'&&room==='outside') {
+  if(!held) message='Сначала возьми меня на ручки — и пойдём гулять!'
+  else {meeting=nextMeeting(state); votesVisible=false; message='Смотри, Мира и Облачко! Спросим, можно ли поиграть?'; save()}
+  audio.play('tap'); render(); return
+ }
  if(action==='wake') { audio.play('wake'); clearTimeout(sleepTimer); sleeping=false; message='Уже проснулся? Можно поспать ещё.'; render(); return }
  if(sleeping) return
  const effect: Partial<Record<string,SlimeSound>> = {pet:'pet',wash:'wash',hold:'pet',sleep:'sleep',cuddle:'pet','ask-owner':'tap','ask-slimes':'tap',later:'tap'}
@@ -109,7 +117,7 @@ function bind() {
  caption.onclick=()=>beginSpeech(caption.textContent ?? '')
  caption.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();caption.click()}}
 
- root.querySelectorAll<HTMLButtonElement>('[data-room]').forEach(b=>b.onclick=()=>{ if(sleeping) {clearTimeout(sleepTimer); sleeping=false} const next=b.dataset.room!; if(next==='outside'&&!held) {message='Сначала возьми меня на ручки — и пойдём гулять!'; render(); return} if(next!==room) { meeting=newMeeting(); votesVisible=false } room=next; message=room==='stretch'?'Тяни меня! Посмотрим, какой я длинный.':room==='bath'?'Давай смоем грязь и листочки!':room==='bed'?'Моя мягкая кроватка…':room==='closet'?'Какой наряд выберем сегодня?':room==='outside'?'Смотри, Мира и Облачко! Спросим, можно ли поиграть?':'Как же хорошо быть вместе!'; render() })
+ root.querySelectorAll<HTMLButtonElement>('[data-room]').forEach(b=>b.onclick=()=>{ if(sleeping) {clearTimeout(sleepTimer); sleeping=false} const next=b.dataset.room!; if(next==='outside'&&!held) {message='Сначала возьми меня на ручки — и пойдём гулять!'; render(); return} if(next!==room) { if(next==='outside'){ meeting=nextMeeting(state); save() } votesVisible=false } room=next; message=room==='stretch'?'Тяни меня! Посмотрим, какой я длинный.':room==='bath'?'Давай смоем грязь и листочки!':room==='bed'?'Моя мягкая кроватка…':room==='closet'?'Какой наряд выберем сегодня?':room==='outside'?'Смотри, Мира и Облачко! Спросим, можно ли поиграть?':'Как же хорошо быть вместе!'; render() })
  root.querySelectorAll<HTMLButtonElement>('[data-action]').forEach(b=>b.onclick=()=>act(b.dataset.action!))
  root.querySelectorAll<HTMLButtonElement>('[data-buy]').forEach(b=>b.onclick=()=>{if(buy(state,b.dataset.buy!)){audio.play('coin');message='Мне очень нравится! ♡';save();render()}})
  const node=root.querySelector<HTMLButtonElement>('#slime')!

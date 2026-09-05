@@ -14,7 +14,8 @@
     "test:sobachka": "node scripts/sobachka-spec.mjs",
     "test:taps": "node scripts/tap-spec.mjs",
     "test:slime": "node scripts/slime-spec.mjs && node scripts/slime-friends-spec.mjs",
-    "test:slime-speech": "node scripts/slime-speech-spec.mjs"
+    "test:slime-speech": "node scripts/slime-speech-spec.mjs",
+    "test:slime-visitors": "node scripts/slime-visitors-spec.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.62.1",

@@ -32,7 +32,7 @@ const localized=async(lang)=>{
 try {
  await page.goto('http://localhost:5173/slime-check/?lang=ru');await waitSpeech()
  for(const lang of ['ru','de','en']) {
-  await page.evaluate(()=>{const key='spielzeuge.slime-check.v1';const s=JSON.parse(localStorage.getItem(key)||'null');if(s){s.energy=100;s.clean=100;s.joy=100;s.friendship=0;s.baby=null;localStorage.setItem(key,JSON.stringify(s))}})
+  await page.evaluate(()=>{const key='spielzeuge.slime-check.v1';const s=JSON.parse(localStorage.getItem(key)||'null');if(s){s.energy=100;s.clean=100;s.joy=100;s.friendship=0;s.friendships={};s.baby=null;localStorage.setItem(key,JSON.stringify(s))}})
   await page.reload();await waitSpeech()
   await reset();await page.selectOption('#slime-language',lang);await localized(lang)
   await reset();await action('pet');await waitSpeech()
@@ -45,7 +45,7 @@ try {
   await reset();await action('ask-slimes');await localized(lang)
   await waitSpeech();assert.equal((await speech()).length,4,'action, caption and both slime answers')
   // Complete the friendship and baby branches with a fresh, well-rested state.
-  await page.evaluate(()=>{const key='spielzeuge.slime-check.v1',s=JSON.parse(localStorage.getItem(key));s.energy=100;s.clean=100;s.joy=100;s.friendship=0;s.baby=null;localStorage.setItem(key,JSON.stringify(s))})
+  await page.evaluate(()=>{const key='spielzeuge.slime-check.v1',s=JSON.parse(localStorage.getItem(key));s.energy=100;s.clean=100;s.joy=100;s.friendship=0;s.friendships={};s.baby=null;localStorage.setItem(key,JSON.stringify(s))})
   await page.reload();await action('hold');await room('outside');await action('ask-owner')
   for(let i=0;i<3;i++)await action('play-friend')
   await reset();await action('ask-slimes');await localized(lang)
