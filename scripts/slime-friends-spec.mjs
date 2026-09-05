@@ -4,7 +4,7 @@ const browser=await chromium.launch({channel:'chrome',headless:true})
 try {
  const page=await browser.newPage({viewport:{width:1280,height:1000}}), errors=[]
  page.on('pageerror',e=>errors.push(e.message))
- const action=id=>page.locator(`[data-action="${id}"]`).click()
+ const action=id=>page.locator(`[data-action="${id}"]`).first().click()
  const room=id=>page.locator(`nav [data-room="${id}"]`).click()
  const read=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('spielzeuge.slime-check.v1')))
  await page.goto('http://localhost:5173/slime-check/')
