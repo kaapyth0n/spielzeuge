@@ -32,3 +32,9 @@ Run `node scripts/slime-speech-spec.mjs` for speech/effect calls, mute, language
 `node scripts/slime-visitors-spec.mjs` checks all six encounters, no consecutive repeats across reloads, separate friendship, reset permissions and three-language mobile presentation. Set `SLIME_BASE_URL` to run this verification against production.
 
 `node scripts/slime-family-spec.mjs` reproduces a saved single baby, creates three additional babies with renewed consent, checks all three languages, individual hugs and persistence. `SLIME_BASE_URL` can target production.
+
+## Baby names
+
+Babies receive distinct default names from a localized set (Droplet, Fluffy, Toffee, Pearl, and more). Existing unnamed babies get these names in family order, keeping all their progress. After the set is exhausted, a numbered cycle keeps defaults distinct. Each family card has “Change name” with Save/Cancel; Enter saves and Escape cancels. Custom names allow up to 32 characters, preserve their spelling across languages, and are saved per baby. Empty names are rejected. Names are inserted as text, never interpreted as HTML or run through the dialogue translator. The selected name appears in the scene, family, accessible labels, birth message and hug narration.
+
+Run `node scripts/slime-names-spec.mjs` for naming, cancellation, persistence, speech, literal text handling and mobile verification. Set `SLIME_BASE_URL` to verify production.

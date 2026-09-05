@@ -1,5 +1,6 @@
+import { cleanBabyName } from './slime-names.ts'
 import { VISITORS, isVisitor, type VisitorId } from './slime-visitors.ts'
-export type SlimeBaby = { color: string; cuddles: number; parent: VisitorId }
+export type SlimeBaby = { name?: string; color: string; cuddles: number; parent: VisitorId }
 export type SlimeState = { coins: number; clean: number; energy: number; joy: number; record: number; color: string; costume: string; decor: string; owned: string[]; sound: boolean; friendship: number; friendships: Partial<Record<VisitorId,number>>; lastVisitor: VisitorId | null; visitorQueue: VisitorId[]; babies: SlimeBaby[]; baby: SlimeBaby | null }
 export const ITEMS = [
   { id: 'mint', name: 'Мятный', icon: '🟢', price: 0, kind: 'color', value: '#99dfc0' },
@@ -28,7 +29,7 @@ export function restore(raw: string | null): SlimeState {
     }
     if(!p.friendships && p.friendship) friendships.mira=bounded(p.friendship,0,3)
     const rawBabies = Array.isArray(p.babies) ? p.babies : p.baby ? [p.baby] : []
-    const babies: SlimeBaby[] = rawBabies.filter((b: unknown) => b && typeof b === 'object' && ITEMS.some(i => i.kind === 'color' && i.id === (b as SlimeBaby).color)).map((b: SlimeBaby) => ({color:b.color,cuddles:bounded(b.cuddles,0,999999),parent:isVisitor(b.parent)?b.parent:'mira'}))
+    const babies: SlimeBaby[] = rawBabies.filter((b: unknown) => b && typeof b === 'object' && ITEMS.some(i => i.kind === 'color' && i.id === (b as SlimeBaby).color)).map((b: SlimeBaby) => ({...cleanBabyName(b.name)?{name:cleanBabyName(b.name)}:{},color:b.color,cuddles:bounded(b.cuddles,0,999999),parent:isVisitor(b.parent)?b.parent:'mira'}))
     return { babies, baby: babies[0] ?? null, friendships, lastVisitor: isVisitor(p.lastVisitor)?p.lastVisitor:null,
       visitorQueue: Array.isArray(p.visitorQueue)?[...new Set(p.visitorQueue.filter(isVisitor))] as VisitorId[]:[], sound: typeof p.sound === 'boolean' ? p.sound : true, friendship: bounded(p.friendship, 0, 3),
 

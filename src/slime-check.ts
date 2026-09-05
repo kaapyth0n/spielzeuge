@@ -1,4 +1,5 @@
 import './slime-check.css'
+import { babyName, cleanBabyName } from './slime-names.ts'
 import { visitorById, visitorText } from './slime-visitors.ts'
 import { loadLang, saveLang, type Lang } from './languages.ts'
 import { slimeText, localizeSlime } from './slime-copy.ts'
@@ -17,6 +18,9 @@ function beginSpeech(label: string) { narration.begin(spoken(label)) }
 let room = 'home', held = false, sleeping = false, sleepTimer = 0
 let meeting = newMeeting()
 let votesVisible = false
+let editingBaby: number | null = null
+let nameDraft = ''
+let messageBaby = 0
 let message = 'Привет! Я твой слайм. Давай дружить?'
 const root = document.querySelector<HTMLDivElement>('#app')!
 const rooms = [['home','♡','Мой слайм'],['bath','🛁','Ванная'],['closet','🎀','Гардероб'],['bed','☾','Спальня'],['outside','☀','Прогулка'],['stretch','↔','Растяжка']]
@@ -32,7 +36,7 @@ function littleSlime(color: string, baby = false, secondColor = '#a8d6ef') {
 }
 function companions() {
  const visitor=visitorById(meeting.visitor)
- return `${room==='outside'?`<div class="park-friends"><span class="owner" aria-hidden="true">${visitor.avatar}</span><span class="owner-label">Мира</span><div class="cloud-slime">${littleSlime(visitor.color)}<span class="visitor-accessory">${visitor.accessory}</span></div><span>Облачко</span></div><span class="play-ball" aria-hidden="true">⚽</span>`:''}${state.baby&&room!=='stretch'?`<button class="baby-slime" data-action="cuddle" aria-label="Обнять малыша Капельку">${littleSlime(item(state.baby.color).value,true,visitorById(state.baby.parent).color)}<span>Капелька ♡</span></button>`:''}`
+ return `${room==='outside'?`<div class="park-friends"><span class="owner" aria-hidden="true">${visitor.avatar}</span><span class="owner-label">Мира</span><div class="cloud-slime">${littleSlime(visitor.color)}<span class="visitor-accessory">${visitor.accessory}</span></div><span>Облачко</span></div><span class="play-ball" aria-hidden="true">⚽</span>`:''}${state.baby&&room!=='stretch'?`<button class="baby-slime" data-action="cuddle" data-baby="0" aria-label="Обнять малыша">${littleSlime(item(state.baby.color).value,true,visitorById(state.baby.parent).color)}<span data-baby-name="0"></span></button>`:''}`
 }
 function encounter() {
  if(room!=='outside') return ''
@@ -42,7 +46,7 @@ function encounter() {
 }
 function family() {
  if(!state.babies.length) return ''
- return `<section class="slime-family" aria-label="Семья слаймов"><h2>Наши малыши · ${state.babies.length}</h2><p>Нажми на малыша, чтобы обнять. На прогулке можно сделать ещё одного!</p><div class="family-grid">${state.babies.map((baby,index)=>`<button class="family-baby" data-action="cuddle" data-baby="${index}" aria-label="Обнять малыша Капельку ${index+1}">${littleSlime(item(baby.color).value,true,visitorById(baby.parent).color)}<b>Капелька ${index+1}</b><small>♡ ${baby.cuddles}</small></button>`).join('')}</div></section>`
+ return `<section class="slime-family" aria-label="Семья слаймов"><h2>Наши малыши · ${state.babies.length}</h2><p>Нажми на малыша, чтобы обнять. На прогулке можно сделать ещё одного!</p><div class="family-grid">${state.babies.map((baby,index)=>`<div class="family-card"><button class="family-baby" data-action="cuddle" data-baby="${index}" aria-label="Обнять малыша">${littleSlime(item(baby.color).value,true,visitorById(baby.parent).color)}<b data-baby-name="${index}"></b><small>♡ ${baby.cuddles}</small></button>${editingBaby===index?`<form class="baby-name-form" data-name-form="${index}"><label for="baby-name-input">Имя малыша</label><input id="baby-name-input" name="baby-name" maxlength="32" required autocomplete="off"><div><button type="submit">Сохранить имя</button><button type="button" data-cancel-name>Отмена</button></div><p class="name-error" role="status"></p></form>`:`<button class="rename-baby" data-rename="${index}">✎ Изменить имя</button>`}</div>`).join('')}</div></section>`
 }
 function render() {
  const limit = stretchLimit(state)
@@ -52,6 +56,13 @@ function render() {
  document.title=slimeText('Слайм Чек · игра Вероники',lang)
  document.querySelector('meta[name="description"]')?.setAttribute('content',slimeText('Игра Вероники. Заботься, наряжай и тяни!',lang))
  localizeSlime(root,lang,text=>visitorText(text,lang,meeting.visitor))
+ root.querySelectorAll<HTMLElement>('[data-baby-name]').forEach(node=>{const index=Number(node.dataset.babyName);node.textContent=babyName(state.babies[index],index,lang)})
+ root.querySelectorAll<HTMLElement>('[data-action="cuddle"]').forEach(node=>{const index=Number(node.dataset.baby??0);node.setAttribute('aria-label',slimeText('Обнять малыша',lang)+' '+babyName(state.babies[index],index,lang))})
+ const speechNode=root.querySelector<HTMLElement>('.speech')!
+ if(state.babies[messageBaby]) speechNode.textContent=(speechNode.textContent??'').replace('{{baby}}',babyName(state.babies[messageBaby],messageBaby,lang))
+ const input=root.querySelector<HTMLInputElement>('#baby-name-input')
+ if(input&&editingBaby!==null) input.value=nameDraft
+
  bind()
  narration.announce([spoken(root.querySelector('.speech')?.textContent ?? '')])
 }
@@ -90,7 +101,7 @@ function act(action:string, babyIndex = 0) {
   let born = false
   if(action==='give-piece') {
    const before=state.babies.length
-   if(givePiece(state,meeting)) { born=state.babies.length>before; message=born?'Две крошечки соединились! Привет, малышка Капелька! ♡':'Первая крошечка готова. Теперь подарок Облачка!' }
+   if(givePiece(state,meeting)) { born=state.babies.length>before; messageBaby=state.babies.length-1; message=born?'Две крошечки соединились! Привет, {{baby}}! ♡':'Первая крошечка готова. Теперь подарок Облачка!' }
    else message='Давай сначала снова спросим обоих слаймов.'
   }
   if(action==='later') { meeting.agreed=false; meeting.pieces=0; votesVisible=false; message='Хорошо! Можно просто дружить и играть.' }
@@ -98,10 +109,10 @@ function act(action:string, babyIndex = 0) {
   if(action==='play-friend'&&message.startsWith('Пас!')) { root.querySelector('.scene')?.classList.add('playing-together'); audio.play('ball') }
   if(action==='ask-slimes'&&votesVisible&&!meeting.agreed) narration.announce(Array.from(root.querySelectorAll('.wishes p'),p=>spoken(p.textContent ?? '')))
   if(action==='give-piece') audio.play(born?'baby':'pet')
-  if(born) root.querySelector('.family-baby:last-child')?.classList.add('baby-arrival')
+  if(born) root.querySelector('.family-card:last-child .family-baby')?.classList.add('baby-arrival')
   return
  }
- if(action==='cuddle'&&state.babies[babyIndex]) { state.babies[babyIndex].cuddles++; message='Капелька: «Пи-пи! Обнимаю!» ♡'; save(); render(); return }
+ if(action==='cuddle'&&state.babies[babyIndex]) { state.babies[babyIndex].cuddles++; messageBaby=babyIndex; message='{{baby}}: «Пи-пи! Обнимаю!» ♡'; save(); render(); return }
  if(action==='pet') rewarded('joy','Мур-мур… то есть, слайм-слайм! ♡')
  if(action==='wash') { held=false; rewarded('clean','Пузырьки! Я становлюсь чище!'); document.querySelector('.scene')?.classList.add('bubbles') }
  if(action==='hold') { if(room==='outside') { held=true; state.energy=Math.max(0,state.energy-5); rewarded('joy','Как красиво на улице! Держи меня крепче.') } else { held=!held; message=held?'У тебя такие тёплые ладошки!':'Какой мягкий коврик!'; render() } }
@@ -109,6 +120,20 @@ function act(action:string, babyIndex = 0) {
  if(action==='stretch') finishStretch(Math.round(stretchLimit(state)*.8))
 }
 function bind() {
+ root.querySelectorAll<HTMLButtonElement>('[data-rename]').forEach(button=>button.onclick=()=>{
+  editingBaby=Number(button.dataset.rename);nameDraft=babyName(state.babies[editingBaby],editingBaby,lang);render();const input=root.querySelector<HTMLInputElement>('#baby-name-input');input?.focus();input?.select()
+ })
+ const cancelName=()=>{const index=editingBaby;editingBaby=null;render();root.querySelector<HTMLButtonElement>(`[data-rename="${index}"]`)?.focus()}
+ root.querySelector<HTMLButtonElement>('[data-cancel-name]')?.addEventListener('click',cancelName)
+ root.querySelector<HTMLFormElement>('[data-name-form]')?.addEventListener('submit',event=>{
+  event.preventDefault();const input=root.querySelector<HTMLInputElement>('#baby-name-input')!;const name=cleanBabyName(input.value)
+  if(!name){root.querySelector('.name-error')!.textContent=slimeText('Впиши имя малыша.',lang);input.focus();return}
+  const index=editingBaby!;state.babies[index].name=name;messageBaby=index;message='Теперь меня зовут {{baby}}!';editingBaby=null
+  beginSpeech(slimeText('Сохранить имя',lang));audio.play('pet');save();render();root.querySelector<HTMLButtonElement>(`[data-rename="${index}"]`)?.focus()
+ })
+ root.querySelector<HTMLInputElement>('#baby-name-input')?.addEventListener('input',event=>{nameDraft=(event.target as HTMLInputElement).value})
+ root.querySelector<HTMLInputElement>('#baby-name-input')?.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();cancelName()}})
+
  root.querySelector<HTMLSelectElement>('#slime-language')!.onchange=e=>{
   const next=(e.target as HTMLSelectElement).value
   if(next!=='ru'&&next!=='de'&&next!=='en') return
