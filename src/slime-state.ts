@@ -1,7 +1,7 @@
 import { cleanBabyName } from './slime-names.ts'
 import { VISITORS, isVisitor, type VisitorId } from './slime-visitors.ts'
 export type SlimeBaby = { name?: string; color: string; cuddles: number; parent: VisitorId }
-export type SlimeState = { coins: number; clean: number; energy: number; joy: number; record: number; color: string; costume: string; decor: string; owned: string[]; sound: boolean; friendship: number; friendships: Partial<Record<VisitorId,number>>; lastVisitor: VisitorId | null; visitorQueue: VisitorId[]; babies: SlimeBaby[]; baby: SlimeBaby | null }
+export type SlimeState = { coins: number; clean: number; energy: number; joy: number; record: number; color: string; costume: string; decor: string; owned: string[]; sound: boolean; friendship: number; friendships: Partial<Record<VisitorId,number>>; lastVisitor: VisitorId | null; visitorQueue: VisitorId[]; companion: number | 'all'; babies: SlimeBaby[]; baby: SlimeBaby | null }
 export const ITEMS = [
   { id: 'mint', name: 'Мятный', icon: '🟢', price: 0, kind: 'color', value: '#99dfc0' },
   { id: 'berry', name: 'Ягодный', icon: '🟣', price: 20, kind: 'color', value: '#c4a4ed' },
@@ -15,7 +15,7 @@ export const ITEMS = [
   { id: 'flowers', name: 'Цветочный дом', icon: '🌼', price: 35, kind: 'decor', value: '🌼' },
   { id: 'stars', name: 'Звёздный дом', icon: '⭐', price: 50, kind: 'decor', value: '⭐' },
 ] as const
-export const fresh = (): SlimeState => ({ coins: 15, clean: 65, energy: 75, joy: 65, record: 0, color: 'mint', costume: 'none', decor: 'plain', owned: ['mint', 'none', 'plain'], sound: true, friendship: 0, friendships: {}, lastVisitor: null, visitorQueue: [], babies: [], baby: null })
+export const fresh = (): SlimeState => ({ coins: 15, clean: 65, energy: 75, joy: 65, record: 0, color: 'mint', costume: 'none', decor: 'plain', owned: ['mint', 'none', 'plain'], sound: true, friendship: 0, friendships: {}, lastVisitor: null, visitorQueue: [], companion: 0, babies: [], baby: null })
 const bounded = (n: unknown, fallback: number, max = 100) => typeof n === 'number' && Number.isFinite(n) ? Math.max(0, Math.min(max, Math.round(n))) : fallback
 export function restore(raw: string | null): SlimeState {
   const base = fresh()
@@ -30,7 +30,7 @@ export function restore(raw: string | null): SlimeState {
     if(!p.friendships && p.friendship) friendships.mira=bounded(p.friendship,0,3)
     const rawBabies = Array.isArray(p.babies) ? p.babies : p.baby ? [p.baby] : []
     const babies: SlimeBaby[] = rawBabies.filter((b: unknown) => b && typeof b === 'object' && ITEMS.some(i => i.kind === 'color' && i.id === (b as SlimeBaby).color)).map((b: SlimeBaby) => ({...cleanBabyName(b.name)?{name:cleanBabyName(b.name)}:{},color:b.color,cuddles:bounded(b.cuddles,0,999999),parent:isVisitor(b.parent)?b.parent:'mira'}))
-    return { babies, baby: babies[0] ?? null, friendships, lastVisitor: isVisitor(p.lastVisitor)?p.lastVisitor:null,
+    return { companion: p.companion==='all'?'all':bounded(p.companion,0,Math.max(0,babies.length-1)), babies, baby: babies[0] ?? null, friendships, lastVisitor: isVisitor(p.lastVisitor)?p.lastVisitor:null,
       visitorQueue: Array.isArray(p.visitorQueue)?[...new Set(p.visitorQueue.filter(isVisitor))] as VisitorId[]:[], sound: typeof p.sound === 'boolean' ? p.sound : true, friendship: bounded(p.friendship, 0, 3),
 
       coins: bounded(p.coins, base.coins, 999999), clean: bounded(p.clean, base.clean), energy: bounded(p.energy, base.energy), joy: bounded(p.joy, base.joy), record: bounded(p.record, 0, 400), owned,
