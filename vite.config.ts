@@ -10,6 +10,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         kuckuck: resolve(__dirname, 'kuckuck/index.html'),
         chunyashka: resolve(__dirname, 'chunyashka/index.html'),
+        sobachka: resolve(__dirname, 'sobachka/index.html'),
       },
     },
   },

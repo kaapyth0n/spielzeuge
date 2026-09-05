@@ -3,6 +3,8 @@ import '@fontsource/pt-serif/latin-400.css'
 import '@fontsource/pt-serif/latin-ext-400.css'
 import '@fontsource/pt-serif/latin-700.css'
 import './catalog.css'
+import { puppy } from './sobachka-art.ts'
+import { PUPPY_COPY } from './sobachka-copy.ts'
 import { bindQuietLang } from './lang-ui.ts'
 import { CATALOG_COPY, type Lang } from './languages.ts'
 
@@ -13,6 +15,8 @@ function setText(selector: string, value: string): void {
 
 function applyCatalog(lang: Lang): void {
   const copy = CATALOG_COPY[lang]
+  setText('[data-i18n="sobachka-name"]', PUPPY_COPY[lang].name)
+  setText('[data-i18n="sobachka-blurb"]', PUPPY_COPY[lang].tagline)
   document.title = copy.documentTitle
   const meta = document.querySelector('meta[name="description"]')
   if (meta) meta.setAttribute('content', copy.description)
@@ -34,6 +38,8 @@ function applyCatalog(lang: Lang): void {
   if (langBtn) langBtn.setAttribute('aria-label', copy.langAria)
 }
 
+const puppyArt = document.querySelector('#catalog-puppy')
+if (puppyArt) puppyArt.innerHTML = puppy()
 bindQuietLang(applyCatalog)
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {

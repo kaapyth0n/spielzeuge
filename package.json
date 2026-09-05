@@ -10,6 +10,7 @@
     "preview": "vite preview --host",
     "capture": "node scripts/capture.mjs",
     "test": "vitest run",
+    "test:sobachka": "node scripts/sobachka-spec.mjs",
     "test:taps": "node scripts/tap-spec.mjs"
   },
   "devDependencies": {

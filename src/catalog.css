@@ -336,3 +336,7 @@ a {
   line-height: 1.4;
   opacity: 0.65;
 }
+
+.toy-card--sobachka .toy-card-art { background: #e6dac2; }
+.toy-card--sobachka .puppy-svg { width: 102px; height: 102px; }
+.toy-card--sobachka .puppy-closed-eyes { display: none; }

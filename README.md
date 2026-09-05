@@ -2,9 +2,9 @@
 
 A small catalog of calm toys for children. Web first, later on iPad.
 
-Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуняшка**, a dress-up doll. Always clothed. Hearts after Ready stay in the game; nothing is posted.
+Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуняшка**, a dress-up doll. Always clothed. Hearts after Ready stay in the game; nothing is posted. The third toy is **Собачка**, a puppy-care game inspired by a child’s drawing.
 
-Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`.
+Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`. Собачка also has a RU/DE/EN selector in its top corner.
 
 ## Toys
 
@@ -13,6 +13,11 @@ Language is shared across the catalog and every toy (`localStorage` key `spielze
 | `/` | Catalog |
 | `/kuckuck/` | Kuckuck — door, knock, visitor, spoken name |
 | `/chunyashka/` | Чуняшка — dress-up; hearts stay on the toy |
+| `/sobachka/` | Собачка — care for a puppy, decorate its room and discover three games |
+
+### Собачка
+
+Feed, walk, play and nap with a little puppy. Friendship hearts unlock three calm mini-games; progress stays on the device and never decays. Details and checks: [docs/sobachka.md](docs/sobachka.md).
 
 ### Kuckuck
 

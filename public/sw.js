@@ -1,4 +1,4 @@
-const CACHE = 'spielzeuge-v2'
+const CACHE = 'spielzeuge-v3'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -10,6 +10,8 @@ self.addEventListener('install', (event) => {
         './kuckuck/index.html',
         './chunyashka/',
         './chunyashka/index.html',
+        './sobachka/',
+        './sobachka/index.html',
         './manifest.webmanifest',
         './icons/app-192.png',
         './icons/app-512.png',
