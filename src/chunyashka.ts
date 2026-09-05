@@ -69,6 +69,7 @@ function paintDoll(): void {
 function paintChips(): void {
   const ids = slot === 'hair' ? HAIR_IDS : slot === 'dress' ? DRESS_IDS : SHOE_IDS
   const selected = outfit[slot === 'shoes' ? 'shoes' : slot]
+  chips.style.setProperty('--chip-count', String(ids.length))
   chips.innerHTML = ids
     .map(
       (id) =>

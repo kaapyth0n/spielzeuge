@@ -120,7 +120,8 @@ a {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 12px 8px 4px;
+  min-width: 0;
+  padding: 12px 0 4px;
 }
 
 .slots {
@@ -142,22 +143,19 @@ a {
 }
 
 .chips {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 4px 2px 8px;
-  scrollbar-width: none;
-}
-
-.chips::-webkit-scrollbar {
-  display: none;
+  display: grid;
+  grid-template-columns: repeat(var(--chip-count, 4), minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 0 2px;
 }
 
 .chip {
-  flex: 0 0 auto;
-  width: 76px;
-  height: 76px;
-  border-radius: 18px;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1;
+  border-radius: 16px;
   background: var(--plum);
   display: grid;
   place-items: center;
@@ -165,8 +163,8 @@ a {
 }
 
 .chip svg {
-  width: 64px;
-  height: 64px;
+  width: 78%;
+  height: 78%;
 }
 
 .chip.is-on {
