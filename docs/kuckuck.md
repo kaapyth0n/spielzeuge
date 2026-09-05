@@ -97,3 +97,9 @@ The visible RU/DE/EN control cycles the shared language. The music button mutes 
 New sounds are original, softly synthesized toy impressions (bark, trumpet, hoot, sniff, chirp), not wildlife recordings. Rebuild using `python3 scripts/kuckuck-sounds.py` (requires ffmpeg).
 
 Run `npm run test:kuckuck` with Vite on port 5174, or set `BASE_URL`. Covers all five visitors in all three languages, portrait and landscape mobile and desktop, repeated greetings, language races, saved mute and language, and unavailable browser APIs.
+
+## iPad first-tap regression
+
+Gameplay handles completed `click`/tap events, not touch `pointerdown`. Audio and wake-lock startup begin in that gesture, but their promises never block door or keyboard actions. Suspended audio contexts do not queue obsolete effects.
+
+`npm run test:kuckuck-start` checks a fresh iPad-sized touch session with indefinitely pending audio resume, sound fetch, audio decode and wake-lock requests, plus normal startup. Each case opens, greets, closes and reopens using the keyboard without touching language controls. Run `ENGINE=webkit npm run test:kuckuck-start` for WebKit (install using `npx playwright-core install webkit`). This is browser automation, not a physical iPad test.

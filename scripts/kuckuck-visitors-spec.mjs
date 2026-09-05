@@ -40,7 +40,7 @@ try {
       const page = await openGuest(id, lang, viewport)
       await page.waitForFunction(word => window.__spoken.some(([text]) => text === word), names[index])
       assert.equal(await page.locator('#visitor-slot').getAttribute('aria-label'), names[index])
-      assert.ok(await page.evaluate(() => window.__effects > 2), 'visitor sound played')
+      assert.ok(await page.evaluate(() => window.__effects > 0), 'visitor sound played')
       const box = await page.locator('.toy').boundingBox()
       assert.ok(box.x >= 0 && box.y >= 0 && box.x + box.width <= viewport.width && box.y + box.height <= viewport.height, `${id} fits ${JSON.stringify(box)}`)
       await page.waitForTimeout(950)

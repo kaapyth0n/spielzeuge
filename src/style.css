@@ -883,3 +883,6 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .visitor-slot.is-greeting .toy, .visitor-slot.is-greeting [class^="part-"] { animation: none; }
 }
+
+/* Make the frame and SVG guest explicit tap targets for Safari click synthesis. */
+.doorway, .visitor-slot .toy { cursor: pointer; }

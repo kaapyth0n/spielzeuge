@@ -98,7 +98,7 @@ export class ToyAudio {
     const ctx = this.ctx
     const master = this.master
     const buffer = this.buffers.get(clip)
-    if (this.muted || document.hidden || !ctx || !master || !buffer) return
+    if (this.muted || document.hidden || !ctx || ctx.state !== 'running' || !master || !buffer) return
     const src = ctx.createBufferSource()
     const gain = ctx.createGain()
     src.buffer = buffer

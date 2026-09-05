@@ -54,7 +54,6 @@ export class Game {
   private unanswered = 0
   private lastGreet = 0
   private parentHold: number | null = null
-  private inputLock = false
   private closeTimer: number | null = null
   private readonly timers = new Set<number>()
 
@@ -96,7 +95,7 @@ export class Game {
       this.audio.setMuted(this.muted)
       try { localStorage.setItem('spielzeuge.kuckuck.muted', String(this.muted)) } catch { /* optional storage */ }
       this.updateControls()
-      if (!this.muted) void this.unlockVoice()
+      if (!this.muted) this.unlockVoice()
     })
     this.languageButton.addEventListener('click', () => this.chooseLang(nextLang(this.lang)))
     const lamp = this.must(this.world, '#lamp')
@@ -115,10 +114,8 @@ export class Game {
       this.run(decide(this.phase, 'lamp', this.hasVisitor()))
     })
 
-    this.world.addEventListener('pointerdown', (event) => {
-      this.speech.prime()
-      void this.onPlayPointer(event)
-    })
+    // A completed tap carries touch activation on iPad; pointerdown does not.
+    this.world.addEventListener('click', (event) => this.onPlayClick(event))
 
     this.door.addEventListener('click', (event) => {
       event.preventDefault()
@@ -157,22 +154,15 @@ export class Game {
     document.addEventListener('gesturestart', (event) => event.preventDefault())
   }
 
-  private async onPlayPointer(event: PointerEvent): Promise<void> {
+  private onPlayClick(event: MouseEvent): void {
     if (this.sheet.classList.contains('is-open')) return
     const zone = zoneFromTarget(event.target)
     if (zone === 'lamp') return
     event.preventDefault()
-    if (this.inputLock) return
-
     const action = decide(this.phase, zone, this.hasVisitor())
     if (action === 'ignore') return
-    this.inputLock = true
-    try {
-      await this.unlockVoice()
-      this.run(action)
-    } finally {
-      this.inputLock = false
-    }
+    this.unlockVoice()
+    this.run(action)
   }
 
   private hasVisitor(): boolean {
@@ -200,7 +190,7 @@ export class Game {
         return
       case 'cycle-lang-name':
         this.applyLang(nextLang(this.lang), true)
-        void this.unlockVoice()
+        this.unlockVoice()
         if (this.hasVisitor()) {
           this.lastGreet = 0
           if (this.current) this.greet(this.current)
@@ -218,7 +208,7 @@ export class Game {
         return
       case 'cycle-lang-word':
         this.applyLang(nextLang(this.lang), true)
-        void this.unlockVoice()
+        this.unlockVoice()
         if (!this.hasVisitor() || !this.current) return
         this.lastGreet = 0
         this.greet(this.current)
@@ -244,7 +234,7 @@ export class Game {
   private chooseLang(lang: Lang): void {
     this.applyLang(lang, true)
     this.speech.prime()
-    void this.unlockVoice()
+    this.unlockVoice()
     if (this.hasVisitor() && this.current) {
       this.lastGreet = 0
       this.greet(this.current)
@@ -432,21 +422,22 @@ export class Game {
     this.world.dataset.phase = phase
   }
 
-  private async unlockVoice(): Promise<void> {
-    this.speech.prime()
-    try { await this.audio.unlock() } catch { /* audio must never block play */ }
+  private unlockVoice(): void {
+    // Start optional capabilities in the gesture, but never let their promises
+    // hold the input path (Safari resume, downloads or wake lock may stay pending).
+    try { this.speech.prime() } catch { /* speech is optional */ }
+    void this.audio.unlock().catch(() => { /* audio is optional */ })
     try {
-      await navigator.wakeLock?.request('screen')
-    } catch {
-      // unsupported or denied
-    }
+      void navigator.wakeLock?.request('screen').catch(() => { /* denied */ })
+    } catch { /* unsupported */ }
   }
 
   private onKey(event: KeyboardEvent): void {
     if ((event.target as HTMLElement)?.closest('button, a') && event.target !== this.door) return
     if (event.target === this.slot && (event.key === ' ' || event.key === 'Enter')) {
       event.preventDefault()
-      void this.unlockVoice().then(() => this.run('greet'))
+      this.unlockVoice()
+      this.run('greet')
       return
     }
     if (event.key === '1') this.chooseLang('ru')
@@ -461,7 +452,8 @@ export class Game {
       if (this.sheet.classList.contains('is-open')) return
       event.preventDefault()
       const action = decide(this.phase, 'door', this.hasVisitor())
-      void this.unlockVoice().then(() => this.run(action))
+      this.unlockVoice()
+      this.run(action)
     }
   }
 
