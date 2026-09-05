@@ -1,6 +1,7 @@
 import '@fontsource/pt-serif/cyrillic-400.css'
 import '@fontsource/pt-serif/latin-400.css'
 import './sobachka.css'
+import { PuppyNarration } from './sobachka-narration.ts'
 import { loadLang, saveLang, type Lang } from './languages.ts'
 import { PUPPY_COPY } from './sobachka-copy.ts'
 import { icon, puppy, wallArt } from './sobachka-art.ts'
@@ -24,6 +25,7 @@ try {
 }
 let lang = loadLang()
 let copy = PUPPY_COPY[lang]
+const narration = new PuppyNarration(() => ({ lang, enabled: state.sound }))
 type Screen =
   | 'room'
   | 'kitchen'
@@ -100,18 +102,12 @@ function tone(kind = 'happy'): void {
     /* Silent play is fully supported. */
   }
 }
-function speak(text: string): void {
-  if (!('speechSynthesis' in window)) return
-  window.speechSynthesis.cancel()
-  const utterance = new SpeechSynthesisUtterance(text)
-  utterance.lang = { ru: 'ru-RU', de: 'de-DE', en: 'en-GB' }[lang]
-  utterance.rate = 0.85
-  window.speechSynthesis.speak(utterance)
-}
 function say(text: string): void {
   message = text
   const node = root.querySelector('#message')
   if (node) node.textContent = text
+  narration.announce([text])
+  narration.observe(root)
 }
 function btn(
   action: string,
@@ -228,6 +224,7 @@ function render(focusHeading = false): void {
     ${screen === 'garden' ? `<div class="bouquet" aria-label="${flowers.size} / 5">${positions.map((_, i) => `<span class="${i < flowers.size ? 'collected' : ''}">${icon('flower')}</span>`).join('')}</div>` : ''}
     </section><footer class="puppy-footer"><span>${hint()}</span><span>${persistent ? copy.saved : copy.notSaved}</span></footer>
   </main>`
+  narration.observe(root)
   if (focusHeading)
     root
       .querySelector<HTMLElement>('#screen-title')
@@ -241,7 +238,6 @@ function navigate(next: Screen): void {
   cancelDrag()
   timers.forEach((id) => clearTimeout(id))
   timers.clear()
-  if ('speechSynthesis' in window) window.speechSynthesis.cancel()
   busy = false
   mood = ''
   screen = next
@@ -303,13 +299,13 @@ function act(action: string): void {
   if (action === 'sound') {
     state.sound = !state.sound
     save()
-    if (!state.sound && 'speechSynthesis' in window)
-      window.speechSynthesis.cancel()
+    if (state.sound) narration.begin(copy.soundOn)
+    else narration.silence()
     render()
     return
   }
   if (action === 'help') {
-    speak(hint())
+    narration.announce([hint()])
     say(hint())
     return
   }
@@ -450,7 +446,15 @@ root.addEventListener('click', (event) => {
     event.target instanceof Element
       ? event.target.closest<HTMLButtonElement>('[data-action]')
       : null
-  if (target && !target.disabled) act(target.dataset.action!)
+  if (target && !target.disabled) {
+    narration.begin(target.getAttribute('aria-label') ?? target.innerText)
+    act(target.dataset.action!)
+  } else if (event.target instanceof Element) {
+    const text = event.target.closest<HTMLElement>(
+      'p, h1, h2, .friendship, .puppy-footer span, a',
+    )
+    if (text) narration.begin(text.getAttribute('aria-label') ?? text.innerText)
+  }
 })
 root.addEventListener('change', (event) => {
   if (
@@ -463,6 +467,7 @@ root.addEventListener('change', (event) => {
   lang = value
   copy = PUPPY_COPY[lang]
   saveLang(lang)
+  narration.languageChanged()
   // Reset the current activity so no delayed callback can show text from the old language.
   navigate(screen === 'win' ? 'games' : screen)
 })
@@ -470,6 +475,7 @@ let drag: {
   x: number
   y: number
   pointerId: number
+  food: string
   art: string
   ghost: HTMLElement | null
 } | null = null
@@ -483,6 +489,7 @@ root.addEventListener('pointerdown', (event) => {
     x: event.clientX,
     y: event.clientY,
     pointerId: event.pointerId,
+    food: target.dataset.food!,
     art: target.querySelector('svg')!.outerHTML,
     ghost: null,
   }
@@ -517,7 +524,11 @@ root.addEventListener('pointerup', (event) => {
       event.clientY <= box.bottom + 25
     drag.ghost.remove()
     suppressedClickUntil = performance.now() + 350
-    if (dropped) feed()
+    if (dropped) {
+      const food = root.querySelector<HTMLElement>(`[data-food="${drag.food}"]`)
+      narration.begin(food?.innerText ?? copy.feed)
+      feed()
+    }
   }
   drag = null
   root.querySelector('#food-bowl')?.classList.remove('drop-ready')
@@ -530,8 +541,15 @@ function cancelDrag(): void {
 root.addEventListener('pointercancel', cancelDrag)
 window.addEventListener('blur', cancelDrag)
 window.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && screen !== 'room') navigate('room')
+  if (event.key === 'Escape' && screen !== 'room') {
+    narration.begin(copy.back)
+    navigate('room')
+  }
 })
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) narration.silence()
+})
+window.addEventListener('pagehide', () => narration.silence())
 save()
 render()
 if (import.meta.env.PROD && 'serviceWorker' in navigator)

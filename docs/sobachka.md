@@ -2,7 +2,7 @@
 
 A calm puppy-care game for children aged 5–8, based on the child's drawing: a dog on a rug, a squeaky toy to its left, a ball, changeable wall drawings, care buttons and a separate page of games.
 
-Open `/sobachka/`. The catalog links to it. Russian, German and English use the existing shared language preference, including `?lang=ru|de|en`. The question-mark button reads the current instruction using the browser's speech synthesis when available. All actions also work silently.
+Open `/sobachka/`. The catalog links to it. Russian, German and English use the existing shared language preference, including `?lang=ru|de|en`. All appearing text, button labels and action feedback are automatically narrated in the selected language using browser speech synthesis. Tapping prose reads it again; the question-mark button repeats the current instruction. A new action or language cancels stale speech, while automatic feedback is queued in order. The sound toggle mutes both voice and effects. Some browsers require the first tap before speech can start; voices depend on the device. All actions also work silently.
 
 - Tap the puppy to pet it; tap the bunny to squeak.
 - Feed: tap a food, or drag it to the bowl using mouse or touch. Eating finishes after 1.8 seconds.
@@ -28,3 +28,5 @@ Original SVG artwork lives in `src/sobachka-art.ts`; all sound effects are synth
 - `npm test`: state recovery, unlock boundaries and existing toy tests.
 - `npm run build`: TypeScript and all four page entrypoints.
 - With `npm run dev` running: `npm run test:sobachka`. Uses locally installed Chrome through Playwright; covers the catalog, completed/interrupted care, drag feeding, mini-games, persistence, languages, touch, and viewport overflow. Screenshots are saved in `tmp/`.
+
+- `npm run test:sobachka-speech`: browser checks of narrated text, action labels, delayed feedback, interruption, mute and Russian/German/English utterance locales. Uses a speech API recorder to verify calls without depending on installed voices.
