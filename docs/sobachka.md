@@ -22,7 +22,7 @@ Each completed care activity adds one permanent friendship heart. Interrupted ac
 
 Mini-games celebrate completion; they do not add care hearts. All earned games stay available. Progress, wallpaper, care history and sound preference are saved locally under `spielzeuge.sobachka.v1`. Malformed data is sanitized. If storage is unavailable, the game runs for the current session and displays a note.
 
-Original SVG artwork lives in `src/sobachka-art.ts`; all sound effects are synthesized locally. No external image, audio or API requests are needed. Reduced-motion preferences disable decorative animations. Native buttons support keyboard input; food dragging also has a tap alternative.
+Original SVG artwork lives in `src/sobachka-art.ts`. Sound effects use local Web Audio synthesis and two existing clips served by this site; no third-party audio service is needed. Reduced-motion preferences disable decorative animations. Native buttons support keyboard input; food dragging also has a tap alternative.
 
 ## Verification
 
@@ -33,3 +33,11 @@ Original SVG artwork lives in `src/sobachka-art.ts`; all sound effects are synth
 - `npm run test:sobachka-speech`: browser checks of narrated text, action labels, delayed feedback, interruption, mute and Russian/German/English utterance locales. Uses a speech API recorder to verify calls without depending on installed voices.
 
 - `PUPPY_TEST_URL=http://localhost:5184 node scripts/sobachka-toilet-spec.mjs`: pee/poop, cleanup rewards, cancelled actions, old saves, touch target sizes, mobile/tablet layouts and localized speech. Set the URL to your running dev server.
+
+## Action sounds
+
+Each action has its own short sound: puppy bark, toy squeak, food crunches, paw steps and flower rustles, bouncing ball, sleepy breathing, potty splashes/plop, cleanup swish, wallpaper rustle, card flip and matching/reward chimes. Effects follow activity timing. There is no continuous background track.
+
+`src/sobachka-audio.ts` synthesizes the effects locally with Web Audio. Petting and the squeaky toy also reuse the existing licensed `/sounds/dog.mp3` and `/sounds/mouse.mp3` clips (see the sound credits), with synthesized fallbacks if unavailable. The shared sound preference controls effects and narration. Muting, leaving a room, or hiding the page cancels active and future effects; unmuting does not replay old sounds.
+
+`node scripts/sobachka-audio-spec.mjs` checks real PCM output for every synthesized effect and verifies action mappings, sample decoding and immediate mute/navigation silence in the browser. `PUPPY_TEST_URL` selects the dev server (default port 5184).

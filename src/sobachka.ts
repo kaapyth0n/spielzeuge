@@ -2,6 +2,7 @@ import '@fontsource/pt-serif/cyrillic-400.css'
 import '@fontsource/pt-serif/latin-400.css'
 import './sobachka.css'
 import { PuppyNarration } from './sobachka-narration.ts'
+import { PuppyAudio } from './sobachka-audio.ts'
 import { loadLang, saveLang, type Lang } from './languages.ts'
 import { PUPPY_COPY } from './sobachka-copy.ts'
 import { icon, puppy, wallArt } from './sobachka-art.ts'
@@ -26,6 +27,7 @@ try {
 let lang = loadLang()
 let copy = PUPPY_COPY[lang]
 const narration = new PuppyNarration(() => ({ lang, enabled: state.sound }))
+const sounds = new PuppyAudio(() => state.sound)
 type Screen =
   | 'room'
   | 'kitchen'
@@ -52,7 +54,6 @@ let shape = 'circle'
 const shapes = ['circle', 'triangle', 'square', 'star']
 let shapeChoices = [...shapes]
 const timers = new Set<number>()
-let audio: AudioContext | undefined
 let suppressedClickUntil = 0
 const positions = [
   [18, 56],
@@ -75,34 +76,6 @@ function later(fn: () => void, ms: number): void {
     fn()
   }, ms)
   timers.add(id)
-}
-function tone(kind = 'happy'): void {
-  if (!state.sound) return
-  try {
-    audio ??= new AudioContext()
-    void audio.resume().catch(() => {})
-    const now = audio.currentTime
-    const notes =
-      kind === 'squeak'
-        ? [620, 890, 610]
-        : kind === 'win'
-          ? [523, 659, 784, 1047]
-          : [523, 659]
-    notes.forEach((frequency, i) => {
-      const osc = audio!.createOscillator()
-      const volume = audio!.createGain()
-      osc.type = 'sine'
-      osc.frequency.setValueAtTime(frequency, now + i * 0.105)
-      volume.gain.setValueAtTime(0, now + i * 0.105)
-      volume.gain.linearRampToValueAtTime(0.045, now + i * 0.105 + 0.02)
-      volume.gain.exponentialRampToValueAtTime(0.001, now + i * 0.105 + 0.22)
-      osc.connect(volume).connect(audio!.destination)
-      osc.start(now + i * 0.105)
-      osc.stop(now + i * 0.105 + 0.24)
-    })
-  } catch {
-    /* Silent play is fully supported. */
-  }
 }
 function say(text: string): void {
   message = text
@@ -242,6 +215,7 @@ function render(focusHeading = false): void {
       ?.focus({ preventScroll: true })
 }
 function navigate(next: Screen): void {
+  sounds.stop()
   cancelDrag()
   timers.forEach((id) => clearTimeout(id))
   timers.clear()
@@ -268,6 +242,7 @@ function navigate(next: Screen): void {
   if (['fetch', 'memory', 'shapes'].includes(next)) lastGame = next
   message = next === 'room' ? copy.welcome : hint()
   render(true)
+  if (next !== 'win') sounds.play(next === 'garden' ? 'walk' : 'tap')
 }
 function newShape(): void {
   shape = shuffled(shapes.filter((s) => s !== shape))[0]
@@ -280,7 +255,7 @@ function completeCare(action: Care, text: string): void {
   mood = 'happy'
   message = text
   render()
-  tone('win')
+  sounds.play('reward')
   later(() => {
     if (mood === 'happy') {
       mood = ''
@@ -294,13 +269,14 @@ function feed(): void {
   mood = 'eating'
   message = copy.eating
   render()
-  tone()
+  sounds.play('eat')
   later(() => completeCare('feed', copy.fed), 1800)
 }
 function usePotty(kind: 'pee' | 'poop'): void {
   if (screen !== 'bathroom' || busy || pottyResult) return
   busy = true
   mood = 'using-potty'
+  sounds.play(kind)
   message = kind === 'pee' ? copy.peeing : copy.pooping
   render()
   later(() => {
@@ -309,13 +285,14 @@ function usePotty(kind: 'pee' | 'poop'): void {
     mood = 'potty-done'
     message = copy.toiletDone
     render()
-    tone()
+    sounds.play('tap')
   }, 2600)
 }
 function cleanPotty(): void {
   if (screen !== 'bathroom' || busy || !pottyResult) return
   busy = true
   mood = 'cleaning-potty'
+  sounds.play('clean')
   message = copy.cleaning
   render()
   later(() => {
@@ -327,14 +304,19 @@ function finishGame(): void {
   navigate('win')
   message = copy.win
   render(true)
-  tone('win')
+  sounds.play('win')
 }
 function act(action: string): void {
   if (action === 'sound') {
     state.sound = !state.sound
     save()
-    if (state.sound) narration.begin(copy.soundOn)
-    else narration.silence()
+    if (state.sound) {
+      narration.begin(copy.soundOn)
+      sounds.play('tap')
+    } else {
+      narration.silence()
+      sounds.stop()
+    }
     render()
     return
   }
@@ -361,7 +343,7 @@ function act(action: string): void {
     save()
     message = copy.walls[state.wall]
     render()
-    tone()
+    sounds.play('wallpaper')
     return
   }
   if (action === 'sleep' && mood === 'sleeping') {
@@ -373,7 +355,7 @@ function act(action: string): void {
     mood = 'happy'
     say(copy.petHappy)
     root.querySelector('.scene')?.classList.add('happy')
-    tone()
+    sounds.play('pet')
     later(() => {
       if (mood === 'happy') {
         mood = ''
@@ -382,7 +364,7 @@ function act(action: string): void {
     }, 1500)
   } else if (action === 'toy') {
     say(copy.squeak)
-    tone('squeak')
+    sounds.play('squeak')
     const toy = root.querySelector('.squeaky')
     toy?.classList.remove('squish')
     void (toy as HTMLElement)?.offsetWidth
@@ -398,20 +380,21 @@ function act(action: string): void {
     mood = 'sleeping'
     message = copy.sleepHint
     render()
+    sounds.play('sleep')
     later(() => completeCare('sleep', copy.slept), 5500)
   } else if (action === 'ball') {
     busy = true
     mood = 'playing'
     message = copy.ballHint
     render()
-    tone()
+    sounds.play('ball')
     later(() => completeCare('ball', copy.played), 3600)
   } else if (action.startsWith('food-')) feed()
   else if (action.startsWith('flower-') && screen === 'garden') {
     const i = Number(action.slice(7))
     if (flowers.has(i) || i < 0 || i >= positions.length) return
     flowers.add(i)
-    tone()
+    sounds.play('flower')
     render()
     if (flowers.size === positions.length) completeCare('walk', copy.walked)
   } else if (action.startsWith('game-')) {
@@ -421,7 +404,7 @@ function act(action: string): void {
   } else if (action === 'catch' && screen === 'fetch') {
     busy = true
     render()
-    tone()
+    sounds.play('fetch')
     later(() => {
       busy = false
       progress++
@@ -433,12 +416,13 @@ function act(action: string): void {
     if (i < 0 || i >= cards.length || flipped.includes(i) || matched.has(i))
       return
     flipped.push(i)
-    tone()
+    sounds.play('flip')
     if (flipped.length === 2) {
       busy = true
       const [a, b] = flipped
       const isPair = cards[a] === cards[b]
       if (isPair) {
+        sounds.play('match')
         matched.add(a)
         matched.add(b)
         message = copy.match
@@ -463,7 +447,7 @@ function act(action: string): void {
       return
     }
     progress++
-    tone()
+    sounds.play('match')
     busy = true
     message = copy.match
     render()
@@ -593,9 +577,15 @@ window.addEventListener('keydown', (event) => {
   }
 })
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) narration.silence()
+  if (document.hidden) {
+    narration.silence()
+    sounds.stop()
+  }
 })
-window.addEventListener('pagehide', () => narration.silence())
+window.addEventListener('pagehide', () => {
+  narration.silence()
+  sounds.stop()
+})
 save()
 render()
 if (import.meta.env.PROD && 'serviceWorker' in navigator)
