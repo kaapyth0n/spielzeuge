@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:sobachka-speech": "node scripts/sobachka-speech-spec.mjs",
     "test:sobachka": "node scripts/sobachka-spec.mjs",
+    "test:kuckuck-speech": "node scripts/kuckuck-speech-session-spec.mjs",
     "test:kuckuck-start": "node scripts/kuckuck-start-spec.mjs",
     "test:kuckuck": "node scripts/kuckuck-visitors-spec.mjs",
     "test:taps": "node scripts/tap-spec.mjs",

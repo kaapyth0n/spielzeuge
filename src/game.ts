@@ -44,6 +44,7 @@ export class Game {
 
   private muted = false
   private greetingGeneration = 0
+  private pendingName = false
   private readonly soundButton: HTMLButtonElement
   private readonly languageButton: HTMLButtonElement
 
@@ -275,6 +276,7 @@ export class Game {
 
   private cancelGreeting(): void {
     this.greetingGeneration += 1
+    this.pendingName = false
     this.speech.silence()
   }
 
@@ -370,14 +372,16 @@ export class Game {
 
   private greet(visitor: Visitor): void {
     const now = performance.now()
-    if (now - this.lastGreet < GREET_COOLDOWN_MS) return
+    if (this.pendingName || now - this.lastGreet < GREET_COOLDOWN_MS) return
     this.lastGreet = now
     this.slot.classList.remove('is-greeting')
     void this.slot.offsetWidth
     this.slot.classList.add('is-greeting')
-    this.cancelGreeting()
+    // Preserve the speech session unlocked by the tap. Cancellation is only
+    // for obsolete feedback (closing, changing language, muting or leaving).
+    const generation = ++this.greetingGeneration
+    this.pendingName = true
     this.audio.stop()
-    const generation = this.greetingGeneration
     this.audio.visitor(visitor.id)
     const word = visitor.word[this.lang]
     const afterSound = Math.min(
@@ -385,7 +389,9 @@ export class Game {
       Math.max(280, this.audio.duration(visitor.id) * 950),
     )
     this.later(afterSound, () => {
-      if (generation !== this.greetingGeneration || this.muted || document.hidden || this.current !== visitor) return
+      if (generation !== this.greetingGeneration) return
+      this.pendingName = false
+      if (this.muted || document.hidden || this.current !== visitor) return
       this.speech.speak(visitor.word[this.lang], this.lang)
     })
     this.live.textContent = word
