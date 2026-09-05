@@ -3,6 +3,7 @@ import '@fontsource/pt-serif/latin-400.css'
 import '@fontsource/pt-serif/latin-ext-400.css'
 import '@fontsource/pt-serif/latin-700.css'
 import './catalog.css'
+import { slimeText } from './slime-copy.ts'
 import { puppy } from './sobachka-art.ts'
 import { PUPPY_COPY } from './sobachka-copy.ts'
 import { bindQuietLang } from './lang-ui.ts'
@@ -15,6 +16,8 @@ function setText(selector: string, value: string): void {
 
 function applyCatalog(lang: Lang): void {
   const copy = CATALOG_COPY[lang]
+  setText('[data-i18n="slime-name"]', slimeText('Слайм Чек',lang))
+  setText('[data-i18n="slime-blurb"]', slimeText('Игра Вероники. Заботься, наряжай и тяни!',lang))
   setText('[data-i18n="sobachka-name"]', PUPPY_COPY[lang].name)
   setText('[data-i18n="sobachka-blurb"]', PUPPY_COPY[lang].tagline)
   document.title = copy.documentTitle

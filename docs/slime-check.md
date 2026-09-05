@@ -1,0 +1,30 @@
+# Слайм Чек
+
+A Russian/German/English slime-care game imagined by Veronika, age 8, with a star-shaped character based on her drawing. Open `/slime-check/` or choose it in the catalog.
+
+- Pet the slime, bathe it, and let it sleep for four seconds. Each action restores up to 25 points and awards one coin per five restored points, rounded up. Full stats do not generate extra coins.
+- Pick up the slime before entering the garden. Drag and release it in the bottom 30% of the garden to get it muddy; washing removes dirt and leaves as cleanliness improves.
+- Walk on your hands to restore joy and use a little energy. Stretching uses energy and joy, making rest and care useful again. No needs decay while the game is closed.
+- In the stretch room, drag in any direction and release to record a distance. Maximum length is `100 + cleanliness + energy + joy` centimetres. A keyboard-accessible button stretches to 80% of the current maximum.
+- Spend earned coins on colors, costumes and room decoration themes. Owned items can be equipped for free. Decoration themes apply across the rooms.
+- Needs, coins, purchases, selected appearance and personal record are saved under `spielzeuge.slime-check.v1` in localStorage. Corrupt saves fall back safely. The game remains playable when storage is unavailable.
+
+Checks: `npm test`, `npm run build`, and `node scripts/slime-spec.mjs` against the local dev server on port 5173. The browser script checks the care/purchase/walk/drop/bath/sleep/stretch/save loop, mobile overflow and catalog navigation, and saves screenshots in `tmp/`.
+
+## Park friends and a baby
+
+Meet Mira (NPC) and her blue slime Cloud. Ask Mira before playing: she asks a muddy or exhausted slime to wash or rest first. Permission lasts for the current visit. Passing the ball builds friendship (three hearts), restores joy and uses both slimes’ energy.
+
+Ask both slimes whether they want to make a baby. Each responds separately: friendship and their wellbeing determine the answer. Only two willing slimes can donate pieces. The player can cancel before the second piece; nothing is spent. Two pieces create Kapelka, a small slime combining the player's color at that moment with Cloud's blue. The current version has one baby, which appears around the house and on walks, can be hugged, and is saved with friendship. Existing saves upgrade automatically.
+
+`node scripts/slime-friends-spec.mjs` verifies the owner permission/refusal, friendship, wishes, cancellation, both donations, baby persistence and mobile layout.
+
+## Language, voice and sound
+
+The visible RU/DE/EN selector shares `spielzeuge.lang` with all games. All UI, shop labels, Mira/Cloud dialogue and accessible labels are translated. The catalog card follows the same language. Numeric captions compose from translated source phrases in `src/slime-copy.ts`; the game model keeps stable language-independent ids.
+
+Narration reuses Собачка’s `PuppyNarration`: a tap speaks its action followed by the resulting message. Both slimes’ answers are narrated when asking their wishes. Tap the message to repeat it. Sleeping/waking, records and the baby’s arrival also speak their messages; changing language cancels old speech and translates delayed feedback when it completes.
+
+`SlimeAudio` synthesizes gentle effects locally for touch, care, water, sleep, waking, stretch, muddy drops, ball play, purchases and a baby’s arrival. No external sound download is needed. The speaker toggle saves its setting with the slime, mutes speech and effects together and cancels pending sound. Browser gestures unlock audio; leaving/hiding the page stops playback. Actual speech depends on installed browser/device voices.
+
+Run `node scripts/slime-speech-spec.mjs` for speech/effect calls, mute, language persistence, translated story branches and mobile checks.

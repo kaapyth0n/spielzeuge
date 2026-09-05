@@ -4,7 +4,17 @@ A small catalog of calm toys for children. Web first, later on iPad.
 
 Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуняшка**, a dress-up doll. Always clothed. Hearts after Ready stay in the game; nothing is posted. The third toy is **Собачка**, a puppy-care game inspired by a child’s drawing.
 
-Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`. Собачка also has a RU/DE/EN selector in its top corner.
+Слайм Чек is Veronika’s slime-care game. [Game details and checks](docs/slime-check.md).
+
+Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`. Собачка and Слайм Чек also have visible RU/DE/EN selectors in their top corners.
+
+## Required for every game
+
+**Every game must support Russian, German and English from its first playable version.** This applies to all buttons, instructions, shops, character dialogue, event feedback and accessible labels. Each game must provide a discoverable language control and use the shared `spielzeuge.lang` preference (Russian by default; `?lang=ru|de|en` is supported).
+
+Actions and character messages should be spoken in the selected language where appropriate, following Собачка’s narration behavior. Add suitable quiet sound effects. A visible sound toggle must mute both speech and effects, save the preference, and stop pending audio. Changing language must cancel speech in the old language; delayed feedback must use the current language. Speech uses browser/device voices, so voice availability depends on the device.
+
+Verify all three languages, narration calls, effects, mute, saved preferences and mobile controls before considering a new game complete.
 
 ## Toys
 
@@ -14,6 +24,7 @@ Language is shared across the catalog and every toy (`localStorage` key `spielze
 | `/kuckuck/` | Kuckuck — door, knock, visitor, spoken name |
 | `/chunyashka/` | Чуняшка — dress-up; hearts stay on the toy |
 | `/sobachka/` | Собачка — care for a puppy, decorate its room and discover three games |
+| `/slime-check/` | Слайм Чек — Veronika’s slime-care, dress-up and stretching game |
 
 ### Собачка
 
@@ -47,6 +58,10 @@ npm run preview
 ```
 
 Kuckuck query helpers: `/kuckuck/?lang=ru|de|en` and `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara`.
+
+## Delivery workflow
+
+Each completed development milestone is checked, committed, pushed and immediately deployed to production. The agent decides when a milestone is ready without asking for additional approval. Verify the affected public routes after deployment.
 
 ## Public site
 

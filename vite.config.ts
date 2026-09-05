@@ -11,6 +11,7 @@ export default defineConfig({
         kuckuck: resolve(__dirname, 'kuckuck/index.html'),
         chunyashka: resolve(__dirname, 'chunyashka/index.html'),
         sobachka: resolve(__dirname, 'sobachka/index.html'),
+        slimeCheck: resolve(__dirname, 'slime-check/index.html'),
       },
     },
   },
