@@ -1,8 +1,8 @@
 import { LANG_LABEL, SPEECH_LOCALE, type Lang } from './languages.ts'
 
-/** Narrate changed screen text and taps, without reading the whole room on each render. */
+/** Only taps and the caption beneath the puppy are narrated. */
 export class PuppyNarration {
-  private previous = new Set<string>()
+  private previousCaption: string | null = null
   private pending: string[] = []
   private scheduled = false
   private generation = 0
@@ -30,7 +30,7 @@ export class PuppyNarration {
 
   /** Called synchronously from a gesture, including touch and keyboard activation. */
   begin(label: string): void {
-    if (this.blocked) this.previous.clear()
+    if (this.blocked) this.previousCaption = null
     this.silence()
     if (this.supported() && this.preferences().enabled) {
       const synth = window.speechSynthesis
@@ -46,19 +46,20 @@ export class PuppyNarration {
   }
 
   languageChanged(): void {
-    this.previous.clear()
+    this.previousCaption = null
     this.begin(LANG_LABEL[this.preferences().lang])
   }
 
   observe(root: HTMLElement): void {
-    const texts = screenText(root)
-    const added = texts.filter((text) => !this.previous.has(text))
-    this.previous = new Set(texts)
+    const caption = root.querySelector('#message')?.textContent?.trim() ?? ''
+    const key = `${this.preferences().lang}:${caption}`
+    const changed = key !== this.previousCaption
+    this.previousCaption = key
     if (!this.preferences().enabled) {
       this.silence()
       return
     }
-    this.announce(added)
+    if (changed && caption) this.announce([caption])
   }
 
   announce(texts: string[]): void {
@@ -134,40 +135,4 @@ export class PuppyNarration {
     }, 60)
     this.playTimers.add(timer)
   }
-}
-
-/** Labels of controls, visible prose, and meaningful counters, in reading order. */
-export function screenText(root: HTMLElement): string[] {
-  const selectors = [
-    'a',
-    '.eyebrow',
-    'h1',
-    '.friendship',
-    '#screen-title',
-    'button',
-    '#puppy-language',
-    '#food-bowl',
-    '.round-dots',
-    '.bouquet',
-    '.games-note',
-    '.win-scene h2',
-    '.win-scene p',
-    '#message',
-    '.puppy-footer span',
-  ].join(',')
-  return [
-    ...new Set(
-      Array.from(root.querySelectorAll<HTMLElement>(selectors))
-        .map((node) => {
-          if (node.id === 'puppy-language')
-            return node.getAttribute('aria-label') ?? ''
-          if (node.classList.contains('friendship')) return node.innerText
-          if (node.classList.contains('game-card'))
-            return node.innerText.replace(/\n/g, '. ')
-          return node.getAttribute('aria-label') ?? node.innerText
-        })
-        .map((text) => text.replace(/\s+/g, ' ').trim())
-        .filter(Boolean),
-    ),
-  ]
 }

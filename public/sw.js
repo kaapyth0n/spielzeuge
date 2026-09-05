@@ -1,4 +1,4 @@
-const CACHE = 'spielzeuge-v4'
+const CACHE = 'spielzeuge-v5'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

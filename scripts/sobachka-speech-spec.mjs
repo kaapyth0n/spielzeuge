@@ -41,27 +41,30 @@ try {
   await page.goto('http://localhost:5173/sobachka/?lang=ru')
   await heard('Привет! Давай дружить?')
   assert((await speech()).every((s) => s.lang === 'ru-RU'))
-  for (const label of [
-    'Все игрушки',
-    'Покормить',
-    'Погулять',
-    'Спать',
-    'Мячик',
-    'Мой уютный дом',
-    'Наша дружба',
-  ]) {
-    assert(
-      (await speech()).some((s) => s.text.includes(label)),
-      label,
-    )
-  }
+  await page.waitForTimeout(150)
+  assert.deepEqual(
+    (await speech()).map((s) => s.text),
+    ['Привет! Давай дружить?'],
+    'Only the welcome is automatic on load',
+  )
   await clear()
   await act('feed')
-  await heard('На кухне')
+  await heard('Перетащи еду')
+  assert.deepEqual(
+    (await speech()).map((s) => s.text),
+    ['Покормить', 'Перетащи еду к миске или просто нажми на неё.'],
+    'A tap reads its action and caption, not the kitchen title or food options',
+  )
   await act('food-1')
   await heard('Морковка')
   await heard('Ам-ням')
+  await clear()
   await heard('Спасибо за угощение!')
+  assert.deepEqual(
+    (await speech()).map((s) => s.text),
+    ['Спасибо за угощение!'],
+    'Completed care reads only its caption, not counters or buttons',
+  )
   await act('room')
   await clear()
   await act('pet')
@@ -105,8 +108,14 @@ try {
     !(await speech()).some((s) => s.text.includes('Выспалась')),
     'Leaving cancels delayed narration',
   )
+  await clear()
   await act('game-0')
   await heard('Нажми на мячик')
+  assert.deepEqual(
+    (await speech()).map((s) => s.text),
+    ['Поймай мяч', 'Нажми на мячик — я побегу за ним!'],
+    'No automatic reading of game controls or counters',
+  )
   for (let i = 0; i < 5; i++) {
     await act('catch')
     await page.waitForTimeout(750)
@@ -117,7 +126,7 @@ try {
   await heard('Привет!')
   assert.deepEqual(errors, [])
   console.log(
-    'PASS: initial text, action labels, timed feedback, repeated taps, mute/unmute, all locales, cancelled activity, mini-game win and tap-to-read. Browser speech calls verified; actual voice quality depends on installed voices.',
+    'PASS: greeting/caption-only automatic narration, action labels, timed feedback, repeated taps, mute/unmute, all locales, cancelled activity, mini-game win and tap-to-read. Browser speech calls verified; actual voice quality depends on installed voices.',
   )
 } finally {
   await browser.close()

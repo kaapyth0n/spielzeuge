@@ -447,7 +447,11 @@ root.addEventListener('click', (event) => {
       ? event.target.closest<HTMLButtonElement>('[data-action]')
       : null
   if (target && !target.disabled) {
-    narration.begin(target.getAttribute('aria-label') ?? target.innerText)
+    narration.begin(
+      target.getAttribute('aria-label') ??
+        target.querySelector('strong')?.innerText ??
+        target.innerText,
+    )
     act(target.dataset.action!)
   } else if (event.target instanceof Element) {
     const text = event.target.closest<HTMLElement>(

@@ -2,7 +2,7 @@
 
 A calm puppy-care game for children aged 5–8, based on the child's drawing: a dog on a rug, a squeaky toy to its left, a ball, changeable wall drawings, care buttons and a separate page of games.
 
-Open `/sobachka/`. The catalog links to it. Russian, German and English use the existing shared language preference, including `?lang=ru|de|en`. All appearing text, button labels and action feedback are automatically narrated in the selected language using browser speech synthesis. Tapping prose reads it again; the question-mark button repeats the current instruction. A new action or language cancels stale speech, while automatic feedback is queued in order. The sound toggle mutes both voice and effects. Some browsers require the first tap before speech can start; voices depend on the device. All actions also work silently.
+Open `/sobachka/`. The catalog links to it. Russian, German and English use the existing shared language preference, including `?lang=ru|de|en`. Only the initial welcome and changing captions beneath the puppy are automatically narrated in the selected language using browser speech synthesis. Clicked actions are spoken; headings, counters, menus and unclicked controls stay quiet. Tapping prose reads it again; the question-mark button repeats the current instruction. A new action or language cancels stale speech, while automatic feedback is queued in order. The sound toggle mutes both voice and effects. Some browsers require the first tap before speech can start; voices depend on the device. All actions also work silently.
 
 - Tap the puppy to pet it; tap the bunny to squeak.
 - Feed: tap a food, or drag it to the bowl using mouse or touch. Eating finishes after 1.8 seconds.
