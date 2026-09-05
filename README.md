@@ -2,7 +2,7 @@
 
 A small catalog of calm toys for children. Web first, later on iPad.
 
-Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуняшка** (coming soon).
+Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуняшка**, a dress-up doll. Always clothed. Hearts after Ready stay in the game; nothing is posted.
 
 Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`.
 
@@ -12,7 +12,7 @@ Language is shared across the catalog and every toy (`localStorage` key `spielze
 | --- | --- |
 | `/` | Catalog |
 | `/kuckuck/` | Kuckuck — door, knock, visitor, spoken name |
-| `/chunyashka/` | Чуняшка — placeholder until the game is ready |
+| `/chunyashka/` | Чуняшка — dress-up; hearts stay on the toy |
 
 ### Kuckuck
 

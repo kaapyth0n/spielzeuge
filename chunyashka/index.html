@@ -9,25 +9,44 @@
     <meta name="theme-color" content="#2a1620" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Чуняшка" />
-    <meta name="description" content="Чуняшка — вторая игрушка в каталоге Spielzeuge. Скоро." />
+    <meta
+      name="description"
+      content="Чуняшка — детская одевалка. Всегда в одежде. Лайки только в игре."
+    />
     <title>Чуняшка</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/app-180.png" />
   </head>
-  <body class="catalog-body" data-lang="ru">
+  <body class="chun-body" data-lang="ru">
+    <a class="chun-back" href="../" data-i18n="back">← Spielzeuge</a>
     <button type="button" class="lang-toggle" id="lang-toggle" aria-label="Язык">
       <span class="lang-toggle-glow" aria-hidden="true"></span>
       <span class="lang-toggle-core" aria-hidden="true"></span>
     </button>
 
-    <div class="coming">
-      <a class="coming-back" href="../" data-i18n="back">← Spielzeuge</a>
-      <p class="coming-kicker" data-i18n="kicker">Чуняшка</p>
-      <h1 class="coming-title" data-i18n="title">Скоро</h1>
-      <p class="coming-text" data-i18n="text">
-        Вторая игрушка в каталоге. Правила и картинки появятся позже — пока здесь только место.
-      </p>
-      <a class="coming-cta" href="../kuckuck/" data-i18n="cta">Открыть Kuckuck</a>
+    <div class="chun">
+      <div class="stage" id="doll-stage"></div>
+
+      <div class="tray">
+        <div class="slots" id="slots">
+          <button type="button" class="slot is-on" data-slot="hair">Волосы</button>
+          <button type="button" class="slot" data-slot="dress">Платье</button>
+          <button type="button" class="slot" data-slot="shoes">Обувь</button>
+        </div>
+        <div class="chips" id="chips"></div>
+        <button type="button" class="ready" id="ready" data-i18n="ready">Готово</button>
+      </div>
+    </div>
+
+    <div class="photo" id="photo" hidden>
+      <div class="photo-card">
+        <div class="photo-stage" id="photo-stage"></div>
+        <p class="likes" id="like-label" aria-label="Сердечки">
+          ♥ <span id="like-count">0</span>
+        </p>
+        <div class="heart-rain" id="heart-rain" aria-hidden="true"></div>
+        <button type="button" class="again" id="again" data-i18n="again">Ещё раз</button>
+      </div>
     </div>
 
     <div class="lang-sheet" id="lang-sheet" hidden>
@@ -44,6 +63,6 @@
       </div>
     </div>
 
-    <script type="module" src="/src/catalog.ts"></script>
+    <script type="module" src="/src/chunyashka.ts"></script>
   </body>
 </html>

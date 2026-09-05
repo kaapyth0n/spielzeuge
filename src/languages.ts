@@ -59,7 +59,7 @@ export const CATALOG_COPY: Record<
     kuckuckName: 'Kuckuck',
     kuckuckBlurb: 'Дверь стучит. Открой — там гость.',
     chunyashkaName: 'Чуняшка',
-    chunyashkaBlurb: 'Скоро. Пока только имя на двери.',
+    chunyashkaBlurb: 'Одень. Потом сердечки.',
     langAria: 'Язык',
     sheetTitle: 'Язык',
     sheetHint: 'Удерживайте кнопку языка, чтобы выбрать сразу.',
@@ -73,8 +73,8 @@ export const CATALOG_COPY: Record<
     navLabel: 'Spiele',
     kuckuckName: 'Kuckuck',
     kuckuckBlurb: 'Die Tür klopft. Öffne sie — ein Gast wartet.',
-    chunyashkaName: 'Tschuljaschka',
-    chunyashkaBlurb: 'Bald. Noch nur ein Name an der Tür.',
+    chunyashkaName: 'Чуняшка',
+    chunyashkaBlurb: 'Anziehen. Dann Herzen.',
     langAria: 'Sprache',
     sheetTitle: 'Sprache',
     sheetHint: 'Sprache gedrückt halten, um direkt zu wählen.',
@@ -89,7 +89,7 @@ export const CATALOG_COPY: Record<
     kuckuckName: 'Kuckuck',
     kuckuckBlurb: 'The door knocks. Open it — a guest is there.',
     chunyashkaName: 'Chunyashka',
-    chunyashkaBlurb: 'Soon. Just a name on the door for now.',
+    chunyashkaBlurb: 'Dress up. Then hearts.',
     langAria: 'Language',
     sheetTitle: 'Language',
     sheetHint: 'Hold the language button to pick one.',
@@ -102,10 +102,12 @@ export const CHUNYASHKA_COPY: Record<
     documentTitle: string
     description: string
     back: string
-    kicker: string
-    title: string
-    text: string
-    cta: string
+    hair: string
+    dress: string
+    shoes: string
+    ready: string
+    again: string
+    likes: string
     langAria: string
     sheetTitle: string
     sheetHint: string
@@ -113,36 +115,42 @@ export const CHUNYASHKA_COPY: Record<
 > = {
   ru: {
     documentTitle: 'Чуняшка',
-    description: 'Чуняшка — вторая игрушка в каталоге Spielzeuge. Скоро.',
+    description: 'Чуняшка — детская одевалка. Всегда в одежде. Лайки только в игре.',
     back: '← Spielzeuge',
-    kicker: 'Чуняшка',
-    title: 'Скоро',
-    text: 'Вторая игрушка в каталоге. Правила и картинки появятся позже — пока здесь только место.',
-    cta: 'Открыть Kuckuck',
+    hair: 'Волосы',
+    dress: 'Платье',
+    shoes: 'Обувь',
+    ready: 'Готово',
+    again: 'Ещё раз',
+    likes: 'Сердечки',
     langAria: 'Язык',
     sheetTitle: 'Язык',
     sheetHint: 'Удерживайте кнопку языка, чтобы выбрать сразу.',
   },
   de: {
-    documentTitle: 'Tschuljaschka',
-    description: 'Tschuljaschka — das zweite Spiel in Spielzeuge. Bald.',
+    documentTitle: 'Чуняшка',
+    description: 'Чуняшка — Anziehspiel. Immer angezogen. Herzen nur im Spiel.',
     back: '← Spielzeuge',
-    kicker: 'Tschuljaschka',
-    title: 'Bald',
-    text: 'Das zweite Spiel im Katalog. Regeln und Bilder kommen später — hier ist nur der Platz.',
-    cta: 'Kuckuck öffnen',
+    hair: 'Haare',
+    dress: 'Kleid',
+    shoes: 'Schuhe',
+    ready: 'Fertig',
+    again: 'Nochmal',
+    likes: 'Herzen',
     langAria: 'Sprache',
     sheetTitle: 'Sprache',
     sheetHint: 'Sprache gedrückt halten, um direkt zu wählen.',
   },
   en: {
     documentTitle: 'Chunyashka',
-    description: 'Chunyashka — the second toy in the Spielzeuge catalog. Coming soon.',
+    description: 'Chunyashka — a dress-up toy. Always clothed. Hearts stay in the game.',
     back: '← Spielzeuge',
-    kicker: 'Chunyashka',
-    title: 'Soon',
-    text: 'The second toy in the catalog. Rules and pictures come later — this is just the place for it.',
-    cta: 'Open Kuckuck',
+    hair: 'Hair',
+    dress: 'Dress',
+    shoes: 'Shoes',
+    ready: 'Ready',
+    again: 'Again',
+    likes: 'Hearts',
     langAria: 'Language',
     sheetTitle: 'Language',
     sheetHint: 'Hold the language button to pick one.',
