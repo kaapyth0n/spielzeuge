@@ -1,3 +1,5 @@
+import { NEW_VISITOR_ART } from './visitor-art.ts'
+
 export const VISITOR_IDS = [
   'cat',
   'dog',
@@ -9,6 +11,11 @@ export const VISITOR_IDS = [
   'bear',
   'frog',
   'capybara',
+  'fox',
+  'elephant',
+  'owl',
+  'hedgehog',
+  'penguin',
 ] as const
 
 export type VisitorId = (typeof VISITOR_IDS)[number]
@@ -321,6 +328,11 @@ export const VISITORS: Visitor[] = [
       <img class="toy" src="/visitors/capybara.png" alt="" draggable="false" aria-hidden="true" />
     `,
   },
+  { id: 'fox', word: { ru: 'лиса', de: 'Fuchs', en: 'fox' }, svg: NEW_VISITOR_ART.fox },
+  { id: 'elephant', word: { ru: 'слон', de: 'Elefant', en: 'elephant' }, svg: NEW_VISITOR_ART.elephant },
+  { id: 'owl', word: { ru: 'сова', de: 'Eule', en: 'owl' }, svg: NEW_VISITOR_ART.owl },
+  { id: 'hedgehog', word: { ru: 'ёжик', de: 'Igel', en: 'hedgehog' }, svg: NEW_VISITOR_ART.hedgehog },
+  { id: 'penguin', word: { ru: 'пингвин', de: 'Pinguin', en: 'penguin' }, svg: NEW_VISITOR_ART.penguin },
 ]
 
 export function visitorById(id: VisitorId): Visitor {

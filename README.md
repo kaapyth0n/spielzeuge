@@ -32,10 +32,11 @@ Feed, walk, play and nap with a little puppy. Friendship hearts unlock three cal
 
 ### Kuckuck
 
-There is no menu. The door knocks. Tap the door frame. It opens. A wooden animal is there. It makes its sound, then a voice says the word. Tap the visitor to hear that again; tap the frame to close. Hall and floor do nothing.
+Fifteen animals visit, including a fox, elephant, owl, hedgehog and penguin. There is no menu. The door knocks. Tap the door frame. It opens. A wooden animal is there. It makes its sound, then a voice says the word. Tap the visitor to hear that again; tap the frame to close. Hall and floor do nothing.
 
 - Default language: Russian
-- Change language: tap the lamp to cycle (or hold it, or press `L` then `1` / `2` / `3`)
+- Sound: the visible music button mutes speech and effects and remembers the choice
+- Change language: use the visible RU/DE/EN button, or tap the lamp to cycle (or hold it, or press `L` then `1` / `2` / `3`)
 - The language name is spoken only when the lamp is tapped and nobody is in the doorway
 - No score, no fail, no written words on the child’s screen
 
@@ -57,7 +58,7 @@ npm run build
 npm run preview
 ```
 
-Kuckuck query helpers: `/kuckuck/?lang=ru|de|en` and `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara`.
+Kuckuck query helpers: `/kuckuck/?lang=ru|de|en` and `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara|fox|elephant|owl|hedgehog|penguin`.
 
 ## Delivery workflow
 

@@ -14,11 +14,30 @@ const FILES = {
   bear: '/sounds/bear.mp3',
   frog: '/sounds/frog.mp3',
   capybara: '/sounds/capybara.mp3',
+  fox: '/sounds/fox.mp3',
+  elephant: '/sounds/elephant.mp3',
+  owl: '/sounds/owl.mp3',
+  hedgehog: '/sounds/hedgehog.mp3',
+  penguin: '/sounds/penguin.mp3',
+
 } as const
 
 type Clip = keyof typeof FILES
 
 export class ToyAudio {
+  private muted = false
+  private readonly sources = new Set<AudioBufferSourceNode>()
+
+  setMuted(muted: boolean): void {
+    this.muted = muted
+    if (muted) this.stop()
+  }
+
+  stop(): void {
+    for (const source of this.sources) { try { source.stop() } catch { /* already ended */ } }
+    this.sources.clear()
+  }
+
   private ctx: AudioContext | null = null
   private master: GainNode | null = null
   private readonly buffers = new Map<Clip, AudioBuffer>()
@@ -34,6 +53,7 @@ export class ToyAudio {
   }
 
   async unlock(): Promise<void> {
+    if (typeof AudioContext === 'undefined') return
     if (!this.ctx) {
       const ctx = new AudioContext()
       const master = ctx.createGain()
@@ -78,12 +98,14 @@ export class ToyAudio {
     const ctx = this.ctx
     const master = this.master
     const buffer = this.buffers.get(clip)
-    if (!ctx || !master || !buffer) return
+    if (this.muted || document.hidden || !ctx || !master || !buffer) return
     const src = ctx.createBufferSource()
     const gain = ctx.createGain()
     src.buffer = buffer
     gain.gain.value = clip === 'creak' ? 0.55 : clip === 'knock' ? 0.9 : 0.8
     src.connect(gain).connect(master)
+    this.sources.add(src)
+    src.onended = () => this.sources.delete(src)
     src.start(ctx.currentTime + offset)
   }
 

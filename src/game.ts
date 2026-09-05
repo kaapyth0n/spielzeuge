@@ -42,6 +42,11 @@ export class Game {
   private readonly audio = new ToyAudio()
   private readonly speech = new ToySpeech()
 
+  private muted = false
+  private greetingGeneration = 0
+  private readonly soundButton: HTMLButtonElement
+  private readonly languageButton: HTMLButtonElement
+
   private phase: Phase = 'boot'
   private lang: Lang = loadLang()
   private bag: VisitorId[] = []
@@ -54,6 +59,14 @@ export class Game {
   private readonly timers = new Set<number>()
 
   constructor(root: HTMLElement) {
+    const controls = document.createElement('div')
+    controls.className = 'kuckuck-controls'
+    controls.innerHTML = '<button type="button" id="kuckuck-language"></button><button type="button" id="kuckuck-sound"></button>'
+    root.append(controls)
+    this.soundButton = controls.querySelector<HTMLButtonElement>('#kuckuck-sound')!
+    this.languageButton = controls.querySelector<HTMLButtonElement>('#kuckuck-language')!
+    try { this.muted = localStorage.getItem('spielzeuge.kuckuck.muted') === 'true' } catch { /* optional storage */ }
+    this.audio.setMuted(this.muted)
     this.world = this.must(root, '.world')
     this.doorway = this.must(root, '#doorway')
     this.door = this.must(root, '#door') as HTMLButtonElement
@@ -77,6 +90,15 @@ export class Game {
   }
 
   private bind(): void {
+    this.soundButton.addEventListener('click', () => {
+      this.muted = !this.muted
+      this.cancelGreeting()
+      this.audio.setMuted(this.muted)
+      try { localStorage.setItem('spielzeuge.kuckuck.muted', String(this.muted)) } catch { /* optional storage */ }
+      this.updateControls()
+      if (!this.muted) void this.unlockVoice()
+    })
+    this.languageButton.addEventListener('click', () => this.chooseLang(nextLang(this.lang)))
     const lamp = this.must(this.world, '#lamp')
     lamp.addEventListener('pointerdown', (event) => {
       event.stopPropagation()
@@ -119,8 +141,10 @@ export class Game {
     window.addEventListener('keydown', (event) => this.onKey(event))
 
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) this.speech.silence()
+      if (document.hidden) { this.cancelGreeting(); this.audio.stop() }
     })
+
+    window.addEventListener('pagehide', () => { this.cancelGreeting(); this.audio.stop(); this.clearTimers() })
 
     document.addEventListener('contextmenu', (event) => event.preventDefault())
     document.addEventListener(
@@ -190,7 +214,7 @@ export class Game {
         ) {
           return
         }
-        this.speech.speak(LANG_LABEL[this.lang], this.lang)
+        if (!this.muted) this.speech.speak(LANG_LABEL[this.lang], this.lang)
         return
       case 'cycle-lang-word':
         this.applyLang(nextLang(this.lang), true)
@@ -226,7 +250,7 @@ export class Game {
       this.greet(this.current)
       return
     }
-    this.speech.speak(LANG_LABEL[this.lang], this.lang)
+    if (!this.muted) this.speech.speak(LANG_LABEL[this.lang], this.lang)
   }
 
   private showParent(): void {
@@ -241,10 +265,14 @@ export class Game {
   }
 
   private applyLang(lang: Lang, persist: boolean): void {
+    this.cancelGreeting()
     this.lang = lang
     if (persist) saveLang(lang)
     document.documentElement.lang = lang === 'ru' ? 'ru' : lang === 'de' ? 'de' : 'en'
     this.world.dataset.lang = lang
+    this.updateControls()
+    if (this.current) this.slot.setAttribute('aria-label', this.current.word[lang])
+    this.must(this.world, '#lamp').setAttribute('aria-label', { ru: 'Сменить язык', de: 'Sprache wechseln', en: 'Change language' }[lang])
     this.parentHint.textContent = PARENT_COPY[lang].hint
     if (this.parentHome) this.parentHome.textContent = PARENT_COPY[lang].home
     for (const button of this.langButtons) {
@@ -255,6 +283,23 @@ export class Game {
     this.door.setAttribute('aria-label', this.doorLabel())
   }
 
+  private cancelGreeting(): void {
+    this.greetingGeneration += 1
+    this.speech.silence()
+  }
+
+  private updateControls(): void {
+    this.languageButton.textContent = this.lang.toUpperCase()
+    this.languageButton.setAttribute('aria-label', { ru: 'Сменить язык', de: 'Sprache wechseln', en: 'Change language' }[this.lang])
+    this.soundButton.textContent = this.muted ? '♫ ×' : '♫'
+    const label = this.muted
+      ? { ru: 'Включить звук', de: 'Ton einschalten', en: 'Enable sound' }[this.lang]
+      : { ru: 'Выключить звук', de: 'Ton ausschalten', en: 'Mute sound' }[this.lang]
+    this.soundButton.setAttribute('aria-label', label)
+    this.soundButton.title = label
+    this.soundButton.setAttribute('aria-pressed', String(this.muted))
+  }
+
   private doorLabel(): string {
     if (this.lang === 'ru') return 'Дверь'
     if (this.lang === 'de') return 'Tür'
@@ -263,7 +308,8 @@ export class Game {
 
   private knock(): void {
     if (this.phase === 'knocking' || this.phase === 'opening' || this.phase === 'open') return
-    this.speech.silence()
+    this.cancelGreeting()
+    this.audio.stop()
     this.setPhase('knocking')
     this.doorway.classList.add('is-knocking')
     this.audio.knocks()
@@ -310,7 +356,8 @@ export class Game {
   private closeDoor(): void {
     if (this.phase !== 'open' && this.phase !== 'opening') return
     this.clearTimers()
-    this.speech.silence()
+    this.cancelGreeting()
+    this.audio.stop()
     this.setPhase('closing')
     this.doorway.classList.remove('is-open')
     this.slot.classList.add('is-leaving')
@@ -318,6 +365,9 @@ export class Game {
     this.later(CLOSE_MS - 80, () => this.audio.latch())
     this.later(CLOSE_MS, () => {
       this.slot.replaceChildren()
+      this.slot.removeAttribute('role')
+      this.slot.removeAttribute('aria-label')
+      this.slot.removeAttribute('tabindex')
       this.slot.className = 'visitor-slot'
       delete this.slot.dataset.zone
       this.current = null
@@ -335,13 +385,19 @@ export class Game {
     this.slot.classList.remove('is-greeting')
     void this.slot.offsetWidth
     this.slot.classList.add('is-greeting')
+    this.cancelGreeting()
+    this.audio.stop()
+    const generation = this.greetingGeneration
     this.audio.visitor(visitor.id)
     const word = visitor.word[this.lang]
     const afterSound = Math.min(
       2000,
       Math.max(280, this.audio.duration(visitor.id) * 950),
     )
-    this.later(afterSound, () => this.speech.speak(word, this.lang))
+    this.later(afterSound, () => {
+      if (generation !== this.greetingGeneration || this.muted || document.hidden || this.current !== visitor) return
+      this.speech.speak(visitor.word[this.lang], this.lang)
+    })
     this.live.textContent = word
   }
 
@@ -378,7 +434,7 @@ export class Game {
 
   private async unlockVoice(): Promise<void> {
     this.speech.prime()
-    await this.audio.unlock()
+    try { await this.audio.unlock() } catch { /* audio must never block play */ }
     try {
       await navigator.wakeLock?.request('screen')
     } catch {
@@ -387,6 +443,12 @@ export class Game {
   }
 
   private onKey(event: KeyboardEvent): void {
+    if ((event.target as HTMLElement)?.closest('button, a') && event.target !== this.door) return
+    if (event.target === this.slot && (event.key === ' ' || event.key === 'Enter')) {
+      event.preventDefault()
+      void this.unlockVoice().then(() => this.run('greet'))
+      return
+    }
     if (event.key === '1') this.chooseLang('ru')
     if (event.key === '2') this.chooseLang('de')
     if (event.key === '3') this.chooseLang('en')

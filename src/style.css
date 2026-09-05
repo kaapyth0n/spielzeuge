@@ -848,3 +848,38 @@ button {
     transition-duration: 0.35s;
   }
 }
+
+/* New wooden guests each answer with a different, short gesture. */
+.visitor--hedgehog .toy { width: min(96%, 260px); }
+.part-head, .part-trunk, .part-spines, .part-leaf,
+.part-flipper-l, .part-flipper-r, .part-scarf {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.part-trunk, .part-flipper-l, .part-flipper-r, .part-scarf { transform-origin: top center; }
+.visitor--fox.is-greeting .part-head { animation: curious-tilt 1.5s ease-in-out; }
+.visitor--elephant.is-greeting .part-trunk { animation: trunk-wave 1.4s ease-in-out; }
+.visitor--owl.is-greeting .part-head { animation: curious-tilt 1.8s ease-in-out; }
+.visitor--owl.is-greeting .part-wing { animation: owl-wings 1.4s ease-in-out; transform-origin: center; }
+.visitor--hedgehog.is-greeting .part-spines { animation: hedgehog-sniff 1.2s ease-in-out; }
+.visitor--hedgehog.is-greeting .part-head { animation: hedgehog-sniff .4s ease-in-out 3; }
+.visitor--hedgehog.is-greeting .part-leaf { animation: curious-tilt 1.2s ease-in-out; }
+.visitor--penguin.is-greeting .toy { animation: penguin-waddle 1.6s ease-in-out; transform-origin: 50% 90%; }
+.visitor--penguin.is-greeting .part-flipper-r { animation: trunk-wave .65s ease-in-out 2; }
+@keyframes curious-tilt { 35% { transform: rotate(-12deg); } 70% { transform: rotate(7deg); } }
+@keyframes trunk-wave { 45% { transform: rotate(-24deg); } 75% { transform: rotate(8deg); } }
+@keyframes owl-wings { 45% { transform: scaleX(1.13) translateY(-4px); } }
+@keyframes hedgehog-sniff { 50% { transform: translateY(-3px) rotate(-3deg); } }
+@keyframes penguin-waddle { 25% { transform: rotate(-7deg); } 65% { transform: rotate(7deg); } }
+.kuckuck-controls {
+  position: fixed; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right));
+  z-index: 20; display: flex; gap: 8px;
+}
+.kuckuck-controls button {
+  min-width: 48px; min-height: 48px; padding: 8px 12px; border: 1px solid #c7a77366;
+  border-radius: 24px; color: #f5e5bf; background: #32221fe6; font: 600 14px system-ui; cursor: pointer;
+}
+.kuckuck-controls button:focus-visible { outline: 3px solid #f5d68b; outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .visitor-slot.is-greeting .toy, .visitor-slot.is-greeting [class^="part-"] { animation: none; }
+}

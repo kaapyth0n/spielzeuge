@@ -17,3 +17,7 @@ All clips are free to use. Encoded as short mono MP3s (Safari on iOS does not pl
 | `bear.mp3` | OpenGameArt [Bear growls](https://opengameart.org/content/bear-growls) from the U.S. Fish & Wildlife Service (`bear_01`) | CC0 |
 | `frog.mp3` | OpenGameArt [Frog Croaks](https://opengameart.org/content/frog-croaks) by EZduzziteh (`croak_01`) | CC0 |
 | `capybara.mp3` | Freesound [Squeaking Guinea Pigs](https://freesound.org/people/Breviceps/sounds/583078/) by Breviceps — short loud cut, normalized | CC0 |
+
+## New Kuckuck toy sounds
+
+`fox.mp3`, `elephant.mp3`, `owl.mp3`, `hedgehog.mp3`, `penguin.mp3`: original synthesized toy impressions created for this project. No external recordings or samples. Reproducible source: `scripts/kuckuck-sounds.py`. These are playful sound cues, not recordings of actual animals.
