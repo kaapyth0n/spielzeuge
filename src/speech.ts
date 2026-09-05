@@ -1,9 +1,12 @@
 import { SPEECH_LOCALE, type Lang } from './languages.ts'
 
+const CANCEL_GAP_MS = 60
 const HOLD_MS = 8000
 
 export class ToySpeech {
   private ready = false
+  private generation = 0
+  private playTimer: number | null = null
   private readonly held = new Set<SpeechSynthesisUtterance>()
 
   constructor() {
@@ -30,18 +33,31 @@ export class ToySpeech {
 
   speak(word: string, lang: Lang): void {
     if (!this.ready) return
+    const generation = ++this.generation
     const utterance = this.makeUtterance(word, lang)
     this.hold(utterance)
-    // Append after the silent unlock utterance. Cancelling that utterance from
-    // this delayed callback can discard iOS's unlocked speech session.
-    this.resumeEngine()
-    window.speechSynthesis.speak(utterance)
+
+    const play = (): void => {
+      if (generation !== this.generation) return
+      this.resumeEngine()
+      window.speechSynthesis.speak(utterance)
+    }
+
+    this.clearPlayTimer()
+    const synth = window.speechSynthesis
+    if (synth.speaking || synth.pending) {
+      synth.cancel()
+      this.playTimer = window.setTimeout(play, CANCEL_GAP_MS)
+      return
+    }
+    play()
   }
 
   silence(): void {
     if (!this.ready) return
+    this.generation += 1
+    this.clearPlayTimer()
     window.speechSynthesis.cancel()
-    this.held.clear()
   }
 
   private makeUtterance(word: string, lang: Lang): SpeechSynthesisUtterance {
@@ -63,6 +79,12 @@ export class ToySpeech {
   private hold(utterance: SpeechSynthesisUtterance): void {
     this.held.add(utterance)
     window.setTimeout(() => this.held.delete(utterance), HOLD_MS)
+  }
+
+  private clearPlayTimer(): void {
+    if (this.playTimer === null) return
+    window.clearTimeout(this.playTimer)
+    this.playTimer = null
   }
 
   private resumeEngine(): void {

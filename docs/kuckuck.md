@@ -104,8 +104,6 @@ Gameplay handles completed `click`/tap events, not touch `pointerdown`. Audio an
 
 `npm run test:kuckuck-start` checks a fresh iPad-sized touch session with indefinitely pending audio resume, sound fetch, audio decode and wake-lock requests, plus normal startup. Each case opens, greets, closes and reopens using the keyboard without touching language controls. Run `ENGINE=webkit npm run test:kuckuck-start` for WebKit (install using `npx playwright-core install webkit`). This is browser automation, not a physical iPad test.
 
-## Speech-session regression
+## Speech recovery
 
-Normal greetings preserve the speech session opened by the tap. They do not call `speechSynthesis.cancel()` before the delayed name, and the name queues after the silent priming utterance instead of cancelling it. Closing, muting, leaving and changing language still explicitly cancel obsolete speech. Taps while a name is pending do not restart its sound/timer, so repeated taps cannot starve the name.
-
-`npm run test:kuckuck-speech` uses a strict speech-session mock where cancelling invalidates the gesture unlock; checks hedgehog, owl and penguin on first reveal and repeated taps. It reproduces the old cancellation failure, unlike a test that only logs `speak()` calls. Actual voice output still depends on the device and its installed voices.
+The speech engine implementation is restored to the pre-expansion version. If an utterance is still pending or speaking, it cancels that queue and waits 60 ms before starting the actual word. Normal greetings do not cancel speech in advance; explicit cancellation is reserved for closing, language changes, mute and leaving. The first-tap fix remains independent of speech startup.
