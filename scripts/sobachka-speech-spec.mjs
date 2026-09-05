@@ -37,6 +37,24 @@ const heard = (text) =>
     (text) => window.spoken.some((s) => s.text.includes(text)),
     text,
   )
+async function checkWallpaperSpeech() {
+  for (const expectedWall of [1, 2, 0]) {
+    await clear()
+    await act('wall')
+    const caption = await page.locator('#message').innerText()
+    await heard(caption)
+    await page.waitForTimeout(200)
+    assert.equal(
+      await page.locator('.scene').getAttribute('data-wall'),
+      String(expectedWall),
+    )
+    assert.deepEqual(
+      (await speech()).map((s) => s.text),
+      [caption],
+      'Changing wallpaper speaks only the new caption once, never the previous button label',
+    )
+  }
+}
 try {
   await page.goto('http://localhost:5173/sobachka/?lang=ru')
   await heard('Привет! Давай дружить?')
@@ -47,6 +65,7 @@ try {
     ['Привет! Давай дружить?'],
     'Only the welcome is automatic on load',
   )
+  await checkWallpaperSpeech()
   await clear()
   await act('feed')
   await heard('Перетащи еду')
@@ -98,6 +117,7 @@ try {
       (await speech()).every((s) => s.lang === locale),
       `All phrases use ${locale}`,
     )
+    await checkWallpaperSpeech()
   }
   await act('sleep')
   await heard('Тс-с')

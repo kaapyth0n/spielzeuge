@@ -447,12 +447,16 @@ root.addEventListener('click', (event) => {
       ? event.target.closest<HTMLButtonElement>('[data-action]')
       : null
   if (target && !target.disabled) {
+    const action = target.dataset.action!
+    // Wallpaper is announced by its new caption, not the button's old state.
     narration.begin(
-      target.getAttribute('aria-label') ??
-        target.querySelector('strong')?.innerText ??
-        target.innerText,
+      action === 'wall'
+        ? ''
+        : (target.getAttribute('aria-label') ??
+            target.querySelector('strong')?.innerText ??
+            target.innerText),
     )
-    act(target.dataset.action!)
+    act(action)
   } else if (event.target instanceof Element) {
     const text = event.target.closest<HTMLElement>(
       'p, h1, h2, .friendship, .puppy-footer span, a',
