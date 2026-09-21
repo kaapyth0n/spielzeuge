@@ -32,7 +32,7 @@ Feed, walk, play and nap with a little puppy. Friendship hearts unlock three cal
 
 ### Kuckuck
 
-Twenty animals visit, including a sheep, pig, horse, chicken and bee. There is no menu. The door knocks. Tap the door frame. It opens. A wooden animal is there. It makes its sound, then a voice says the word. Tap the visitor to hear that again; tap the frame to close. Hall and floor do nothing.
+Twenty animals visit, including a sheep, pig, horse, chicken and bee. A wooden home tile in the top-right corner returns to the catalog in one tap. The door knocks. Tap the door frame. It opens. A wooden animal is there. It makes its sound, then a voice says the word. Tap the visitor to hear that again; tap the frame to close. Hall and floor do nothing.
 
 - Default language: Russian
 - Sound: the visible music button mutes speech and effects and remembers the choice
@@ -75,3 +75,7 @@ Live at [https://spielzeuge.kapitonov.su](https://spielzeuge.kapitonov.su).
 That builds and rsyncs `dist/` to `root@46.62.166.228:/opt/spielzeuge/`. The shared Caddy on that host serves the files and renews the certificate. First-time Caddy/compose changes are in `deploy/Caddyfile.snippet`.
 
 Hashed `/assets/*` are cached forever. Everything else, including `/sounds/*`, is `no-cache`. After changing a sound or icon, bump `CACHE` in `public/sw.js` so home-screen copies drop the old files.
+
+The always-visible 68px home tile stays clear of the door and safe-area insets, including with the language sheet open. Leaving tears down audio, speech, timers, listeners and wake lock; history restoration starts a fresh sitting.
+
+`npm run test:home` checks the home tile on mobile, small portrait, landscape and desktop, keyboard navigation, language labels, re-entry and teardown with a pending audio unlock. Like `test:taps`, it expects a running dev server; override `BASE_URL` and `CHROMIUM_PATH` as needed (defaults: `http://localhost:5173`, `/usr/bin/chromium`). No browser download is required when Chromium is installed.

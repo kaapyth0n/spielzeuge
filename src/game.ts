@@ -29,6 +29,11 @@ const GREET_COOLDOWN_MS = 900
 const PARENT_HOLD_MS = 720
 
 export class Game {
+  private disposed = false
+  private started = false
+  private readonly listeners = new AbortController()
+  private wakeLock: WakeLockSentinel | null = null
+  private readonly home: HTMLAnchorElement
   private readonly world: HTMLElement
   private readonly doorway: HTMLElement
   private readonly door: HTMLButtonElement
@@ -59,6 +64,7 @@ export class Game {
   private readonly timers = new Set<number>()
 
   constructor(root: HTMLElement) {
+    this.home = this.must(root, '#home') as HTMLAnchorElement
     const controls = document.createElement('div')
     controls.className = 'kuckuck-controls'
     controls.innerHTML = '<button type="button" id="kuckuck-language"></button><button type="button" id="kuckuck-sound"></button>'
@@ -81,6 +87,8 @@ export class Game {
   }
 
   start(): void {
+    if (this.started || this.disposed) return
+    this.started = true
     this.applyLang(this.lang, false)
     this.bind()
     this.setPhase('closed')
@@ -89,7 +97,38 @@ export class Game {
     })
   }
 
+  /** Permanent teardown; a restored page gets a fresh Game instance. */
+  destroy(): void {
+    if (this.disposed) return
+    this.disposed = true
+    this.listeners.abort()
+    this.clearTimers()
+    this.cancelParentHold()
+    this.speech.destroy()
+    this.audio.destroy()
+    void this.wakeLock?.release().catch(() => {})
+    this.wakeLock = null
+    this.hideParent()
+    this.doorway.classList.remove('is-open', 'is-knocking')
+    this.slot.replaceChildren()
+    this.slot.className = 'visitor-slot'
+    this.slot.removeAttribute('role')
+    this.slot.removeAttribute('aria-label')
+    this.slot.removeAttribute('tabindex')
+    delete this.slot.dataset.zone
+    this.live.textContent = ''
+    this.current = null
+    this.setPhase('boot')
+  }
+
   private bind(): void {
+    const options = { signal: this.listeners.signal }
+    this.home.addEventListener('pointerdown', (event) => event.stopPropagation(), options)
+    this.home.addEventListener('click', (event) => {
+      event.stopPropagation()
+      if (event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) this.destroy()
+    }, options)
+    this.home.addEventListener('keydown', (event) => event.stopPropagation(), options)
     this.soundButton.addEventListener('click', () => {
       this.muted = !this.muted
       this.cancelGreeting()
@@ -97,30 +136,30 @@ export class Game {
       try { localStorage.setItem('spielzeuge.kuckuck.muted', String(this.muted)) } catch { /* optional storage */ }
       this.updateControls()
       if (!this.muted) this.unlockVoice()
-    })
-    this.languageButton.addEventListener('click', () => this.chooseLang(nextLang(this.lang)))
+    }, options)
+    this.languageButton.addEventListener('click', () => this.chooseLang(nextLang(this.lang)), options)
     const lamp = this.must(this.world, '#lamp')
     lamp.addEventListener('pointerdown', (event) => {
       event.stopPropagation()
       this.speech.prime()
       if (this.sheet.classList.contains('is-open')) return
       this.beginParentHold()
-    })
-    lamp.addEventListener('pointercancel', () => this.cancelParentHold())
+    }, options)
+    lamp.addEventListener('pointercancel', () => this.cancelParentHold(), options)
     lamp.addEventListener('click', (event) => {
       event.preventDefault()
       event.stopPropagation()
       this.cancelParentHold()
       if (this.sheet.classList.contains('is-open')) return
       this.run(decide(this.phase, 'lamp', this.hasVisitor()))
-    })
+    }, options)
 
     // A completed tap carries touch activation on iPad; pointerdown does not.
-    this.world.addEventListener('click', (event) => this.onPlayClick(event))
+    this.world.addEventListener('click', (event) => this.onPlayClick(event), options)
 
     this.door.addEventListener('click', (event) => {
       event.preventDefault()
-    })
+    }, options)
 
     for (const button of this.langButtons) {
       button.addEventListener('click', () => {
@@ -129,30 +168,28 @@ export class Game {
           this.chooseLang(next)
           this.hideParent()
         }
-      })
+      }, options)
     }
 
     this.sheet.addEventListener('click', (event) => {
       if (event.target === this.sheet) this.hideParent()
-    })
+    }, options)
 
-    window.addEventListener('keydown', (event) => this.onKey(event))
+    window.addEventListener('keydown', (event) => this.onKey(event), options)
 
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) { this.cancelGreeting(); this.audio.stop() }
-    })
+    }, options)
 
-    window.addEventListener('pagehide', () => { this.cancelGreeting(); this.audio.stop(); this.clearTimers() })
-
-    document.addEventListener('contextmenu', (event) => event.preventDefault())
+    document.addEventListener('contextmenu', (event) => event.preventDefault(), options)
     document.addEventListener(
       'touchmove',
       (event) => {
         event.preventDefault()
       },
-      { passive: false },
+      { ...options, passive: false },
     )
-    document.addEventListener('gesturestart', (event) => event.preventDefault())
+    document.addEventListener('gesturestart', (event) => event.preventDefault(), options)
   }
 
   private onPlayClick(event: MouseEvent): void {
@@ -171,6 +208,7 @@ export class Game {
   }
 
   private run(action: Action): void {
+    if (this.disposed) return
     switch (action) {
       case 'ignore':
         return
@@ -257,6 +295,7 @@ export class Game {
 
   private applyLang(lang: Lang, persist: boolean): void {
     this.cancelGreeting()
+    this.home.setAttribute('aria-label', PARENT_COPY[lang].home)
     this.lang = lang
     if (persist) saveLang(lang)
     document.documentElement.lang = lang === 'ru' ? 'ru' : lang === 'de' ? 'de' : 'en'
@@ -434,7 +473,12 @@ export class Game {
     try { this.speech.prime() } catch { /* speech is optional */ }
     void this.audio.unlock().catch(() => { /* audio is optional */ })
     try {
-      void navigator.wakeLock?.request('screen').catch(() => { /* denied */ })
+      if (this.disposed || (this.wakeLock && !this.wakeLock.released)) return
+      void navigator.wakeLock?.request('screen').then((lock) => {
+        if (!lock) return
+        if (this.disposed || (this.wakeLock && !this.wakeLock.released)) void lock.release()
+        else this.wakeLock = lock
+      }).catch(() => { /* denied */ })
     } catch { /* unsupported */ }
   }
 
@@ -467,7 +511,7 @@ export class Game {
     const id = window.setTimeout(() => {
       this.timers.delete(id)
       if (this.closeTimer === id) this.closeTimer = null
-      fn()
+      if (!this.disposed) fn()
     }, ms)
     this.timers.add(id)
     return id

@@ -8,8 +8,14 @@ import { Game } from './game.ts'
 const root = document.querySelector<HTMLElement>('#app')
 if (!root) throw new Error('Missing #app')
 
-const game = new Game(root)
+let game = new Game(root)
 game.start()
+window.addEventListener('pagehide', () => game.destroy())
+window.addEventListener('pageshow', (event) => {
+  if (!event.persisted) return
+  game = new Game(root)
+  game.start()
+})
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {

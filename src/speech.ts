@@ -4,6 +4,8 @@ const CANCEL_GAP_MS = 60
 const HOLD_MS = 8000
 
 export class ToySpeech {
+  private readonly listeners = new AbortController()
+  private readonly holdTimers = new Set<number>()
   private ready = false
   private generation = 0
   private playTimer: number | null = null
@@ -14,7 +16,7 @@ export class ToySpeech {
     this.ready = true
     window.speechSynthesis.addEventListener('voiceschanged', () => {
       window.speechSynthesis.getVoices()
-    })
+    }, { signal: this.listeners.signal })
     window.speechSynthesis.getVoices()
   }
 
@@ -60,6 +62,15 @@ export class ToySpeech {
     window.speechSynthesis.cancel()
   }
 
+  destroy(): void {
+    this.silence()
+    this.ready = false
+    this.listeners.abort()
+    for (const timer of this.holdTimers) window.clearTimeout(timer)
+    this.holdTimers.clear()
+    this.held.clear()
+  }
+
   private makeUtterance(word: string, lang: Lang): SpeechSynthesisUtterance {
     const utterance = new SpeechSynthesisUtterance(word)
     utterance.lang = SPEECH_LOCALE[lang]
@@ -78,7 +89,11 @@ export class ToySpeech {
 
   private hold(utterance: SpeechSynthesisUtterance): void {
     this.held.add(utterance)
-    window.setTimeout(() => this.held.delete(utterance), HOLD_MS)
+    const timer = window.setTimeout(() => {
+      this.holdTimers.delete(timer)
+      this.held.delete(utterance)
+    }, HOLD_MS)
+    this.holdTimers.add(timer)
   }
 
   private clearPlayTimer(): void {

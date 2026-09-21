@@ -30,6 +30,8 @@ type Clip = keyof typeof FILES
 
 export class ToyAudio {
   private muted = false
+  private disposed = false
+  private readonly requests = new AbortController()
   private readonly sources = new Set<AudioBufferSourceNode>()
 
   setMuted(muted: boolean): void {
@@ -41,7 +43,6 @@ export class ToyAudio {
     for (const source of this.sources) { try { source.stop() } catch { /* already ended */ } }
     this.sources.clear()
   }
-
   private ctx: AudioContext | null = null
   private master: GainNode | null = null
   private readonly buffers = new Map<Clip, AudioBuffer>()
@@ -52,12 +53,23 @@ export class ToyAudio {
     this.prefetching = this.prefetch()
   }
 
+  destroy(): void {
+    if (this.disposed) return
+    this.disposed = true
+    this.stop()
+    this.requests.abort()
+    this.master?.disconnect()
+    if (this.ctx && this.ctx.state !== 'closed') void this.ctx.close().catch(() => {})
+    this.buffers.clear()
+    this.raw.clear()
+  }
+
   get unlocked(): boolean {
     return this.ctx !== null && this.ctx.state === 'running'
   }
 
   async unlock(): Promise<void> {
-    if (typeof AudioContext === 'undefined') return
+    if (this.disposed || typeof AudioContext === 'undefined') return
     if (!this.ctx) {
       const ctx = new AudioContext()
       const master = ctx.createGain()
@@ -70,7 +82,7 @@ export class ToyAudio {
       await this.ctx.resume()
     }
     await this.prefetching
-    await this.decodeAll()
+    if (!this.disposed) await this.decodeAll()
   }
 
   duration(clip: Clip): number {
@@ -102,14 +114,14 @@ export class ToyAudio {
     const ctx = this.ctx
     const master = this.master
     const buffer = this.buffers.get(clip)
-    if (this.muted || document.hidden || !ctx || ctx.state !== 'running' || !master || !buffer) return
+    if (this.disposed || this.muted || document.hidden || !ctx || ctx.state !== 'running' || !master || !buffer) return
     const src = ctx.createBufferSource()
     const gain = ctx.createGain()
     src.buffer = buffer
     gain.gain.value = clip === 'creak' ? 0.55 : clip === 'knock' ? 0.9 : 0.8
     src.connect(gain).connect(master)
     this.sources.add(src)
-    src.onended = () => this.sources.delete(src)
+    src.onended = () => { this.sources.delete(src); src.disconnect(); gain.disconnect() }
     src.start(ctx.currentTime + offset)
   }
 
@@ -117,9 +129,10 @@ export class ToyAudio {
     await Promise.all(
       (Object.keys(FILES) as Clip[]).map(async (clip) => {
         try {
-          const response = await fetch(FILES[clip])
+          const response = await fetch(FILES[clip], { signal: this.requests.signal })
           if (!response.ok) return
-          this.raw.set(clip, await response.arrayBuffer())
+          const data = await response.arrayBuffer()
+          if (!this.disposed) this.raw.set(clip, data)
         } catch {
           // keep going; missing clips stay silent
         }
@@ -135,7 +148,7 @@ export class ToyAudio {
         if (this.buffers.has(clip)) return
         try {
           const buffer = await ctx.decodeAudioData(data.slice(0))
-          this.buffers.set(clip, buffer)
+          if (!this.disposed) this.buffers.set(clip, buffer)
         } catch {
           // skip a bad clip
         }

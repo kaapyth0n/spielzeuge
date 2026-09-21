@@ -2,7 +2,7 @@ import { chromium } from 'playwright-core'
 
 const LANG_NAMES = new Set(['русский', 'Deutsch', 'English'])
 
-const browser = await chromium.launch({ channel: 'chrome', headless: true })
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', headless: true })
 const page = await browser.newPage({
   viewport: { width: 390, height: 844 },
   hasTouch: true,
@@ -22,7 +22,7 @@ await page.addInitScript(() => {
   }
 })
 
-await page.goto('http://localhost:5173/kuckuck/?lang=ru&visitor=cat', {
+await page.goto(`${process.env.BASE_URL || 'http://localhost:5173'}/kuckuck/?lang=ru&visitor=cat`, {
   waitUntil: 'networkidle',
 })
 await page.waitForTimeout(1400)
@@ -109,7 +109,7 @@ if (!LANG_NAMES.has(afterClosedLamp.at(-1) ?? '')) {
 
 console.log('spoken log', afterClosedLamp)
 
-await page.goto('http://localhost:5173/kuckuck/?lang=ru&visitor=cow', {
+await page.goto(`${process.env.BASE_URL || 'http://localhost:5173'}/kuckuck/?lang=ru&visitor=cow`, {
   waitUntil: 'networkidle',
 })
 await page.waitForTimeout(1400)

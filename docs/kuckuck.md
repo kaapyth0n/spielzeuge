@@ -93,6 +93,10 @@ At this age drag-and-drop, menus, timers, and failure are the wrong material. A 
 
 The door is also the seed of the catalog: later toys can live behind it without turning the home screen into a grid of icons.
 
+The always-visible 68px home tile stays clear of the door, the language and sound buttons, and the safe-area insets, including with the language sheet open. Leaving tears down audio, speech, timers, listeners and wake lock; a restored page starts a fresh sitting.
+
+`npm run test:home` checks the home tile on mobile, small portrait, landscape and desktop, keyboard navigation, language labels, re-entry and teardown with a pending audio unlock. It expects a running dev server; override `BASE_URL` and `CHROMIUM_PATH` as needed (defaults: `http://localhost:5173`, `/usr/bin/chromium`).
+
 ## Five new visitors
 
 Fox wags its cream-tipped tail and tilts its head; elephant waves its trunk and ears; owl tilts its head and spreads its wings; hedgehog sniffs beneath a little leaf; penguin waddles and waves a flipper. Sheep nods; the pig curls its tail; the horse tosses its mane; the chicken pecks; the bee flutters. All of these are layered SVG wooden toys, with reduced-motion support.
