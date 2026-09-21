@@ -32,7 +32,7 @@ Feed, walk, play and nap with a little puppy. Friendship hearts unlock three cal
 
 ### Kuckuck
 
-Fifteen animals visit, including a fox, elephant, owl, hedgehog and penguin. There is no menu. The door knocks. Tap the door frame. It opens. A wooden animal is there. It makes its sound, then a voice says the word. Tap the visitor to hear that again; tap the frame to close. Hall and floor do nothing.
+Twenty animals visit, including a sheep, pig, horse, chicken and bee. There is no menu. The door knocks. Tap the door frame. It opens. A wooden animal is there. It makes its sound, then a voice says the word. Tap the visitor to hear that again; tap the frame to close. Hall and floor do nothing.
 
 - Default language: Russian
 - Sound: the visible music button mutes speech and effects and remembers the choice
@@ -58,7 +58,7 @@ npm run build
 npm run preview
 ```
 
-Kuckuck query helpers: `/kuckuck/?lang=ru|de|en` and `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara|fox|elephant|owl|hedgehog|penguin`.
+Kuckuck query helpers: `/kuckuck/?lang=ru|de|en` and `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara|fox|elephant|owl|hedgehog|penguin|sheep|pig|horse|chicken|bee`.
 
 ## Delivery workflow
 

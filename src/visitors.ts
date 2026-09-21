@@ -16,6 +16,11 @@ export const VISITOR_IDS = [
   'owl',
   'hedgehog',
   'penguin',
+  'sheep',
+  'pig',
+  'horse',
+  'chicken',
+  'bee',
 ] as const
 
 export type VisitorId = (typeof VISITOR_IDS)[number]
@@ -333,6 +338,11 @@ export const VISITORS: Visitor[] = [
   { id: 'owl', word: { ru: 'сова', de: 'Eule', en: 'owl' }, svg: NEW_VISITOR_ART.owl },
   { id: 'hedgehog', word: { ru: 'ёжик', de: 'Igel', en: 'hedgehog' }, svg: NEW_VISITOR_ART.hedgehog },
   { id: 'penguin', word: { ru: 'пингвин', de: 'Pinguin', en: 'penguin' }, svg: NEW_VISITOR_ART.penguin },
+  { id: 'sheep', word: { ru: 'овечка', de: 'Schaf', en: 'sheep' }, svg: NEW_VISITOR_ART.sheep },
+  { id: 'pig', word: { ru: 'свинка', de: 'Schwein', en: 'pig' }, svg: NEW_VISITOR_ART.pig },
+  { id: 'horse', word: { ru: 'лошадка', de: 'Pferd', en: 'horse' }, svg: NEW_VISITOR_ART.horse },
+  { id: 'chicken', word: { ru: 'курочка', de: 'Huhn', en: 'chicken' }, svg: NEW_VISITOR_ART.chicken },
+  { id: 'bee', word: { ru: 'пчёлка', de: 'Biene', en: 'bee' }, svg: NEW_VISITOR_ART.bee },
 ]
 
 export function visitorById(id: VisitorId): Visitor {

@@ -851,7 +851,8 @@ button {
 
 /* New wooden guests each answer with a different, short gesture. */
 .visitor--hedgehog .toy { width: min(96%, 260px); }
-.part-head, .part-trunk, .part-spines, .part-leaf,
+.visitor--horse .toy { width: min(108%, 300px); }
+.part-head, .part-trunk, .part-spines, .part-leaf, .part-tail, .part-mane, .part-wing, .part-wool,
 .part-flipper-l, .part-flipper-r, .part-scarf {
   transform-box: fill-box;
   transform-origin: center;
@@ -866,6 +867,14 @@ button {
 .visitor--hedgehog.is-greeting .part-leaf { animation: curious-tilt 1.2s ease-in-out; }
 .visitor--penguin.is-greeting .toy { animation: penguin-waddle 1.6s ease-in-out; transform-origin: 50% 90%; }
 .visitor--penguin.is-greeting .part-flipper-r { animation: trunk-wave .65s ease-in-out 2; }
+.visitor--sheep.is-greeting .part-head { animation: curious-tilt 1.3s ease-in-out; }
+.visitor--pig.is-greeting .part-tail { animation: trunk-wave 0.7s ease-in-out 2; }
+.visitor--horse.is-greeting .part-head { animation: curious-tilt 1.2s ease-in-out; }
+.visitor--horse.is-greeting .part-mane { animation: trunk-wave 0.8s ease-in-out; }
+.visitor--chicken.is-greeting .part-head { animation: chicken-peck 0.7s ease-in-out 2; }
+.visitor--bee.is-greeting .part-wing { animation: bee-wings 0.18s linear 8; }
+@keyframes chicken-peck { 40% { transform: translateY(8px) rotate(8deg); } }
+@keyframes bee-wings { 50% { transform: scaleY(0.35); } }
 @keyframes curious-tilt { 35% { transform: rotate(-12deg); } 70% { transform: rotate(7deg); } }
 @keyframes trunk-wave { 45% { transform: rotate(-24deg); } 75% { transform: rotate(8deg); } }
 @keyframes owl-wings { 45% { transform: scaleX(1.13) translateY(-4px); } }

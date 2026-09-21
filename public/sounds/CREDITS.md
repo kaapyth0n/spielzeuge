@@ -17,6 +17,11 @@ All clips are free to use. Encoded as short mono MP3s (Safari on iOS does not pl
 | `bear.mp3` | OpenGameArt [Bear growls](https://opengameart.org/content/bear-growls) from the U.S. Fish & Wildlife Service (`bear_01`) | CC0 |
 | `frog.mp3` | OpenGameArt [Frog Croaks](https://opengameart.org/content/frog-croaks) by EZduzziteh (`croak_01`) | CC0 |
 | `capybara.mp3` | Freesound [Squeaking Guinea Pigs](https://freesound.org/people/Breviceps/sounds/583078/) by Breviceps — short loud cut, normalized | CC0 |
+| `sheep.mp3` | OpenGameArt [Sheep Baa](https://opengameart.org/content/sheep-baa) by AntumDeluge, from a recording by mikewest — full bleat, normalized | CC0 |
+| `pig.mp3` | Wikimedia Commons [Mudchute pig 2](https://commons.wikimedia.org/wiki/File:Mudchute_pig_2.ogg) by Secretlondon — the whole oink, with short fades | CC BY-SA 3.0 |
+| `horse.mp3` | Wikimedia Commons [Wiehern](https://commons.wikimedia.org/wiki/File:Wiehern.ogg) by Hü — full neigh, normalized, fades at the ends | Public domain |
+| `chicken.mp3` | Wikimedia Commons [Small rooster crowing](https://commons.wikimedia.org/wiki/File:Small_rooster_crowing.ogg) by alys — one complete crow between silences, not a mid-call cut | Public domain |
+| `bee.mp3` | Original toy wing-buzz for this project. Rebuild with `python3 scripts/kuckuck-bee.py`. Not a field recording. | original |
 
 ## New Kuckuck toy sounds
 

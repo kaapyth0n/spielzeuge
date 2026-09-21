@@ -5,6 +5,8 @@ const base = process.env.BASE_URL || 'http://localhost:5174'
 const guests = {
   fox: ['лиса', 'Fuchs', 'fox'], elephant: ['слон', 'Elefant', 'elephant'],
   owl: ['сова', 'Eule', 'owl'], hedgehog: ['ёжик', 'Igel', 'hedgehog'], penguin: ['пингвин', 'Pinguin', 'penguin'],
+  sheep: ['овечка', 'Schaf', 'sheep'], pig: ['свинка', 'Schwein', 'pig'], horse: ['лошадка', 'Pferd', 'horse'],
+  chicken: ['курочка', 'Huhn', 'chicken'], bee: ['пчёлка', 'Biene', 'bee'],
 }
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const errors = []
@@ -49,7 +51,7 @@ try {
       if (lang === 'ru') await page.screenshot({ path: `/tmp/kuckuck-${id}.png` })
       await page.close()
     }))
-    console.log(`PASS: five visitors, ${lang}, speech, sound, repeat greeting, viewport`)
+    console.log(`PASS: visitors, ${lang}, speech, sound, repeat greeting, viewport`)
   }
   const page = await openGuest('owl', 'ru')
   await page.locator('#kuckuck-language').click()
