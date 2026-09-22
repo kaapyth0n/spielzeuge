@@ -871,9 +871,10 @@ button {
 .visitor--pig.is-greeting .part-tail { animation: trunk-wave 0.7s ease-in-out 2; }
 .visitor--horse.is-greeting .part-head { animation: curious-tilt 1.2s ease-in-out; }
 .visitor--horse.is-greeting .part-mane { animation: trunk-wave 0.8s ease-in-out; }
-.visitor--chicken.is-greeting .part-head { animation: chicken-peck 0.7s ease-in-out 2; }
+.visitor--rooster .toy { width: min(112%, 320px); }
+.visitor--rooster.is-greeting .toy { animation: rooster-crow 0.9s ease-in-out 2; transform-origin: 62% 90%; }
 .visitor--bee.is-greeting .part-wing { animation: bee-wings 0.18s linear 8; }
-@keyframes chicken-peck { 40% { transform: translateY(8px) rotate(8deg); } }
+@keyframes rooster-crow { 35% { transform: rotate(-7deg) translateY(-4px); } }
 @keyframes bee-wings { 50% { transform: scaleY(0.35); } }
 @keyframes curious-tilt { 35% { transform: rotate(-12deg); } 70% { transform: rotate(7deg); } }
 @keyframes trunk-wave { 45% { transform: rotate(-24deg); } 75% { transform: rotate(8deg); } }

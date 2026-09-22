@@ -437,7 +437,8 @@ export class Game {
   }
 
   private nextVisitor(): Visitor {
-    const forced = new URLSearchParams(window.location.search).get('visitor')
+    const raw = new URLSearchParams(window.location.search).get('visitor')
+    const forced = raw === 'chicken' ? 'rooster' : raw
     if (this.isVisitorId(forced) && !this.current) {
       return visitorById(forced)
     }

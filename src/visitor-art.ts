@@ -66,11 +66,6 @@ export const NEW_VISITOR_ART = {
       <ellipse cx="96" cy="138" rx="6" ry="4" fill="#6b4634"/><ellipse cx="112" cy="138" rx="6" ry="4" fill="#6b4634"/>
       <g class="part-mane"><path d="M78 78c-8-32 10-46 18-18" fill="#4a2e1e"/><path d="M122 76c10-34-8-46-18-16" fill="#4a2e1e"/><path d="M90 58c4 36 6 52 14 62 8-10 10-28 14-62-8-10-20-10-28 0z" fill="#4a2e1e"/></g>
     </g>`),
-  chicken: toy(`
-    <path d="M78 206 l8 12 m8-12 8 12 m22-12 8 12 m8-12 8 12" stroke="#e2b15a" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <ellipse cx="112" cy="168" rx="40" ry="34" fill="#f4e2b8"/><g class="part-wing"><ellipse cx="124" cy="172" rx="22" ry="14" fill="#e4cfa0"/></g>
-    <g class="part-head"><circle cx="74" cy="128" r="24" fill="#f7e7c6"/><path d="M64 108l6-16 7 14 8-18 7 16" fill="#d24a3a"/><path d="M52 128l-16 7 16 6z" fill="#e2a24a"/><path d="M58 146c8 10 16 8 18-2" fill="#e07a72"/>
-    <circle cx="78" cy="124" r="4.4" fill="#302720"/><circle cx="79.3" cy="122.6" r="1.3" fill="#fff6dd"/></g>`),
   bee: toy(`
     <g class="part-wing"><ellipse cx="62" cy="118" rx="30" ry="16" fill="#f7f1e4" opacity=".92"/><ellipse cx="138" cy="118" rx="30" ry="16" fill="#f7f1e4" opacity=".92"/></g>
     <ellipse cx="100" cy="156" rx="34" ry="46" fill="#e6c15a"/><path d="M68 140h64M68 156h64M68 172h64" stroke="#3a2a22" stroke-width="9" stroke-linecap="round"/>

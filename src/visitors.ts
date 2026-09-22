@@ -19,7 +19,7 @@ export const VISITOR_IDS = [
   'sheep',
   'pig',
   'horse',
-  'chicken',
+  'rooster',
   'bee',
 ] as const
 
@@ -341,7 +341,7 @@ export const VISITORS: Visitor[] = [
   { id: 'sheep', word: { ru: 'овечка', de: 'Schaf', en: 'sheep' }, svg: NEW_VISITOR_ART.sheep },
   { id: 'pig', word: { ru: 'свинка', de: 'Schwein', en: 'pig' }, svg: NEW_VISITOR_ART.pig },
   { id: 'horse', word: { ru: 'лошадка', de: 'Pferd', en: 'horse' }, svg: NEW_VISITOR_ART.horse },
-  { id: 'chicken', word: { ru: 'курочка', de: 'Huhn', en: 'chicken' }, svg: NEW_VISITOR_ART.chicken },
+  { id: 'rooster', word: { ru: 'петушок', de: 'Hahn', en: 'rooster' }, svg: `<img class="toy" src="/visitors/rooster.png" alt="" draggable="false" aria-hidden="true" />` },
   { id: 'bee', word: { ru: 'пчёлка', de: 'Biene', en: 'bee' }, svg: NEW_VISITOR_ART.bee },
 ]
 

@@ -28,7 +28,7 @@ await shot('phone-open', { width: 390, height: 844 }, async (page) => {
   await page.waitForTimeout(1300)
 })
 
-for (const visitor of ['cat', 'dog', 'bird', 'duck', 'bunny', 'mouse', 'cow', 'bear', 'frog', 'capybara', 'fox', 'elephant', 'owl', 'hedgehog', 'penguin', 'sheep', 'pig', 'horse', 'chicken', 'bee']) {
+for (const visitor of ['cat', 'dog', 'bird', 'duck', 'bunny', 'mouse', 'cow', 'bear', 'frog', 'capybara', 'fox', 'elephant', 'owl', 'hedgehog', 'penguin', 'sheep', 'pig', 'horse', 'rooster', 'bee']) {
   const page = await browser.newPage({
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 2,
