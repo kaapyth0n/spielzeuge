@@ -21,6 +21,7 @@ All clips are free to use. Encoded as short mono MP3s (Safari on iOS does not pl
 | `pig.mp3` | Wikimedia Commons [Mudchute pig 2](https://commons.wikimedia.org/wiki/File:Mudchute_pig_2.ogg) by Secretlondon — the whole oink, with short fades | CC BY-SA 3.0 |
 | `horse.mp3` | Wikimedia Commons [Wiehern](https://commons.wikimedia.org/wiki/File:Wiehern.ogg) by Hü — full neigh, normalized, fades at the ends | Public domain |
 | `rooster.mp3` | Wikimedia Commons [Small rooster crowing](https://commons.wikimedia.org/wiki/File:Small_rooster_crowing.ogg) by alys — one complete crow between silences, not a mid-call cut | Public domain |
+| `hen.mp3` | Wikimedia Commons [Hen announcing she's lain an egg](https://commons.wikimedia.org/wiki/File:Hen_announcing_shes_lain_an_egg.ogg) by alys — a short cluck from the middle of the call, normalized | Public domain |
 | `bee.mp3` | Original toy wing-buzz for this project. Rebuild with `python3 scripts/kuckuck-bee.py`. Not a field recording. | original |
 
 ## New Kuckuck toy sounds

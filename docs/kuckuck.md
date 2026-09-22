@@ -17,7 +17,7 @@ It is a toy, not a lesson. Sitting together and saying the word with the voice i
 
 1. The hallway waits. After a breath, the door knocks.
 2. A tap on the door frame opens it wide.
-3. One of twenty wooden visitors steps into the opening, makes its sound, and is named. The whole animal is visible — the closed door is the peekaboo, not a half-hidden guest.
+3. One of twenty-one wooden visitors steps into the opening, makes its sound, and is named. The whole animal is visible — the closed door is the peekaboo, not a half-hidden guest.
 4. Tap the visitor to hear the sound and the word again.
 5. Tap the door frame (not the guest, not the hall) to close. If nobody taps the frame, it closes after about four seconds.
 
@@ -62,11 +62,12 @@ One language per sitting. Switching mid-play is how words fail to stick.
 | pig | свинка | Schwein | pig |
 | horse | лошадка | Pferd | horse |
 | rooster | петушок | Hahn | rooster |
+| hen | курочка | Huhn | hen |
 | bee | пчёлка | Biene | bee |
 
 Tap the lamp to cycle русский → Deutsch → English. If a visitor is in the doorway, it says its name in the new language right away. If the door is closed, it says the language’s name. Hold the lamp to pick from the sheet. The choice is stored on the device.
 
-`?lang=ru|de|en` sets the sitting. `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara|fox|elephant|owl|hedgehog|penguin|sheep|pig|horse|rooster|bee` forces the first guest (useful for checking a clip). `chicken` still opens the rooster.
+`?lang=ru|de|en` sets the sitting. `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara|fox|elephant|owl|hedgehog|penguin|sheep|pig|horse|rooster|hen|bee` forces the first guest (useful for checking a clip). `chicken` is the old hen link and still opens the hen.
 
 ## Sounds
 
@@ -99,7 +100,7 @@ The always-visible 68px home tile stays clear of the door, the language and soun
 
 ## Five new visitors
 
-Fox wags its cream-tipped tail and tilts its head; elephant waves its trunk and ears; owl tilts its head and spreads its wings; hedgehog sniffs beneath a little leaf; penguin waddles and waves a flipper. Sheep nods; the pig curls its tail; the horse tosses its mane; the rooster throws its head back; the bee flutters. The rooster is a wooden cutout; the others are layered SVG toys, with reduced-motion support.
+Fox wags its cream-tipped tail and tilts its head; elephant waves its trunk and ears; owl tilts its head and spreads its wings; hedgehog sniffs beneath a little leaf; penguin waddles and waves a flipper. Sheep nods; the pig curls its tail; the horse tosses its mane; the rooster throws its head back; the hen pecks; the bee flutters. The rooster and the hen are wooden cutouts; the others are layered SVG toys, with reduced-motion support.
 
 The visible RU/DE/EN control cycles the shared language. The music button mutes both speech and effects, immediately stops pending sounds, and saves `spielzeuge.kuckuck.muted`. Changing language cancels obsolete greetings. Missing audio, speech and storage APIs do not prevent opening the door.
 

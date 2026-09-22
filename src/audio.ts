@@ -23,6 +23,7 @@ const FILES = {
   pig: '/sounds/pig.mp3',
   horse: '/sounds/horse.mp3',
   rooster: '/sounds/rooster.mp3',
+  hen: '/sounds/hen.mp3',
   bee: '/sounds/bee.mp3',
 } as const
 
