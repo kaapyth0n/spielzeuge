@@ -22,6 +22,11 @@ export const VISITOR_IDS = [
   'rooster',
   'hen',
   'bee',
+  'goat',
+  'donkey',
+  'goose',
+  'cuckoo',
+  'monkey',
 ] as const
 
 export type VisitorId = (typeof VISITOR_IDS)[number]
@@ -345,6 +350,11 @@ export const VISITORS: Visitor[] = [
   { id: 'rooster', word: { ru: 'петушок', de: 'Hahn', en: 'rooster' }, svg: `<img class="toy" src="/visitors/rooster.png" alt="" draggable="false" aria-hidden="true" />` },
   { id: 'hen', word: { ru: 'курочка', de: 'Huhn', en: 'hen' }, svg: `<img class="toy" src="/visitors/hen.png" alt="" draggable="false" aria-hidden="true" />` },
   { id: 'bee', word: { ru: 'пчёлка', de: 'Biene', en: 'bee' }, svg: NEW_VISITOR_ART.bee },
+  { id: 'goat', word: { ru: 'козочка', de: 'Ziege', en: 'goat' }, svg: NEW_VISITOR_ART.goat },
+  { id: 'donkey', word: { ru: 'ослик', de: 'Esel', en: 'donkey' }, svg: NEW_VISITOR_ART.donkey },
+  { id: 'goose', word: { ru: 'гусь', de: 'Gans', en: 'goose' }, svg: NEW_VISITOR_ART.goose },
+  { id: 'cuckoo', word: { ru: 'кукушка', de: 'Kuckuck', en: 'cuckoo' }, svg: NEW_VISITOR_ART.cuckoo },
+  { id: 'monkey', word: { ru: 'обезьянка', de: 'Affe', en: 'monkey' }, svg: NEW_VISITOR_ART.monkey },
 ]
 
 export function visitorById(id: VisitorId): Visitor {

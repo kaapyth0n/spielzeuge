@@ -25,6 +25,11 @@ const FILES = {
   rooster: '/sounds/rooster.mp3',
   hen: '/sounds/hen.mp3',
   bee: '/sounds/bee.mp3',
+  goat: '/sounds/goat.mp3',
+  donkey: '/sounds/donkey.mp3',
+  goose: '/sounds/goose.mp3',
+  cuckoo: '/sounds/cuckoo.mp3',
+  monkey: '/sounds/monkey.mp3',
 } as const
 
 type Clip = keyof typeof FILES

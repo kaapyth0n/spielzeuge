@@ -7,6 +7,8 @@ const guests = {
   owl: ['сова', 'Eule', 'owl'], hedgehog: ['ёжик', 'Igel', 'hedgehog'], penguin: ['пингвин', 'Pinguin', 'penguin'],
   sheep: ['овечка', 'Schaf', 'sheep'], pig: ['свинка', 'Schwein', 'pig'], horse: ['лошадка', 'Pferd', 'horse'],
   rooster: ['петушок', 'Hahn', 'rooster'], hen: ['курочка', 'Huhn', 'hen'], bee: ['пчёлка', 'Biene', 'bee'],
+  goat: ['козочка', 'Ziege', 'goat'], donkey: ['ослик', 'Esel', 'donkey'], goose: ['гусь', 'Gans', 'goose'],
+  cuckoo: ['кукушка', 'Kuckuck', 'cuckoo'], monkey: ['обезьянка', 'Affe', 'monkey'],
 }
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const errors = []

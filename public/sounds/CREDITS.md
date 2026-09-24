@@ -22,6 +22,11 @@ All clips are free to use. Encoded as short mono MP3s (Safari on iOS does not pl
 | `horse.mp3` | Wikimedia Commons [Wiehern](https://commons.wikimedia.org/wiki/File:Wiehern.ogg) by Hü — full neigh, normalized, fades at the ends | Public domain |
 | `rooster.mp3` | Wikimedia Commons [Small rooster crowing](https://commons.wikimedia.org/wiki/File:Small_rooster_crowing.ogg) by alys — one complete crow between silences, not a mid-call cut | Public domain |
 | `hen.mp3` | Wikimedia Commons [Hen announcing she's lain an egg](https://commons.wikimedia.org/wiki/File:Hen_announcing_shes_lain_an_egg.ogg) by alys — a short cluck from the middle of the call, normalized | Public domain |
+| `goat.mp3` | Wikimedia Commons [Herd of goats bleating](https://commons.wikimedia.org/wiki/File:Herd_of_goats_bleating.ogg) by stephan — two bleats, band-filtered and normalized | Public domain |
+| `donkey.mp3` | Wikimedia Commons [A donkey is braying in his enclosure in south of France](https://commons.wikimedia.org/wiki/File:157763_felix-blume_a-donkey-is-braying-in-his-enclosure-in-south-of-france.wav) by felix-blume — one bray, normalized | CC0 |
+| `goose.mp3` | Wikimedia Commons [Greylag Goose (Anser anser) - Bærum, Norway 2021-04-03](https://commons.wikimedia.org/wiki/File:Greylag_Goose_(Anser_anser)_-_B%C3%A6rum,_Norway_2021-04-03.mp3) by Ryan Hodnett — a short run of honks, normalized | CC BY-SA 4.0 |
+| `cuckoo.mp3` | Wikimedia Commons [Cuculus canorus - Common Cuckoo XC84060](https://commons.wikimedia.org/wiki/File:Cuculus_canorus_-_Common_Cuckoo_XC84060.mp3) by Alexander Kurthy — two complete "ku-ku" calls, band-filtered to drop the songbirds behind them | CC BY-SA 4.0 |
+| `monkey.mp3` | Original synthesized toy "oo-oo-aa-aa" for this project. Rebuild with `python3 scripts/kuckuck-guests-2.py`. Not a recording. | original |
 | `bee.mp3` | Original toy wing-buzz for this project. Rebuild with `python3 scripts/kuckuck-bee.py`. Not a field recording. | original |
 
 ## New Kuckuck toy sounds

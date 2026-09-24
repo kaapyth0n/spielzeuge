@@ -72,4 +72,62 @@ export const NEW_VISITOR_ART = {
     <circle cx="100" cy="96" r="22" fill="#3a2a22"/><path d="M86 80c-8-16-2-22 4-14M114 80c8-16 2-22-4-14" fill="none" stroke="#3a2a22" stroke-width="3" stroke-linecap="round"/>
     <circle cx="92" cy="94" r="5" fill="#fff6dd"/><circle cx="108" cy="94" r="5" fill="#fff6dd"/><circle cx="93" cy="94" r="2.4" fill="#302720"/><circle cx="109" cy="94" r="2.4" fill="#302720"/>
     <path d="M100 198l0 10" stroke="#3a2a22" stroke-width="3" stroke-linecap="round"/>`),
+  goat: toy(`
+    <g class="part-tail"><path d="M148 146q16-14 12 6" fill="none" stroke="#b9a58a" stroke-width="8" stroke-linecap="round"/></g>
+    <rect x="62" y="180" width="13" height="34" rx="6" fill="#c9b79c"/><rect x="84" y="182" width="13" height="32" rx="6" fill="#b9a58a"/><rect x="112" y="182" width="13" height="32" rx="6" fill="#c9b79c"/><rect x="134" y="180" width="13" height="34" rx="6" fill="#b9a58a"/>
+    <path d="M62 212h13m9 2h13m15 0h13m9-2h13" stroke="#5a4636" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="104" cy="164" rx="52" ry="34" fill="#efe4d0"/><ellipse cx="116" cy="170" rx="22" ry="16" fill="#e2d4bc"/>
+    <path d="M60 112 94 108 104 150 62 160z" fill="#efe4d0"/>
+    <g class="part-head">
+      <path d="M58 70q-8-26 8-34-2 18 6 30z" fill="#a88a64"/><path d="M84 66q4-30 22-32-10 16-12 32z" fill="#a88a64"/>
+      <g class="part-ear-l"><ellipse cx="46" cy="92" rx="20" ry="9" fill="#e2d4bc" transform="rotate(-20 46 92)"/><ellipse cx="46" cy="92" rx="11" ry="4.5" fill="#f0b2a4" transform="rotate(-20 46 92)"/></g>
+      <g class="part-ear-r"><ellipse cx="108" cy="92" rx="20" ry="9" fill="#e2d4bc" transform="rotate(20 108 92)"/><ellipse cx="108" cy="92" rx="11" ry="4.5" fill="#f0b2a4" transform="rotate(20 108 92)"/></g>
+      <path d="M52 94q0-34 25-34t25 34l-6 34q-19 12-38 0z" fill="#f5ecdc"/>
+      ${eyes(66, 96, 22)}<ellipse cx="77" cy="124" rx="15" ry="10" fill="#f0c8bc"/><circle cx="72" cy="123" r="2.4" fill="#5a3a28"/><circle cx="82" cy="123" r="2.4" fill="#5a3a28"/>
+      <g class="part-beard"><path d="M70 132q7 22 7 26 1-4 7-26z" fill="#d8c8ae"/></g>
+    </g>`),
+  donkey: toy(`
+    <g class="part-tail"><path d="M152 156q16 16 10 40" fill="none" stroke="#7f7a78" stroke-width="6" stroke-linecap="round"/><path d="M156 192q8 4 6 14-8-2-10-10z" fill="#3e3431"/></g>
+    <rect x="62" y="178" width="15" height="36" rx="6" fill="#9a9491"/><rect x="86" y="180" width="15" height="34" rx="6" fill="#8b8582"/><rect x="112" y="180" width="15" height="34" rx="6" fill="#9a9491"/><rect x="136" y="178" width="15" height="36" rx="6" fill="#8b8582"/>
+    <path d="M62 212h15m9 2h15m11 0h15m9-2h15" stroke="#3e3431" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="106" cy="162" rx="54" ry="34" fill="#aca6a2"/><ellipse cx="110" cy="176" rx="30" ry="14" fill="#d9d2cb"/>
+    <path d="M58 110 102 100 124 150 66 162z" fill="#aca6a2"/><path d="M96 84q24 10 34 64" fill="none" stroke="#4a3f3b" stroke-width="10" stroke-linecap="round"/>
+    <g class="part-head">
+      <g class="part-ear-l"><ellipse cx="60" cy="46" rx="11" ry="32" fill="#9a9491" transform="rotate(-14 60 46)"/><ellipse cx="60" cy="48" rx="5" ry="22" fill="#e7c9bd" transform="rotate(-14 60 48)"/><path d="M52 16q6-6 12 0" stroke="#3e3431" stroke-width="5" fill="none" stroke-linecap="round" transform="rotate(-14 60 46)"/></g>
+      <g class="part-ear-r"><ellipse cx="98" cy="44" rx="11" ry="32" fill="#8b8582" transform="rotate(16 98 44)"/><ellipse cx="98" cy="46" rx="5" ry="22" fill="#e7c9bd" transform="rotate(16 98 46)"/></g>
+      <path d="M86 68q10 2 14 14" fill="none" stroke="#4a3f3b" stroke-width="10" stroke-linecap="round"/>
+      <path d="M52 100q0-34 28-34t28 34v26q-28 18-56 0z" fill="#b5afab"/>
+      ${eyes(68, 98, 24)}<ellipse cx="80" cy="130" rx="24" ry="17" fill="#e8e1d8"/><ellipse cx="72" cy="130" rx="3.2" ry="4" fill="#4a3f3b"/><ellipse cx="88" cy="130" rx="3.2" ry="4" fill="#4a3f3b"/>
+      <path d="M72 140q8 5 16 0" fill="none" stroke="#4a3f3b" stroke-width="2" stroke-linecap="round"/>
+    </g>`),
+  goose: toy(`
+    <path d="M78 190 72 212h16l-6-22m34 0-6 22h16l-6-22" fill="#e58a3a"/>
+    <path d="M56 172q-26-2-30-18 18 2 30 4" fill="#e9e4da"/>
+    <ellipse cx="96" cy="168" rx="50" ry="34" fill="#f7f4ee"/>
+    <g class="part-wing"><path d="M74 156q30-18 62 2-4 24-30 26-22 0-32-28" fill="#e2ddd2"/><path d="M84 164q20 6 40 0M88 174q16 4 30-1" stroke="#cfc8ba" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+    <g class="part-neck"><path d="M126 160q10-40-2-70-6-20 10-30 18-8 24 10" fill="none" stroke="#f7f4ee" stroke-width="22" stroke-linecap="round"/>
+      <circle cx="148" cy="70" r="17" fill="#f7f4ee"/><path d="M162 64q20 2 24 10-4 8-24 8z" fill="#e58a3a"/><path d="M163 74h20" stroke="#c96e2a" stroke-width="1.6" stroke-linecap="round"/>
+      <g class="part-eyes" fill="#302720"><circle cx="150" cy="66" r="4.2"/><circle cx="151.3" cy="64.6" r="1.3" fill="#fff6dd"/></g></g>`),
+  cuckoo: toy(`
+    <path d="M40 206h120" stroke="#97734d" stroke-width="10" stroke-linecap="round"/><path d="M92 196l-4 12m12-12 4 12" stroke="#e0b030" stroke-width="4" stroke-linecap="round"/>
+    <g class="part-tail"><path d="M58 150 20 186l12 8 36-26z" fill="#5f6a74"/><path d="m28 184 4 4m6-10 4 4m6-10 4 4" stroke="#f1ead8" stroke-width="3" stroke-linecap="round"/></g>
+    <ellipse cx="96" cy="160" rx="44" ry="38" fill="#7f8b95"/>
+    <ellipse cx="104" cy="170" rx="28" ry="26" fill="#f1ead8"/><path d="M84 158h36M82 168h42M84 178h38M90 188h26" stroke="#6b7680" stroke-width="3" stroke-linecap="round"/>
+    <g class="part-wing"><path d="M64 142q30-10 52 10-8 26-40 26-16-10-12-36" fill="#6b7680"/></g>
+    <g class="part-head"><circle cx="124" cy="110" r="28" fill="#8a96a0"/>${eyes(124, 104, 0)}<circle cx="124" cy="104" r="8" fill="none" stroke="#e0b030" stroke-width="3"/>
+      <path d="M148 108q18 2 22 8-6 6-22 6z" fill="#3a3a38"/><path d="M146 118h20" stroke="#e0b030" stroke-width="2" stroke-linecap="round"/></g>`),
+  monkey: toy(`
+    <g class="part-tail"><path d="M142 190q40 4 38-28-2-24-22-18-12 6-4 16" fill="none" stroke="#8a5a36" stroke-width="9" stroke-linecap="round"/></g>
+    <ellipse cx="100" cy="168" rx="44" ry="42" fill="#9c6a42"/><ellipse cx="100" cy="176" rx="28" ry="28" fill="#e8c8a0"/>
+    <ellipse cx="76" cy="210" rx="17" ry="10" fill="#8a5a36"/><ellipse cx="124" cy="210" rx="17" ry="10" fill="#8a5a36"/>
+    <path d="M142 160q14 10 10 30" fill="none" stroke="#8a5a36" stroke-width="13" stroke-linecap="round"/>
+    <g class="part-paw"><path d="M60 158q-22-12-24-40" fill="none" stroke="#8a5a36" stroke-width="13" stroke-linecap="round"/><circle cx="36" cy="114" r="10" fill="#e8c8a0"/></g>
+    <g class="part-head">
+      <g class="part-ear-l"><circle cx="54" cy="96" r="16" fill="#9c6a42"/><circle cx="54" cy="96" r="9" fill="#e8b89a"/></g>
+      <g class="part-ear-r"><circle cx="146" cy="96" r="16" fill="#9c6a42"/><circle cx="146" cy="96" r="9" fill="#e8b89a"/></g>
+      <circle cx="100" cy="94" r="40" fill="#9c6a42"/>
+      <path d="M100 76q-10-14-26-6-14 8-8 28 4 12 12 16q-10 8-4 22 8 16 26 16t26-16q6-14-4-22 8-4 12-16 6-20-8-28-16-8-26 6" fill="#ecd0aa"/>
+      ${eyes(86, 96, 28)}<ellipse cx="96" cy="118" rx="2.6" ry="2" fill="#5a3a28"/><ellipse cx="104" cy="118" rx="2.6" ry="2" fill="#5a3a28"/>
+      <path d="M88 126q12 10 24 0" fill="none" stroke="#5a3a28" stroke-width="2.4" stroke-linecap="round"/><path d="M94 62q6-10 12 0" fill="none" stroke="#7a4e2e" stroke-width="4" stroke-linecap="round"/>
+    </g>`),
 } as const

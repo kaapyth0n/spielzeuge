@@ -17,7 +17,7 @@ It is a toy, not a lesson. Sitting together and saying the word with the voice i
 
 1. The hallway waits. After a breath, the door knocks.
 2. A tap on the door frame opens it wide.
-3. One of twenty-one wooden visitors steps into the opening, makes its sound, and is named. The whole animal is visible — the closed door is the peekaboo, not a half-hidden guest.
+3. One of twenty-six wooden visitors steps into the opening, makes its sound, and is named. The whole animal is visible — the closed door is the peekaboo, not a half-hidden guest.
 4. Tap the visitor to hear the sound and the word again.
 5. Tap the door frame (not the guest, not the hall) to close. If nobody taps the frame, it closes after about four seconds.
 
@@ -64,10 +64,15 @@ One language per sitting. Switching mid-play is how words fail to stick.
 | rooster | петушок | Hahn | rooster |
 | hen | курочка | Huhn | hen |
 | bee | пчёлка | Biene | bee |
+| goat | козочка | Ziege | goat |
+| donkey | ослик | Esel | donkey |
+| goose | гусь | Gans | goose |
+| cuckoo | кукушка | Kuckuck | cuckoo |
+| monkey | обезьянка | Affe | monkey |
 
 Tap the lamp to cycle русский → Deutsch → English. If a visitor is in the doorway, it says its name in the new language right away. If the door is closed, it says the language’s name. Hold the lamp to pick from the sheet. The choice is stored on the device.
 
-`?lang=ru|de|en` sets the sitting. `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara|fox|elephant|owl|hedgehog|penguin|sheep|pig|horse|rooster|hen|bee` forces the first guest (useful for checking a clip). `chicken` is the old hen link and still opens the hen.
+`?lang=ru|de|en` sets the sitting. `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara|fox|elephant|owl|hedgehog|penguin|sheep|pig|horse|rooster|hen|bee|goat|donkey|goose|cuckoo|monkey` forces the first guest (useful for checking a clip). `chicken` is the old hen link and still opens the hen.
 
 ## Sounds
 
@@ -107,6 +112,16 @@ The visible RU/DE/EN control cycles the shared language. The music button mutes 
 New sounds are original, softly synthesized toy impressions (bark, trumpet, hoot, sniff, chirp), not wildlife recordings. Rebuild using `python3 scripts/kuckuck-sounds.py` (requires ffmpeg).
 
 Run `npm run test:kuckuck` with Vite on port 5174, or set `BASE_URL`. Covers all five visitors in all three languages, portrait and landscape mobile and desktop, repeated greetings, language races, saved mute and language, and unavailable browser APIs.
+
+## Five more visitors
+
+Goat, donkey, goose, cuckoo and monkey. The goat tilts its head and shakes its beard; the donkey throws its head back twice while it brays and its long ears twitch; the goose stretches its neck forward with each honk and lifts its wing; the cuckoo bobs its head and flicks its tail on each "ku-ku"; the monkey waves a paw and tilts its head. All five are layered SVG toys with reduced-motion support.
+
+The cuckoo is the toy's namesake: in German it is simply *Kuckuck*.
+
+Sounds: goat, donkey, goose and cuckoo are short cuts from free recordings on Wikimedia Commons, band-filtered and loudness-normalized so they sit with the older clips (credits in `public/sounds/CREDITS.md`). The monkey is an original synthesized toy "oo-oo-aa-aa", not a recording. Rebuild all five with `python3 scripts/kuckuck-guests-2.py` (needs curl and ffmpeg).
+
+`npm run test:kuckuck` covers these five alongside the earlier guests.
 
 ## iPad first-tap regression
 
