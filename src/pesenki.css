@@ -1095,6 +1095,16 @@ button {
 /* Speed-up circles. */
 .ps-speedbar {
   grid-area: speeds;
+  max-width: 100%;
+}
+
+.ps-speedbar .ps-speeds {
+  flex-wrap: nowrap;
+  gap: clamp(6px, 2vw, 10px);
+}
+
+.ps-speedbar .ps-speed {
+  --size: clamp(44px, min(9vmin, calc((100vw - 96px) / 5)), 76px);
 }
 
 .ps-speeds {
@@ -1446,10 +1456,27 @@ button {
     margin: 6px 0;
   }
   .ps-finish {
-    place-items: center;
+    place-items: safe center;
+    overflow-y: auto;
   }
   .ps-finish-card {
-    padding: 10px 12px;
+    padding: 8px 12px;
+  }
+  .ps-finish-title {
+    font-size: 26px;
+  }
+  .ps-found {
+    width: 32px;
+    height: 32px;
+  }
+  .ps-finish-pick {
+    margin: 4px 0 6px;
+  }
+  .ps-speeds-big {
+    padding-bottom: 22px;
+  }
+  .ps-button {
+    min-height: 44px;
   }
   .ps-speeds-big .ps-speed {
     --size: clamp(54px, 16vh, 84px);

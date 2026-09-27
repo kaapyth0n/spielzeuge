@@ -73,6 +73,11 @@ describe.each(SONGS.map((song) => song.id))('recording of %s', (id) => {
     for (const chorus of t.choruses) {
       for (const line of picks) expect(line.e <= chorus.s + 0.01 || line.s >= chorus.e - 0.01, `${lang} ${line.words.map((w) => w.w).join(' ')}`).toBe(true)
     }
+    // Both choruses are sung the same way: their lines start at the same offsets.
+    const chorusLines = (n: number) => t.lines.filter((line) => line.kind === 'sing' && line.e > t.choruses[n].s && line.s < t.choruses[n].e)
+    const [c0, c1] = [chorusLines(0), chorusLines(1)]
+    expect(c0.length).toBe(c1.length)
+    c0.forEach((line, i) => expect(Math.abs(line.s - c0[0].s - (c1[i].s - c1[0].s)), `${lang} chorus line ${i}`).toBeLessThan(1))
     const plan = planSong(t)
     expect(plan.cues).toHaveLength(8)
     expect(plan.begin).toBeGreaterThanOrEqual(0)

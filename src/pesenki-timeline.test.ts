@@ -127,6 +127,14 @@ describe('karaoke and beats', () => {
     expect(lineAt(SONG.lines, 2)).toBe(-1)
     expect(lineAt(SONG.lines, 5.6)).toBe(0)
     expect(lineAt(SONG.lines, 8.7)).toBe(1)
+    // Touching lines: the last word of a line is lit before the next one takes over.
+    const touching = [pick('a b', 5, 7, 'x'), pick('c d', 7.05, 9, 'y')]
+    expect(lineAt(touching, 6.3)).toBe(0)
+    expect(lineAt(touching, 6.5)).toBe(1)
+    const lateWord = [pick('a b', 5, 7.5, 'x'), pick('c d', 7.55, 9, 'y')]
+    lateWord[0].words[1] = { w: 'b', s: 7.1, e: 7.5 }
+    expect(lineAt(lateWord, 7.3)).toBe(0)
+    expect(lineAt(lateWord, 7.56)).toBe(1)
     expect(lineAt(SONG.lines, 16.1)).toBe(3)
     expect(lineAt(SONG.lines, 17.8)).toBe(4)
     expect(lineAt(SONG.lines, 19)).toBe(4)
@@ -324,6 +332,76 @@ describe('conductor: chorus', () => {
     expect(chorusRate(1, 1.6)).toBe(1.6)
     expect(chorusRate(0.2, 1)).toBeLessThan(0.7)
     expect(chorusRate(0, 1)).toBeGreaterThan(0)
+  })
+})
+
+describe('conductor: review regressions', () => {
+  const toChorus = () => {
+    const h = new Harness(new Conductor({ timing: SONG, level: 0 }))
+    h.apply(h.c.start())
+    for (let i = 0; i < 60 * 30 && h.c.chorus < 0; i++) {
+      h.step()
+      const cue = h.c.shown
+      if (cue >= 0) h.apply(h.c.pick(h.c.plan.cues[cue].pic))
+    }
+    return h
+  }
+
+  it('the tape comes back exactly to full speed after a slowdown', () => {
+    const h = toChorus()
+    h.run(1.9)
+    expect(h.c.rate).toBeLessThan(1)
+    h.run(3, () => {
+      if (Math.round(h.now * 60) % 24 === 0) h.apply(h.c.tapHero(h.now))
+    })
+    expect(h.c.rate).toBe(1)
+    expect(h.rate).toBe(1)
+  })
+
+  it('a pause during the hint rewind replays the whole line after resume', () => {
+    const h = new Harness(new Conductor({ timing: SONG, level: 0 }))
+    h.apply(h.c.start())
+    h.run(8)
+    h.apply(h.c.tapHero(h.now))
+    expect(h.c.mode).toBe('hint')
+    h.run(0.05)
+    h.apply(h.c.pause())
+    h.run(1)
+    const cmds = h.c.resume(h.now)
+    expect(cmds[0]).toMatchObject({ type: 'play', from: planSong(SONG).cues[0].replayFrom })
+  })
+
+  it('a pause during a chorus rewind stops the spinning', () => {
+    const h = toChorus()
+    for (let i = 0; i < 60 * 6 && h.c.mode !== 'rewind'; i++) h.step()
+    expect(h.c.mode).toBe('rewind')
+    expect(h.c.pause()).toContainEqual({ type: 'rewinding', on: false })
+  })
+
+  it('rewinds run faster at higher speed-ups', () => {
+    const h = new Harness(new Conductor({ timing: SONG, level: 4 }))
+    h.apply(h.c.start())
+    for (let i = 0; i < 60 * 30 && h.c.chorus < 0; i++) {
+      h.step()
+      if (h.c.shown >= 0) h.apply(h.c.pick(h.c.plan.cues[h.c.shown].pic))
+    }
+    for (let i = 0; i < 60 * 6 && h.c.mode !== 'rewind'; i++) h.step()
+    expect(h.log.find((c) => c.type === 'reverse')).toMatchObject({ rate: REWIND_RATE * LEVELS[4].speed })
+  })
+
+  it('fades out again after a pause at the very end', () => {
+    const h = new Harness(new Conductor({ timing: SONG, level: 0 }))
+    h.apply(h.c.start())
+    h.run(40, () => {
+      const cue = h.c.shown
+      if (cue >= 0 && h.c.mode !== 'paused') h.apply(h.c.pick(h.c.plan.cues[cue].pic))
+      if (h.c.chorus >= 0 && Math.round(h.now * 60) % 20 === 0) h.apply(h.c.tapHero(h.now))
+      if (h.has('fade-out') && !h.log.some((c) => c.type === 'stop') && h.c.mode === 'play') {
+        h.apply(h.c.pause())
+        h.apply(h.c.resume(h.now))
+      }
+    })
+    expect(h.log.filter((c) => c.type === 'fade-out').length).toBeGreaterThanOrEqual(2)
   })
 })
 

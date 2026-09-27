@@ -92,7 +92,10 @@ const suno = []
 // Section tags ([Chorus], [Instrumental Break]) are never sung; Suno may split them across words.
 let inTag = false
 for (const w of sunoWords) {
-  if (w.end_s - w.start_s > LONGEST_WORD) w.end_s = w.start_s + LONGEST_WORD
+  if (w.end_s - w.start_s > LONGEST_WORD) {
+    if (!w.word.includes('[')) console.warn(`warning: "${w.word.trim()}" lasted ${(w.end_s - w.start_s).toFixed(1)} s; the aligner may have slipped here`)
+    w.end_s = w.start_s + LONGEST_WORD
+  }
   let clean = ''
   for (const c of w.word) {
     if (c === '[') inTag = true
@@ -178,6 +181,38 @@ for (let k = 0; k < flat.length; k++) {
 const missing = flat.filter((f) => f.interpolated).length
 console.log(`words: ${flat.length}, interpolated ${missing}`)
 
+// Both choruses of a language are sung the same way. When the aligner slips in one of them
+// (a line jumps seconds early), rebuild that line from the other chorus.
+for (const lang of song.order) {
+  const chorus = (n) => lines.map((l, i) => (l.lang === lang && l.chorus === n ? i : -1)).filter((i) => i >= 0)
+  const a = chorus(0)
+  const b = chorus(1)
+  if (a.length !== b.length || !a.length) continue
+  const starts = (ids) => ids.map((li) => wordTimes[li][0].s - wordTimes[ids[0]][0].s)
+  const spread = (ids) => {
+    const st = starts(ids)
+    const gaps = st.slice(1).map((v, i) => v - st[i])
+    const mean = gaps.reduce((x, y) => x + y, 0) / gaps.length
+    return Math.sqrt(gaps.reduce((x, y) => x + (y - mean) ** 2, 0) / gaps.length)
+  }
+  const [good, bad] = spread(a) <= spread(b) ? [a, b] : [b, a]
+  const goodBase = wordTimes[good[0]][0].s
+  const badBase = wordTimes[bad[0]][0].s
+  good.forEach((gl, j) => {
+    const bl = bad[j]
+    const gw = wordTimes[gl]
+    const bw = wordTimes[bl]
+    if (gw.length !== bw.length) return
+    const off = Math.max(...gw.map((w, k) => Math.abs(w.s - goodBase - (bw[k].s - badBase))))
+    if (off <= 1) return
+    bw.forEach((w, k) => {
+      w.s = badBase + (gw[k].s - goodBase)
+      w.e = badBase + (gw[k].e - goodBase)
+    })
+    console.log(`${lang}: chorus line "${lines[bl].text}" was off by ${off.toFixed(2)} s, rebuilt from the other chorus`)
+  })
+}
+
 /* ───────────── cut per language ───────────── */
 
 const duration = Number(
@@ -245,27 +280,34 @@ function findBeat(samples, rate) {
   // Detrend.
   const mean = flux.reduce((a, b) => a + b, 0) / frames
   const env = flux.map((v) => Math.max(0, v - mean))
+  // Coarse tempo on whole-frame lags, then a fine comb with fractional positions:
+  // a 0.25 bpm error drifts by a whole beat over a song, so the fine step matters.
   let best = { bpm: 100, score: -1 }
-  for (let bpm = 70; bpm <= 170; bpm += 0.25) {
-    const lag = (60 / bpm) * fps
+  for (let bpm = 70; bpm <= 170; bpm += 0.5) {
+    const lag = Math.round((60 / bpm) * fps)
     let s = 0
-    for (let f = 0; f + lag * 4 < frames; f += 2) {
-      const i = Math.round(f + lag)
-      const i2 = Math.round(f + lag * 2)
-      s += env[f] * (env[i] + 0.5 * env[i2])
-    }
+    for (let f = 0; f + lag * 2 < frames; f++) s += env[f] * (env[f + lag] + 0.5 * env[f + lag * 2])
     // Children's songs sit near 90–130 bpm: mild preference against halves and doubles.
     s *= Math.exp(-Math.pow(Math.log2(bpm / 110), 2) * 0.6)
     if (s > best.score) best = { bpm, score: s }
   }
-  const period = (60 / best.bpm) * fps
-  let phase = { at: 0, score: -1 }
-  for (let p = 0; p < period; p += 0.25) {
-    let s = 0
-    for (let t = p; t < frames; t += period) s += env[Math.round(t)] || 0
-    if (s > phase.score) phase = { at: p, score: s }
+  const at = (x) => {
+    const i = Math.floor(x)
+    const t = x - i
+    return (env[i] || 0) * (1 - t) + (env[i + 1] || 0) * t
   }
-  return { bpm: Math.round(best.bpm * 100) / 100, beat0: Math.round((phase.at / fps) * 1000) / 1000 }
+  let fine = { bpm: best.bpm, at: 0, score: -1 }
+  for (let bpm = best.bpm - 1.5; bpm <= best.bpm + 1.5; bpm += 0.01) {
+    const period = (60 / bpm) * fps
+    for (let p = 0; p < period; p += 0.5) {
+      let s = 0
+      for (let t = p; t < frames - 1; t += period) s += at(t)
+      if (s > fine.score) fine = { bpm, at: p, score: s }
+    }
+  }
+  // Frame f covers samples f*hop … f*hop+win: its onset sits near the middle.
+  const beat0 = (fine.at * hop + win / 2) / rate
+  return { bpm: Math.round(fine.bpm * 100) / 100, beat0: Math.round(beat0 * 1000) / 1000 }
 }
 
 function fft(re, im) {

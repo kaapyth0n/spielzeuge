@@ -20,13 +20,14 @@
 
 - **Shelf:** her ten circles, one per song. Five dots under each circle show which speed-ups are done. After all five, the circle gets a gold ring. The last song played is underlined. A song that is not recorded yet shows its hero asleep (grey, eyes shut, «zzz», a dashed ring); tapping it makes the hero stretch and the narrator says the song is still asleep.
 - **Start:** the hero breathes and a pencil hand points at it. One tap starts the song after a short intro.
-- **Verse lines:** 3 to 5 picture circles pop up just before each line. The karaoke line under the hero shows the words and lights them as they are sung. The picture word is an empty circle. A wrong picture shakes and greys out; nothing else happens. The right one flies onto the clock, fills the circle in the karaoke line and the song goes on.
+- **Verse lines:** 3 to 5 picture circles pop up just before each line. Their order and the other pictures are shuffled anew every time a song starts, so the right answer never has a place to remember. The karaoke line under the hero shows the words and lights them as they are sung. The picture word is an empty circle. A wrong picture shakes and greys out; nothing else happens. The right one flies onto the clock, fills the circle in the karaoke line and the song goes on.
 - **Waiting:** if the line ends without the right picture, the song stops between lines. A soft clock ticks. The first time, the narrator asks “Что спели? Найди картинку!”. After 6.5 s the song rewinds «уй-уй-уй» and sings the line again. After the second replay the right picture glows. Tapping the hero while waiting also sings the line again.
 - **Choruses:** the choices disappear, an energy ring appears around the hero and the hand points at it. Every tap adds energy; a tap right on the beat adds more and throws a golden note. With no taps, the ring empties, the music slows down like a tape and then runs backwards to the start of the chorus. There it waits, asleep, for a tap.
 - **The end:** the alarm clock rings, confetti flies, and a card shows one star per picture found without stopping. It offers the speed-ups, “Ещё раз” and “Другая песенка”. A newly opened speed-up spins in with a sparkle. Next time the song opens at the fastest open speed-up, and the smaller speed circles under the hero let a grown-up pick another.
-- **Speed-ups:** ×1, ×1.15, ×1.3, ×1.45, ×1.6 with 3, 3, 4, 4 and 5 pictures. The tape speed changes the pitch too, so the rocket sings like a chipmunk. That is on purpose. Pauses, rewinds and chorus drain follow the speed.
+- **Speed-ups:** ×1, ×1.15, ×1.3, ×1.45, ×1.6 with 3, 3, 4, 4 and 5 pictures. The tape speed changes the pitch too, so the rocket sings like a chipmunk. That is on purpose. The chorus drain, the beat window for golden taps and both rewinds follow the speed; the 6.5 s wait before a replay does not.
 - **Pause:** the pause button in the top bar, `Esc`, hiding the page or an audio interruption (a phone call on iPad) stop the song where it is. Tapping the hero continues.
 - **Keyboard:** `1`–`5` pick the circles from left to right, `Space` taps the hero, `Esc` pauses.
+- **Double taps:** for 350 ms after new circles appear, taps on them are ignored, so a quick second tap on the previous answer cannot answer the next line.
 
 There is no failing, no timer and no score apart from the stars.
 
@@ -48,7 +49,8 @@ The lyrics, pictures, colours and Suno styles live in `src/pesenki-lyrics.json`.
 4. `node scripts/pesenki-songs.mjs build <song> <raw.mp3> <aligned.json>`:
    - It matches Suno’s words to ours letter by letter (Needleman–Wunsch on folded letters; section tags are skipped, and words that swallow an instrumental break are capped at 2.4 s).
    - It cuts one file per language. Each later language keeps up to 5 s of the break before it as its intro. It fades, normalises loudness to −16 LUFS and encodes 112 kbps mono MP3 into `public/pesenki/<song>.<lang>.mp3`.
-   - It finds the tempo and a downbeat from an onset envelope (spectral flux, autocorrelation, comb phase).
+   - It finds the tempo and a downbeat from an onset envelope: spectral flux, a coarse autocorrelation, then a fine comb on fractional frame positions (0.01 bpm steps), because a 0.25 bpm error drifts by a beat over a song.
+   - Both choruses of a language are sung alike. If the aligner slipped in one chorus (a line more than 1 s off), that line is rebuilt from the other chorus. Words the aligner stretched past 2.4 s are reported.
    - It writes `src/pesenki-timings/<song>.<lang>.json` with lines, words, the picture of each verse line, the choruses, `bpm` and `beat0`. Choruses are trimmed so they never overlap a picture line.
    - `song.end` in the lyrics file cuts the last language when Suno started the song over to fill its length.
 5. Draw the pictures (`src/pesenki-pictures.ts`) and check with `npm test`.
@@ -65,7 +67,9 @@ The lyrics, pictures, colours and Suno styles live in `src/pesenki-lyrics.json`.
 
 - Russian, German and English share `spielzeuge.lang`. The RU/DE/EN selector is in the top bar, and `?lang=` works too. Every language has its own recording. Changing the language during a song loads that language’s recording and waits for a tap.
 - Narration uses `PuppyNarration`. It speaks the welcome, the song title when a circle is tapped, the start hint, the first “what was sung?” while a song waits, the chorus wake-up, the finish (stars and the new speed-up), speed-up names, pause and sound on. Nothing is spoken over the singing. Speech is cancelled when the song continues.
-- The sound button mutes songs, effects and speech, stops pending speech and is saved. Without sound the game still works: the karaoke line and the pictures carry on in silence.
+- The sound button mutes songs, effects and speech, stops pending speech and is saved. Without sound the game still works: the karaoke line and the pictures carry on in silence. Turning sound back on during singing says nothing.
+- A speed-up picked on the finish card is named by the narrator over the instrumental intro of the replay.
+- Without Web Audio the song screen says the browser cannot play the songs, instead of offering a retry.
 
 ## Saving
 

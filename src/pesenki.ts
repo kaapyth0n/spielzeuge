@@ -80,6 +80,8 @@ interface Session {
   fresh: number
   /** All speed-ups just finished for the first time. */
   golden: boolean
+  /** This browser has no Web Audio: the song cannot play here. */
+  noAudio: boolean
   line: number
   sung: number
   lastTick: number
@@ -271,14 +273,14 @@ function el<T extends HTMLElement = HTMLElement>(selector: string): T | null {
 
 function setStatus(text: string): void {
   const status = el('#ps-status')
-  if (!status) return
+  if (!status || status.textContent === text) return
   status.textContent = text
   status.classList.toggle('is-empty', !text)
 }
 
 function statusFor(s: Session): string {
   if (s.stage === 'loading') return copy.loading
-  if (s.stage === 'error') return copy.loadError
+  if (s.stage === 'error') return s.noAudio ? copy.noAudio : copy.loadError
   if (s.stage === 'idle') return copy.tapToStart
   const mode = s.conductor?.mode
   if (mode === 'paused') return copy.paused
@@ -298,7 +300,7 @@ function refreshStage(): void {
   setStatus(statusFor(s))
   const hero = el('.ps-hero')
   hero?.classList.toggle('is-chorus', !!s.conductor && s.conductor.chorus >= 0)
-  const error = s.stage === 'error'
+  const error = s.stage === 'error' && !s.noAudio
   const choices = el('.ps-choices')
   if (choices && error) {
     choices.innerHTML = `<button type="button" class="ps-button" data-action="retry">${icon('again')}<span>${esc(copy.retry)}</span></button>`
@@ -335,6 +337,7 @@ async function openSong(song: Song, level?: number): Promise<void> {
     loaded: 0,
     fresh: -1,
     golden: false,
+    noAudio: false,
     line: -2,
     sung: -1,
     lastTick: 0,
@@ -346,6 +349,12 @@ async function openSong(song: Song, level?: number): Promise<void> {
   persist()
   render()
   keepAwake()
+  if (!player.unlock()) {
+    s.stage = 'error'
+    s.noAudio = true
+    refreshStage()
+    return
+  }
   const timing = await loadTiming(song.id, s.lang)
   if (session !== s) return
   if (!timing) {
@@ -373,7 +382,13 @@ async function openSong(song: Song, level?: number): Promise<void> {
 
 function prepareRun(s: Session): void {
   if (!s.timing) return
-  s.conductor = new Conductor({ timing: s.timing, level: s.level, extras: extraPictures(s.timing) })
+  // A new shuffle every time the song starts: the circles never stand in a memorised order.
+  s.conductor = new Conductor({
+    timing: s.timing,
+    level: s.level,
+    extras: extraPictures(s.timing),
+    seed: Math.floor(Math.random() * 2 ** 31),
+  })
   s.stage = 'idle'
   s.line = -2
   s.sung = -1
@@ -399,11 +414,13 @@ function stopSession(): void {
   session = null
 }
 
-function startSong(): void {
+/** keepSpeech: a spoken choice (the speed-up name) may finish over the instrumental intro. */
+function startSong(keepSpeech = false): void {
   const s = session
   if (!s?.conductor || s.stage !== 'idle') return
   player.unlock()
-  narration.silence()
+  keepAwake()
+  if (!keepSpeech) narration.silence()
   s.stage = 'playing'
   el('.ps-speedbar')!.innerHTML = ''
   refreshTop()
@@ -419,7 +436,8 @@ function apply(commands: Command[]): void {
   for (const cmd of commands) {
     switch (cmd.type) {
       case 'play':
-        narration.silence()
+        // The very start plays the instrumental intro: a spoken choice may finish over it.
+        if (cmd.from > s.conductor.plan.begin + 0.05) narration.silence()
         player.play(cmd.from, cmd.rate, cmd.fade)
         break
       case 'stop-at':
@@ -477,9 +495,13 @@ function apply(commands: Command[]): void {
   refreshStage()
 }
 
+/** When the current circles appeared: a fast double tap must not answer the next line. */
+let choicesShownAt = 0
+
 function showChoices(s: Session, cue: number, choices: string[]): void {
   const box = el('.ps-choices')
   if (!box) return
+  choicesShownAt = performance.now()
   box.dataset.cue = String(cue)
   box.dataset.count = String(choices.length)
   box.innerHTML = choices
@@ -629,7 +651,9 @@ function finish(s: Session, stars: number, total: number): void {
   s.golden = before < LEVELS.length && progressOf(save, s.song.id).done >= LEVELS.length
   el('.ps-hero')?.classList.add('is-cheering')
   sfx.play('alarm')
-  window.setTimeout(() => sfx.play('cheer'), 700)
+  window.setTimeout(() => {
+    if (session === s && s.stage === 'finished') sfx.play('cheer')
+  }, 700)
   refreshTop()
   el('.ps-clock-fill')?.style.setProperty('--progress', '1')
   burst(el('.ps-hero'), 18)
@@ -678,7 +702,10 @@ function renderFinish(s: Session, stars: number, total: number): void {
     </div>
   </div>`
   card.hidden = false
-  if (s.fresh >= 0) window.setTimeout(() => sfx.play('unlock'), 1300)
+  if (s.fresh >= 0)
+    window.setTimeout(() => {
+      if (session === s && s.stage === 'finished') sfx.play('unlock')
+    }, 1300)
   window.setTimeout(() => card.querySelector<HTMLElement>(s.fresh >= 0 ? '.ps-speed.is-fresh' : '.ps-speed.is-current')?.focus({ preventScroll: true }), 50)
 }
 
@@ -688,8 +715,9 @@ function restart(level: number): void {
   s.level = Math.max(0, Math.min(openLevels(save, s.song.id) - 1, level))
   s.fresh = -1
   player.stop(0.05)
+  sfx.silence()
   prepareRun(s)
-  startSong()
+  startSong(true)
 }
 
 /* ─────────────────────────── every frame ─────────────────────────── */
@@ -872,7 +900,9 @@ root.addEventListener('click', (event) => {
   if (!target) return
   const action = target.dataset.action
   if (action === 'home') {
-    teardown()
+    // A plain click leaves the page; a Cmd/Ctrl/Shift-click opens a new tab and this page keeps playing.
+    const e = event as MouseEvent
+    if (!e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0) teardown()
     return
   }
   player.unlock()
@@ -901,6 +931,7 @@ root.addEventListener('click', (event) => {
   if (target.dataset.pic) {
     const s = session
     if (!s?.conductor || s.stage !== 'playing' || target.classList.contains('is-tried')) return
+    if (performance.now() - choicesShownAt < 350) return
     apply(s.conductor.pick(target.dataset.pic))
     return
   }
@@ -924,7 +955,9 @@ root.addEventListener('click', (event) => {
       player.setMuted(!save.sound)
       if (save.sound) {
         sfx.play('tap')
-        begin(copy.soundOn)
+        // Never talk over the singing: only prime speech for later.
+        if (session?.stage === 'playing' && player.playing) begin('')
+        else begin(copy.soundOn)
       } else {
         narration.silence()
         sfx.silence()

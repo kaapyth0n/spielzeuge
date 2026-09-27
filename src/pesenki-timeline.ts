@@ -115,18 +115,27 @@ export function planSong(timing: SongTiming): Plan {
 }
 
 /** Index of the line to show in the karaoke strip at a position. */
+/** When a line takes over the karaoke strip: a little early, but never before the previous line's last word is lit. */
+function lineShowsAt(lines: readonly TimedLine[], i: number): number {
+  const line = lines[i]
+  const previous = lines[i - 1]
+  const early = line.s - 0.6
+  if (!previous) return early
+  const lastWord = previous.words[previous.words.length - 1]
+  return Math.max(early, Math.min(line.s, (lastWord?.s ?? previous.e) + 0.45))
+}
+
 export function lineAt(lines: readonly TimedLine[], pos: number): number {
   let index = -1
   for (let i = 0; i < lines.length; i++) {
-    const next = lines[i + 1]
-    if (pos >= lines[i].s - 0.6) index = i
-    if (next && pos < next.s - 0.6) break
+    if (pos >= lineShowsAt(lines, i)) index = i
+    else break
   }
   if (index >= 0) {
     const line = lines[index]
     const next = lines[index + 1]
     // Long instrumental gaps show nothing.
-    if (pos > line.e + 1.6 && (!next || pos < next.s - 0.6)) return -1
+    if (pos > line.e + 1.6 && (!next || pos < lineShowsAt(lines, index + 1))) return -1
   }
   return index
 }
@@ -308,7 +317,8 @@ export class Conductor {
 
   /** Called every animation frame with the player's position. */
   frame(pos: number, now: number, dt: number): Command[] {
-    this.pos = pos
+    // While paused the player's halted position means nothing (a hint rewind may have stopped mid-way).
+    if (this.mode !== 'paused') this.pos = pos
     const out: Command[] = []
     switch (this.mode) {
       case 'play':
@@ -397,8 +407,10 @@ export class Conductor {
       const target = chorusRate(this.energy, speed)
       // Ease like a tape motor: slowing is gentle, catching up is quick.
       const k = target > this.rate ? 9 : 3.2
-      const next = this.rate + (target - this.rate) * Math.min(1, k * dt)
-      if (Math.abs(next - this.rate) > 0.002 || (next === target && this.rate !== target)) {
+      let next = this.rate + (target - this.rate) * Math.min(1, k * dt)
+      // Land exactly on the target, or the tape stays a few cents flat for the rest of the chorus.
+      if (Math.abs(target - next) < 0.004) next = target
+      if (next !== this.rate && (Math.abs(next - this.rate) > 0.002 || next === target)) {
         this.rate = next
         out.push({ type: 'rate', rate: next })
       }
@@ -407,7 +419,7 @@ export class Conductor {
         if (pos > section.s + 0.3) {
           this.mode = 'rewind'
           this.rewindTo = section.s
-          out.push({ type: 'reverse', from: pos, rate: REWIND_RATE }, { type: 'rewinding', on: true })
+          out.push({ type: 'reverse', from: pos, rate: REWIND_RATE * speed }, { type: 'rewinding', on: true })
         }
       }
     }
@@ -419,7 +431,7 @@ export class Conductor {
     this.hinted[cue.index] = this.holds[cue.index] >= 2 || this.hinted[cue.index]
     this.mode = 'hint'
     this.rewindTo = cue.replayFrom
-    out.push({ type: 'reverse', from: this.holdPos, rate: HINT_REWIND_RATE }, { type: 'hint', cue: cue.index, count: this.holds[cue.index] })
+    out.push({ type: 'reverse', from: this.holdPos, rate: HINT_REWIND_RATE * this.level.speed }, { type: 'hint', cue: cue.index, count: this.holds[cue.index] })
   }
 
   /** Ask for the line again (tap on the hero while waiting). */
@@ -486,9 +498,11 @@ export class Conductor {
   pause(): Command[] {
     if (this.mode === 'idle' || this.mode === 'done' || this.mode === 'paused') return []
     this.resumeMode = this.mode === 'hint' || this.mode === 'rewind' ? 'play' : this.mode
+    const out: Command[] = [{ type: 'stop' }]
     if (this.mode === 'hint') this.pos = this.rewindTo
+    if (this.mode === 'rewind') out.push({ type: 'rewinding', on: false })
     this.mode = 'paused'
-    return [{ type: 'stop' }]
+    return out
   }
 
   resume(now: number): Command[] {
@@ -501,6 +515,8 @@ export class Conductor {
     if (this.mode === 'stuck') return []
     this.mode = 'play'
     this.stopSent = false
+    // The player restarts at full volume: fade out again if we were already fading.
+    this.fading = false
     if (this.chorus >= 0) this.energy = 1
     this.rate = this.level.speed
     return [{ type: 'play', from: this.pos, rate: this.rate, fade: 0.2 }]
