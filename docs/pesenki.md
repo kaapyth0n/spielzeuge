@@ -45,6 +45,9 @@ The lyrics, pictures, colours and Suno styles live in `src/pesenki-lyrics.json`.
 | Кораблик / Schiffchen / Little Boat | a little sailing boat with a face | sun, seagull, whale, fish, island, crab, anchor, lighthouse |
 | Матрёна / Matrjona / Matryona | a matryoshka doll with sparkles: the song about Matryona’s day | rooster, bun, scooter, grapes, pencil, lamb, book, teddy |
 | Мороженка / Eiskugel / Ice Cream | the fire-breathing mint scoop from her first game | sun, plane, fire, cherry, snowflake, pencil, stone, cone |
+| Буковки / Buchstaben / Letters | a red letter A with a pencil | one picture per letter, different in each language: RU А–З (арбуз … зайчик), DE and EN A–H (Apfel/apple … Hase/hare) |
+
+Единорожка, Гусеничка and Совушка are written and drawn, and sleep on the shelf until they are recorded. The free Suno plan allowed seven downloads; each further song needs one more download.
 
 ## How a song is made
 

@@ -2348,7 +2348,12 @@
           ]
         }
       },
-      "outro": "Letters, letters – hip hip hooray!"
+      "outro": "Letters, letters – hip hip hooray!",
+      "suno": {
+        "clip": "7e468a8c-222b-4afd-bcb5-8eae07e7634d",
+        "model": "v6-mini"
+      },
+      "end": 181.0
     }
   ]
 }
