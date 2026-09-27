@@ -22,6 +22,8 @@ export interface TimedLine {
   /** Pick lines: the picture sung in this line and the index of its word. */
   pic?: string
   key?: number
+  /** A chorus line Suno sang once more than written. */
+  repeat?: boolean
 }
 
 export interface SongTiming {

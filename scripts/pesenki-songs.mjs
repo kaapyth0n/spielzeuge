@@ -91,9 +91,13 @@ const LONGEST_WORD = 2.4
 const suno = []
 // Section tags ([Chorus], [Instrumental Break]) are never sung; Suno may split them across words.
 let inTag = false
-for (const w of sunoWords) {
+sunoWords.forEach((w, wordIndex) => {
+  let slipped = false
   if (w.end_s - w.start_s > LONGEST_WORD) {
-    if (!w.word.includes('[')) console.warn(`warning: "${w.word.trim()}" lasted ${(w.end_s - w.start_s).toFixed(1)} s; the aligner may have slipped here`)
+    if (!w.word.includes('[')) {
+      slipped = true
+      console.warn(`warning: "${w.word.trim()}" lasted ${(w.end_s - w.start_s).toFixed(1)} s; the aligner may have slipped here`)
+    }
     w.end_s = w.start_s + LONGEST_WORD
   }
   let clean = ''
@@ -106,9 +110,10 @@ for (const w of sunoWords) {
   letters.forEach((c, i) => {
     const t0 = w.start_s + ((w.end_s - w.start_s) * i) / letters.length
     const t1 = w.start_s + ((w.end_s - w.start_s) * (i + 1)) / letters.length
-    suno.push({ c: fold(c), s: t0, e: t1 })
+    suno.push({ c: fold(c), s: t0, e: t1, slipped, word: wordIndex })
   })
-}
+  w.clean = clean
+})
 
 const lines = scriptLines(song).map((line) => ({ ...line, words: displayWords(line.text) }))
 const ours = []
@@ -159,6 +164,7 @@ ours.forEach((o, i) => {
   const t = wordTimes[o.li][o.wi]
   if (Number.isNaN(t.s)) t.s = suno[j].s
   t.e = suno[j].e
+  if (suno[j].slipped) t.slipped = true
 })
 const flat = []
 wordTimes.forEach((ws, li) => ws.forEach((t, wi) => flat.push({ li, wi, t })))
@@ -181,8 +187,79 @@ for (let k = 0; k < flat.length; k++) {
 const missing = flat.filter((f) => f.interpolated).length
 console.log(`words: ${flat.length}, interpolated ${missing}`)
 
+// Suno sometimes sings a chorus line twice. Those words match none of ours: find runs of them
+// that spell a chorus line of the same language and add the repeat as its own karaoke line.
+{
+  const used = new Set(match.filter((j) => j >= 0).map((j) => suno[j].word))
+  const plain = (t) => [...t].filter((c) => LETTER.test(c)).map(fold).join('')
+  const runs = []
+  let run = null
+  sunoWords.forEach((w, i) => {
+    const text = plain(w.clean ?? '')
+    if (!text) return
+    if (used.has(i)) {
+      run = null
+      return
+    }
+    if (!run) runs.push((run = []))
+    run.push(i)
+  })
+  for (const r of runs) {
+    // A run may hold several lines: take chorus lines greedily from its start.
+    let k = 0
+    while (k < r.length) {
+      const t0 = sunoWords[r[k]].start_s
+      // The language whose sung lines surround this moment.
+      const near = lines.map((l, i) => ({ l, i, t: wordTimes[i][0].s })).filter((x) => x.t <= t0).pop()
+      if (!near) break
+      const candidates = lines.map((l, i) => ({ l, i })).filter((x) => x.l.lang === near.l.lang && x.l.kind === 'sing' && x.l.chorus !== undefined)
+      let found = null
+      for (const cand of candidates) {
+        const target = plain(cand.l.text)
+        let acc = ''
+        let m = k
+        while (m < r.length && acc.length < target.length) acc += plain(sunoWords[r[m]].clean)
+        if (acc === target) {
+          found = { cand, from: k, to: m }
+          break
+        }
+        // advance m while accumulating
+        acc = ''
+        m = k
+        while (m < r.length && acc.length < target.length) acc += plain(sunoWords[r[m++]].clean)
+        if (acc === target) {
+          found = { cand, from: k, to: m }
+          break
+        }
+      }
+      if (!found) {
+        k++
+        continue
+      }
+      const ids = r.slice(found.from, found.to)
+      const source = found.cand.l
+      const words = source.words
+      const times = words.map((_, wi) => {
+        const sw = sunoWords[ids[Math.min(ids.length - 1, Math.round((wi * ids.length) / words.length))]]
+        return { s: sw.start_s, e: sw.end_s }
+      })
+      if (ids.length === words.length) ids.forEach((id, wi) => (times[wi] = { s: sunoWords[id].start_s, e: sunoWords[id].end_s }))
+      lines.push({ ...source, words: [...words], repeat: true })
+      wordTimes.push(times)
+      console.log(`${source.lang}: repeated line "${source.text}" at ${times[0].s.toFixed(2)} s`)
+      k = found.to
+    }
+  }
+  // Keep every language's lines in sung order.
+  const order = lines.map((l, i) => ({ l, t: wordTimes[i], lang: song.order.indexOf(l.lang), s: wordTimes[i][0].s }))
+  order.sort((a, b) => a.lang - b.lang || a.s - b.s)
+  lines.splice(0, lines.length, ...order.map((o) => o.l))
+  wordTimes.splice(0, wordTimes.length, ...order.map((o) => o.t))
+}
+
 // Both choruses of a language are sung the same way. When the aligner slips in one of them
-// (a line jumps seconds early), rebuild that line from the other chorus.
+// (a word stretched over seconds and the line shifted), rebuild that line from the other chorus.
+// Lines without a slipped word are left alone: Suno sometimes really sings a chorus differently.
 for (const lang of song.order) {
   const chorus = (n) => lines.map((l, i) => (l.lang === lang && l.chorus === n ? i : -1)).filter((i) => i >= 0)
   const a = chorus(0)
@@ -204,7 +281,8 @@ for (const lang of song.order) {
     const bw = wordTimes[bl]
     if (gw.length !== bw.length) return
     const off = Math.max(...gw.map((w, k) => Math.abs(w.s - goodBase - (bw[k].s - badBase))))
-    if (off <= 1) return
+    const nearSlip = [bl - 1, bl].some((li) => wordTimes[li]?.some((w) => w.slipped))
+    if (off <= 1 || !nearSlip) return
     bw.forEach((w, k) => {
       w.s = badBase + (gw[k].s - goodBase)
       w.e = badBase + (gw[k].e - goodBase)
@@ -246,7 +324,8 @@ function pcm(path, from, to, rate = 11025) {
 }
 
 /** Onset envelope from energy rises in a few bands, then tempo by autocorrelation and phase by comb. */
-function findBeat(samples, rate) {
+/** One recording has one tempo: pass `bpm` to fit only the downbeat of a part. */
+function findBeat(samples, rate, bpm = 0) {
   const hop = 128
   const win = 512
   const frames = Math.floor((samples.length - win) / hop)
@@ -282,14 +361,14 @@ function findBeat(samples, rate) {
   const env = flux.map((v) => Math.max(0, v - mean))
   // Coarse tempo on whole-frame lags, then a fine comb with fractional positions:
   // a 0.25 bpm error drifts by a whole beat over a song, so the fine step matters.
-  let best = { bpm: 100, score: -1 }
-  for (let bpm = 70; bpm <= 170; bpm += 0.5) {
-    const lag = Math.round((60 / bpm) * fps)
+  let best = { bpm: bpm || 100, score: -1 }
+  for (let b = 70; !bpm && b <= 170; b += 0.5) {
+    const lag = Math.round((60 / b) * fps)
     let s = 0
     for (let f = 0; f + lag * 2 < frames; f++) s += env[f] * (env[f + lag] + 0.5 * env[f + lag * 2])
     // Children's songs sit near 90–130 bpm: mild preference against halves and doubles.
-    s *= Math.exp(-Math.pow(Math.log2(bpm / 110), 2) * 0.6)
-    if (s > best.score) best = { bpm, score: s }
+    s *= Math.exp(-Math.pow(Math.log2(b / 110), 2) * 0.6)
+    if (s > best.score) best = { bpm: b, score: s }
   }
   const at = (x) => {
     const i = Math.floor(x)
@@ -297,12 +376,13 @@ function findBeat(samples, rate) {
     return (env[i] || 0) * (1 - t) + (env[i + 1] || 0) * t
   }
   let fine = { bpm: best.bpm, at: 0, score: -1 }
-  for (let bpm = best.bpm - 1.5; bpm <= best.bpm + 1.5; bpm += 0.01) {
-    const period = (60 / bpm) * fps
+  const [from, to, step] = bpm ? [bpm, bpm, 1] : [best.bpm - 1.5, best.bpm + 1.5, 0.01]
+  for (let b = from; b <= to + 1e-9; b += step) {
+    const period = (60 / b) * fps
     for (let p = 0; p < period; p += 0.5) {
       let s = 0
       for (let t = p; t < frames - 1; t += period) s += at(t)
-      if (s > fine.score) fine = { bpm, at: p, score: s }
+      if (s > fine.score) fine = { bpm: b, at: p, score: s }
     }
   }
   // Frame f covers samples f*hop … f*hop+win: its onset sits near the middle.
@@ -343,6 +423,10 @@ function fft(re, im) {
 mkdirSync(resolve(ROOT, 'public/pesenki'), { recursive: true })
 mkdirSync(resolve(ROOT, 'src/pesenki-timings'), { recursive: true })
 const r3 = (v) => Math.round(v * 1000) / 1000
+// The tempo of the whole recording (all languages): steadier than any single part.
+const songEnd = byLang[byLang.length - 1].to
+const tempo = findBeat(pcm(rawPath, 0, songEnd), 11025).bpm
+console.log(`tempo of the recording: ${tempo} bpm`)
 
 for (const part of byLang) {
   const { lang, from, to } = part
@@ -354,11 +438,12 @@ for (const part of byLang) {
     '-af', `afade=t=in:st=0:d=${from > 0 ? 0.6 : 0.05},afade=t=out:st=${Math.max(0, length - 1.6)}:d=1.6,loudnorm=I=-16:TP=-1.5:LRA=11`,
     '-ac', '1', '-ar', '44100', '-c:a', 'libmp3lame', '-b:a', '112k', out,
   ])
-  const beat = findBeat(pcm(out, 0, length), 11025)
+  const beat = findBeat(pcm(out, 0, length), 11025, tempo)
   const timedLines = part.idx.map((li) => {
     const line = lines[li]
     const words = line.words.map((w, wi) => ({ w, s: r3(wordTimes[li][wi].s - from), e: r3(wordTimes[li][wi].e - from) }))
     const entry = { kind: line.kind, s: words[0].s, e: words[words.length - 1].e, words }
+    if (line.repeat) entry.repeat = true
     if (line.kind === 'pick') {
       const target = fold(line.word).replace(/[^\p{L}\p{N}]/gu, '')
       const key = line.words.findIndex((w) => [...w].map(fold).join('').replace(/[^\p{L}\p{N}]/gu, '').includes(target))

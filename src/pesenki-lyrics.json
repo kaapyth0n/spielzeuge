@@ -467,7 +467,12 @@
           "crown",
           "crow"
         ]
-      ]
+      ],
+      "suno": {
+        "clip": "4b44703f-19bd-4e96-8fc4-6e85d48e1014",
+        "model": "v6-mini"
+      },
+      "end": 190.5
     },
     {
       "id": "kitten",
@@ -696,7 +701,12 @@
           ]
         }
       },
-      "outro": "Purr-purr-purr… sleep tight, Kitty!"
+      "outro": "Purr-purr-purr… sleep tight, Kitty!",
+      "suno": {
+        "clip": "ea701474-e737-436a-a7f8-09616a3b3635",
+        "model": "v6-mini"
+      },
+      "end": 202.5
     },
     {
       "id": "boat",

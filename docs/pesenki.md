@@ -35,11 +35,13 @@ There is no failing, no timer and no score apart from the stars.
 
 Every song has the same form in every language: a short intro, a verse of 4 picture lines, a chorus of 4 tap-along lines, another verse of 4 picture lines and the chorus again. The English part ends with an outro. Each picture line names exactly one picture, and no picture word appears anywhere else in the song.
 
-The lyrics, pictures, colours and Suno styles live in `src/pesenki-lyrics.json`. The shelf and the picture names are read from it. The shelf shows only songs recorded in all three languages. Lyrics for Лабубу, Котёнок, Кораблик, Матрёна and Совушка are written and wait for their recordings.
+The lyrics, pictures, colours and Suno styles live in `src/pesenki-lyrics.json`. The shelf and the picture names are read from it. The shelf shows only songs recorded in all three languages. Lyrics for the other songs of the drawing are written and wait for their recordings.
 
 | Song | Hero | Pictures |
 | --- | --- | --- |
 | Пандёнок / Kleiner Panda / Panda Cub | a panda cub with a tie and a flower | bamboo, ball, tie, flower, cloud, apple, drum, sofa |
+| Лабубу / Labubu / Labubu | a cheeky furry monster with bunny ears and pointy teeth | candy, rocket, sock, whistle, crown, crow, balloon, lantern (crown and crow are never offered together) |
+| Котёнок / Kätzchen / Kitty | a ginger kitten with a blue flower | bowl, sausage, yarn, flower, butterfly, frog, slipper, pillow |
 
 ## How a song is made
 
@@ -53,6 +55,9 @@ The lyrics, pictures, colours and Suno styles live in `src/pesenki-lyrics.json`.
    - Both choruses of a language are sung alike. If the aligner slipped in one chorus (a line more than 1 s off), that line is rebuilt from the other chorus. Words the aligner stretched past 2.4 s are reported.
    - It writes `src/pesenki-timings/<song>.<lang>.json` with lines, words, the picture of each verse line, the choruses, `bpm` and `beat0`. Choruses are trimmed so they never overlap a picture line.
    - `song.end` in the lyrics file cuts the last language when Suno started the song over to fill its length.
+   - The tempo is measured once over the whole recording; each language part only fits its downbeat.
+   - When Suno sings a chorus line twice, the extra words match nothing in the lyrics. Runs of them that spell a chorus line of that language become extra karaoke lines (`repeat: true`).
+   - Choosing between Suno's two takes: prefer the take whose lines have steady lengths, whose two choruses match, with few stretched words and a low `hoot_cer`.
 5. Draw the pictures (`src/pesenki-pictures.ts`) and check with `npm test`.
 
 ## How it works
