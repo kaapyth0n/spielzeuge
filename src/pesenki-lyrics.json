@@ -1842,6 +1842,488 @@
         }
       },
       "outro": "Caterpillar flies away — hooray!"
+    },
+    {
+      "id": "unicorn",
+      "color": "#a66cff",
+      "paper": "#f0e6ff",
+      "style": "Sparkly galloping fairy-tale pop, harp glissandos, glockenspiel, woodblock hoof clops, bouncy bass, 100 bpm, E major, bright clear female vocal, clear diction, children's song",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "carrot": {
+          "ru": "морковка",
+          "de": "Möhre",
+          "en": "carrot",
+          "draw": "Already drawn (Гусеничка): long orange carrot, point down, a few horizontal lines, bushy green top. Reuse it."
+        },
+        "horseshoe": {
+          "ru": "подковка",
+          "de": "Hufeisen",
+          "en": "horseshoe",
+          "draw": "Silver-grey U-shaped horseshoe, open end up, 6 small dark nail holes, one tiny white sparkle."
+        },
+        "rainbow": {
+          "ru": "радуга",
+          "de": "Regenbogen",
+          "en": "rainbow",
+          "draw": "Arc of 6 colour bands, red outside to violet inside, standing alone. No clouds at the ends, so it never reads as the cloud."
+        },
+        "cloud": {
+          "ru": "облако",
+          "de": "Wolke",
+          "en": "cloud",
+          "draw": "Already drawn (Пандёнок): fluffy white cloud with pale-blue shading. Reuse it."
+        },
+        "castle": {
+          "ru": "дворец",
+          "de": "Schloss",
+          "en": "castle",
+          "draw": "Pink fairy-tale castle: 3 towers with pointed purple roofs, arched door, one small plain pennant (no star on it)."
+        },
+        "lollipop": {
+          "ru": "леденец",
+          "de": "Lolli",
+          "en": "lollipop",
+          "draw": "Round pink-and-white spiral lollipop on a straight white stick with a small blue bow."
+        },
+        "star": {
+          "ru": "звезда",
+          "de": "Stern",
+          "en": "star",
+          "draw": "Already drawn (Совушка): plump golden five-pointed star with rounded tips. Reuse it."
+        },
+        "moon": {
+          "ru": "луна",
+          "de": "Mond",
+          "en": "moon",
+          "draw": "Already drawn (Совушка): pale lemon-cream crescent with a sleepy smiling face. Reuse it; the crescent keeps it apart from the round lollipop."
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Единорожка",
+          "hero": "Единорожка",
+          "blurb": "Единорожка скачет по радуге в сказочный дворец!",
+          "verse1": [
+            {
+              "text": "Утром хрумкает морковку (хрум-хрум!)",
+              "pic": "carrot",
+              "word": "морковку"
+            },
+            {
+              "text": "Ой, нашла в траве подковку!",
+              "pic": "horseshoe",
+              "word": "подковку"
+            },
+            {
+              "text": "В небе радуга-дуга,",
+              "pic": "rainbow",
+              "word": "радуга"
+            },
+            {
+              "text": "Скок — и прямо в облака!",
+              "pic": "cloud",
+              "word": "облака"
+            }
+          ],
+          "chorus": [
+            "Цок-цок-цок, Единорожка!",
+            "Постучи со мной немножко!",
+            "Веселей, ещё, ещё!",
+            "Цок-цок-цок! Как хорошо!"
+          ],
+          "verse2": [
+            {
+              "text": "Вот и сказочный дворец,",
+              "pic": "castle",
+              "word": "дворец"
+            },
+            {
+              "text": "Праздник! Сладкий леденец! (ням-ням!)",
+              "pic": "lollipop",
+              "word": "леденец"
+            },
+            {
+              "text": "Ночь пришла, звезда видна,",
+              "pic": "star",
+              "word": "звезда"
+            },
+            {
+              "text": "Сладких снов! Глядит луна. (баю-бай!)",
+              "pic": "moon",
+              "word": "луна"
+            }
+          ]
+        },
+        "de": {
+          "title": "Einhorn",
+          "hero": "Kleines Einhorn",
+          "blurb": "Das kleine Einhorn hüpft über den Regenbogen zum Schloss!",
+          "verse1": [
+            {
+              "text": "Morgens eine Möhre – knack! (mjam-mjam!)",
+              "pic": "carrot",
+              "word": "Möhre"
+            },
+            {
+              "text": "Glück! Ein Hufeisen – klick-klack!",
+              "pic": "horseshoe",
+              "word": "Hufeisen"
+            },
+            {
+              "text": "Hopp, den Regenbogen rauf,",
+              "pic": "rainbow",
+              "word": "Regenbogen"
+            },
+            {
+              "text": "Und dann auf die Wolke drauf!",
+              "pic": "cloud",
+              "word": "Wolke"
+            }
+          ],
+          "chorus": [
+            "Klipp-klapp, kleines Einhorn, hopp!",
+            "Klopf mit mir im Hopp-Galopp!",
+            "Schneller, schneller, immer mehr,",
+            "Klipp-klapp! Einhorn freut sich sehr!"
+          ],
+          "verse2": [
+            {
+              "text": "Großes Fest im Schloss – hurra!",
+              "pic": "castle",
+              "word": "Schloss"
+            },
+            {
+              "text": "Jeder kriegt 'nen Lolli – klar! (schleck-schleck!)",
+              "pic": "lollipop",
+              "word": "Lolli"
+            },
+            {
+              "text": "Oben, wo das Sternchen wohnt,",
+              "pic": "star",
+              "word": "Sternchen"
+            },
+            {
+              "text": "Gute Nacht, sagt leis' der Mond. (schlaf gut!)",
+              "pic": "moon",
+              "word": "Mond"
+            }
+          ]
+        },
+        "en": {
+          "title": "Unicorn",
+          "hero": "Little Unicorn",
+          "blurb": "Little Unicorn gallops up a rainbow to a castle!",
+          "verse1": [
+            {
+              "text": "Morning time – a carrot snack! (crunch-crunch!)",
+              "pic": "carrot",
+              "word": "carrot"
+            },
+            {
+              "text": "Finds a lucky horseshoe – clack!",
+              "pic": "horseshoe",
+              "word": "horseshoe"
+            },
+            {
+              "text": "Up, up, up the rainbow – whee!",
+              "pic": "rainbow",
+              "word": "rainbow"
+            },
+            {
+              "text": "Riding on a cloud – yippee!",
+              "pic": "cloud",
+              "word": "cloud"
+            }
+          ],
+          "chorus": [
+            "Little Unicorn, clip-clop!",
+            "Tap with me and never stop!",
+            "Faster, faster, tap and play,",
+            "Clip-clop, clip-clop, hip hooray!"
+          ],
+          "verse2": [
+            {
+              "text": "Party in the castle – hop!",
+              "pic": "castle",
+              "word": "castle"
+            },
+            {
+              "text": "Here's a yummy lollipop! (lick-lick!)",
+              "pic": "lollipop",
+              "word": "lollipop"
+            },
+            {
+              "text": "Up above, a star so bright,",
+              "pic": "star",
+              "word": "star"
+            },
+            {
+              "text": "Sleepy, sleepy moon – goodnight! (sweet dreams!)",
+              "pic": "moon",
+              "word": "moon"
+            }
+          ]
+        }
+      },
+      "outro": "Neigh! Hooray, Little Unicorn!"
+    },
+    {
+      "id": "letters",
+      "color": "#f0463c",
+      "paper": "#fde5e2",
+      "style": "Cheerful chiptune kids pop, 8-bit synth melody, toy piano, bouncy bass, handclaps, chant-along, 110 bpm, A major, bright clear female vocal, clear diction, children's song",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "watermelon": {
+          "ru": "арбуз",
+          "de": "Wassermelone",
+          "en": "watermelon",
+          "draw": "Already drawn (Гусеничка): big half-moon slice, dark-green rind, thin white band, red flesh with black seeds. Reuse it."
+        },
+        "banana": {
+          "ru": "банан",
+          "de": "Banane",
+          "en": "banana",
+          "draw": "One curved yellow banana with brown tips and a short stem. No bunch, no peel."
+        },
+        "helicopter": {
+          "ru": "вертолёт",
+          "de": "Hubschrauber",
+          "en": "helicopter",
+          "draw": "Red helicopter in side view: round cabin with a big window, long tail with a small tail rotor, grey main rotor on top, landing skids."
+        },
+        "goose": {
+          "ru": "гусь",
+          "de": "Gans",
+          "en": "goose",
+          "draw": "White goose standing in side view, long curved neck, orange beak and orange feet."
+        },
+        "dragon": {
+          "ru": "дракон",
+          "de": "Drache",
+          "en": "dragon",
+          "draw": "Friendly purple dragon sitting: lilac belly, small orange wings, spiky back, tiny orange puff of fire. Not green, so it is never confused with the frog."
+        },
+        "raccoon": {
+          "ru": "енот",
+          "de": "Waschbär",
+          "en": "raccoon",
+          "draw": "Grey raccoon sitting front-on: black eye mask, long white whiskers, bushy tail with black rings."
+        },
+        "giraffe": {
+          "ru": "жираф",
+          "de": "Giraffe",
+          "en": "giraffe",
+          "draw": "Tall yellow giraffe with brown patches, very long neck, two small knobbed horns."
+        },
+        "hare": {
+          "ru": "зайчик",
+          "de": "Hase",
+          "en": "hare",
+          "draw": "Light sandy-brown hare sitting in side view: very long upright ears, big hind feet, white fluffy tail. Warmer and browner than the grey raccoon."
+        },
+        "apple": {
+          "ru": "яблоко",
+          "de": "Apfel",
+          "en": "apple",
+          "draw": "Already drawn (Пандёнок): shiny red apple with a stem and one green leaf. Reuse it."
+        },
+        "clown": {
+          "ru": "клоун",
+          "de": "Clown",
+          "en": "clown",
+          "draw": "Whole smiling clown: white face, big round red nose, orange curly hair, colourful polka-dot suit and two huge red shoes. No hat."
+        },
+        "elephant": {
+          "ru": "слон",
+          "de": "Elefant",
+          "en": "elephant",
+          "draw": "Grey elephant in side view: big ears, trunk curled up, small white tusk."
+        },
+        "frog": {
+          "ru": "лягушка",
+          "de": "Frosch",
+          "en": "frog",
+          "draw": "Already drawn (Котёнок, Совушка): bright-green frog sitting front-on, big eyes on top, wide smile. Reuse it."
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Буковки",
+          "hero": "Буковки",
+          "blurb": "Весёлая азбука: от арбуза до зайчика!",
+          "verse1": [
+            {
+              "text": "Буква А — арбуз большой,",
+              "pic": "watermelon",
+              "word": "арбуз"
+            },
+            {
+              "text": "Буква Б — банан смешной, (ням-ням!)",
+              "pic": "banana",
+              "word": "банан"
+            },
+            {
+              "text": "Буква В — вот вертолёт,",
+              "pic": "helicopter",
+              "word": "вертолёт"
+            },
+            {
+              "text": "Буква Г — а гусь плывёт! (га-га-га!)",
+              "pic": "goose",
+              "word": "гусь"
+            }
+          ],
+          "chorus": [
+            "Буковки, буковки — тук-тук-тук!",
+            "Каждая буковка — лучший друг!",
+            "Скоро мы сами начнём читать,",
+            "Тук-тук, стучи — и споём опять!"
+          ],
+          "verse2": [
+            {
+              "text": "Буква Д — дракон крылатый, (ух ты!)",
+              "pic": "dragon",
+              "word": "дракон"
+            },
+            {
+              "text": "Буква Е — енот усатый,",
+              "pic": "raccoon",
+              "word": "енот"
+            },
+            {
+              "text": "Буква Ж — жираф, дружок,",
+              "pic": "giraffe",
+              "word": "жираф"
+            },
+            {
+              "text": "Буква З — и зайчик — скок!",
+              "pic": "hare",
+              "word": "зайчик"
+            }
+          ]
+        },
+        "de": {
+          "title": "Buchstaben",
+          "hero": "Buchstaben",
+          "blurb": "Das fröhliche ABC – vom Apfel bis zum Hasen!",
+          "verse1": [
+            {
+              "text": "Erst kommt A wie Apfel – rund,",
+              "pic": "apple",
+              "word": "Apfel"
+            },
+            {
+              "text": "Und das B: Banane – krumm,",
+              "pic": "banana",
+              "word": "Banane"
+            },
+            {
+              "text": "Dann das C: ein Clown – so bunt! (hahaha!)",
+              "pic": "clown",
+              "word": "Clown"
+            },
+            {
+              "text": "Und das D: ein Drache – bumm! (fauch!)",
+              "pic": "dragon",
+              "word": "Drache"
+            }
+          ],
+          "chorus": [
+            "Buchstaben, Buchstaben – klopf, klopf, klopf!",
+            "Tanzen und hüpfen in meinem Kopf!",
+            "Lesen, das lernen wir, klein und groß,",
+            "Klopf mit – dann geht es von vorne los!"
+          ],
+          "verse2": [
+            {
+              "text": "Hier ist E wie Elefant,",
+              "pic": "elephant",
+              "word": "Elefant"
+            },
+            {
+              "text": "F wie Frosch auf meiner Hand! (quak-quak!)",
+              "pic": "frog",
+              "word": "Frosch"
+            },
+            {
+              "text": "Und das G: Giraffe, sing!",
+              "pic": "giraffe",
+              "word": "Giraffe"
+            },
+            {
+              "text": "Und das H: du Hase, spring! (hopp-hopp!)",
+              "pic": "hare",
+              "word": "Hase"
+            }
+          ]
+        },
+        "en": {
+          "title": "Letters",
+          "hero": "Letters",
+          "blurb": "A happy ABC song, from apple to hare!",
+          "verse1": [
+            {
+              "text": "First comes A – an apple, sweet,",
+              "pic": "apple",
+              "word": "apple"
+            },
+            {
+              "text": "Then comes B – banana: more!",
+              "pic": "banana",
+              "word": "banana"
+            },
+            {
+              "text": "Next comes C – a clown: big feet! (honk-honk!)",
+              "pic": "clown",
+              "word": "clown"
+            },
+            {
+              "text": "Here comes D – a dragon: roar!",
+              "pic": "dragon",
+              "word": "dragon"
+            }
+          ],
+          "chorus": [
+            "Letters, my letters, come tap-tap-tap!",
+            "Each little letter's a friend – clap-clap!",
+            "Soon we'll be reading – hooray, hooray!",
+            "Tap-tap and sing it again – let's play!"
+          ],
+          "verse2": [
+            {
+              "text": "E – an elephant: so big! (toot-toot!)",
+              "pic": "elephant",
+              "word": "elephant"
+            },
+            {
+              "text": "F – a frog who does a jig! (ribbit!)",
+              "pic": "frog",
+              "word": "frog"
+            },
+            {
+              "text": "G is for giraffe – so tall,",
+              "pic": "giraffe",
+              "word": "giraffe"
+            },
+            {
+              "text": "Last comes H – a hare: that's all!",
+              "pic": "hare",
+              "word": "hare"
+            }
+          ]
+        }
+      },
+      "outro": "Letters, letters – hip hip hooray!"
     }
   ]
 }

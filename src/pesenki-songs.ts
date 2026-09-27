@@ -71,21 +71,10 @@ export interface SleepingSong {
 }
 
 const DRAWN_ORDER = ['panda', 'labubu', 'kitten', 'boat', 'icecream', 'girl', 'letters', 'unicorn', 'caterpillar', 'owl']
-const SLEEPING_TITLES: Record<string, Words> = {
-  letters: { ru: 'Буковки', de: 'ABC-Lied', en: 'ABC Song' },
-  unicorn: { ru: 'Единорожка', de: 'Einhorn', en: 'Unicorn' },
-  caterpillar: { ru: 'Гусеничка', de: 'Räupchen', en: 'Caterpillar' },
-  owl: { ru: 'Совушка', de: 'Eulchen', en: 'Little Owl' },
-}
-const SLEEPING_COLORS: Record<string, [string, string]> = {
-  letters: ['#f0463c', '#fde5e2'],
-  unicorn: ['#a66cff', '#f0e6ff'],
-}
-
 export const SLEEPING: SleepingSong[] = DRAWN_ORDER.filter((id) => !SONGS.some((song) => song.id === id)).map((id) => {
   const source = SOURCE.find((song) => song.id === id)
-  const [color, paper] = source ? [source.color, source.paper] : (SLEEPING_COLORS[id] ?? ['#9aa3ad', '#eceef1'])
-  return { id, color, paper, title: source ? pick(source, 'title') : (SLEEPING_TITLES[id] ?? { ru: id, de: id, en: id }) }
+  const [color, paper] = source ? [source.color, source.paper] : ['#9aa3ad', '#eceef1']
+  return { id, color, paper, title: source ? pick(source, 'title') : { ru: id, de: id, en: id } }
 })
 
 /** Picture names, used for accessible labels and the word under a found picture. */
