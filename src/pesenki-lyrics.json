@@ -1632,7 +1632,12 @@
           ]
         }
       },
-      "outro": "Ice Cream is home — yippee!"
+      "outro": "Ice Cream is home — yippee!",
+      "suno": {
+        "clip": "a85d06f6-dd4d-4f27-b715-9150081a4271",
+        "model": "v6-mini"
+      },
+      "end": 243.0
     },
     {
       "id": "caterpillar",
