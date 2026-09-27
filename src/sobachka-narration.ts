@@ -1,5 +1,18 @@
 import { LANG_LABEL, SPEECH_LOCALE, type Lang } from './languages.ts'
 
+/**
+ * Text as the voice should hear it. Apple's Russian voice (Milena) reads
+ * typographic quotes « » „ “ ” aloud as symbol names, so they are dropped;
+ * decorative symbols go too. Plain apostrophes (Don’t) stay silent and stay.
+ */
+export function speakable(text: string): string {
+  return text
+    .replace(/[♥✧↗✓]/g, '')
+    .replace(/[«»„“”‚‘]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 /** Only taps and the caption beneath the puppy are narrated. */
 export class PuppyNarration {
   private previousCaption: string | null = null
@@ -66,10 +79,7 @@ export class PuppyNarration {
     if (!this.supported() || !this.preferences().enabled || document.hidden)
       return
     for (const text of texts) {
-      const clean = text
-        .replace(/[♥✧↗✓]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
+      const clean = speakable(text)
       if (clean && !this.pending.includes(clean)) this.pending.push(clean)
     }
     if (this.scheduled) return

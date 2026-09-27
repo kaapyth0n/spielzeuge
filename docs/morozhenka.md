@@ -68,6 +68,7 @@ Without a microphone, when permission is denied, or on browsers without `getUser
 ## Language, narration and sound
 
 - Russian, German and English share `spielzeuge.lang` with the catalog. RU/DE/EN are selected in the top bar or with `?lang=`. The game is called Мороженка, Eiskugel and Ice Cream. The letter labels are А/О/У/И/Э, A/O/U/I/E and AH/OH/OO/EE/EH. English uses sound spellings so that “I” is not read as “eye”.
+- Before speaking, `speakable()` removes typographic quotes (« » „ “ ”). Apple’s Russian voice Milena reads them aloud as symbol names, which added about a second to every hint that names a letter, as in «А». The same fix covers Слайм Чек dialogue.
 - Narration reuses `PuppyNarration`. It speaks the welcome, clicked menu actions, round hints (with the current letters), crashes, wins and cherry totals, teaching prompts, letter changes and microphone fallbacks. A retry names only the round, so the microphone opens sooner. In voice mode, cherries and snowflakes during flight are shown and chimed but not spoken, because speech would mute the microphone mid-flight. In button mode they are spoken too. The letter pad itself is not narrated.
 - Effects are synthesized in `src/morozhenka-audio.ts`: a soft fire whoosh that follows the voice, a start chime, a splat, a respawn sparkle, a cherry, a snowflake, a win fanfare, a “learned” chime and a flavor bloop. The speaker button mutes speech and effects, stops the fire and is saved.
 
