@@ -42,6 +42,8 @@ The lyrics, pictures, colours and Suno styles live in `src/pesenki-lyrics.json`.
 | Пандёнок / Kleiner Panda / Panda Cub | a panda cub with a tie and a flower | bamboo, ball, tie, flower, cloud, apple, drum, sofa |
 | Лабубу / Labubu / Labubu | a cheeky furry monster with bunny ears and pointy teeth | candy, rocket, sock, whistle, crown, crow, balloon, lantern (crown and crow are never offered together) |
 | Котёнок / Kätzchen / Kitty | a ginger kitten with a blue flower | bowl, sausage, yarn, flower, butterfly, frog, slipper, pillow |
+| Кораблик / Schiffchen / Little Boat | a little sailing boat with a face | sun, seagull, whale, fish, island, crab, anchor, lighthouse |
+| Матрёна / Matrjona / Matryona | a matryoshka doll with sparkles: the song about Matryona’s day | rooster, bun, scooter, grapes, pencil, lamb, book, teddy |
 
 ## How a song is made
 
@@ -52,7 +54,7 @@ The lyrics, pictures, colours and Suno styles live in `src/pesenki-lyrics.json`.
    - It matches Suno’s words to ours letter by letter (Needleman–Wunsch on folded letters; section tags are skipped, and words that swallow an instrumental break are capped at 2.4 s).
    - It cuts one file per language. Each later language keeps up to 5 s of the break before it as its intro. It fades, normalises loudness to −16 LUFS and encodes 112 kbps mono MP3 into `public/pesenki/<song>.<lang>.mp3`.
    - It finds the tempo and a downbeat from an onset envelope: spectral flux, a coarse autocorrelation, then a fine comb on fractional frame positions (0.01 bpm steps), because a 0.25 bpm error drifts by a beat over a song.
-   - Both choruses of a language are sung alike. If the aligner slipped in one chorus (a line more than 1 s off), that line is rebuilt from the other chorus. Words the aligner stretched past 2.4 s are reported.
+   - Both choruses of a language are sung alike. If the aligner slipped in one chorus (a line more than 1 s off next to a word stretched past 2.4 s inside a line), that line is rebuilt from the other chorus, unless the rebuilt line would overlap its neighbours. A long last word is a held note, not a slip. Stretched words are reported.
    - It writes `src/pesenki-timings/<song>.<lang>.json` with lines, words, the picture of each verse line, the choruses, `bpm` and `beat0`. Choruses are trimmed so they never overlap a picture line.
    - `song.end` in the lyrics file cuts the last language when Suno started the song over to fill its length.
    - The tempo is measured once over the whole recording; each language part only fits its downbeat.

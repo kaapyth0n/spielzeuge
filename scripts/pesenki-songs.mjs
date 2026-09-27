@@ -281,12 +281,15 @@ for (const lang of song.order) {
     const bw = wordTimes[bl]
     if (gw.length !== bw.length) return
     const off = Math.max(...gw.map((w, k) => Math.abs(w.s - goodBase - (bw[k].s - badBase))))
-    const nearSlip = [bl - 1, bl].some((li) => wordTimes[li]?.some((w) => w.slipped))
+    // A long last word is a held note, not a slip: only stretched words inside a line count.
+    const nearSlip = [bl - 1, bl].some((li) => wordTimes[li]?.some((w, k, all) => w.slipped && k < all.length - 1))
     if (off <= 1 || !nearSlip) return
-    bw.forEach((w, k) => {
-      w.s = badBase + (gw[k].s - goodBase)
-      w.e = badBase + (gw[k].e - goodBase)
-    })
+    const rebuilt = bw.map((w, k) => ({ ...w, s: badBase + (gw[k].s - goodBase), e: badBase + (gw[k].e - goodBase) }))
+    const before = wordTimes[bl - 1]
+    const after = wordTimes[bl + 1]
+    const clashes = (before && rebuilt[0].s < before[before.length - 1].s) || (after && rebuilt[rebuilt.length - 1].s > after[0].s)
+    if (clashes) return
+    rebuilt.forEach((w, k) => Object.assign(bw[k], w))
     console.log(`${lang}: chorus line "${lines[bl].text}" was off by ${off.toFixed(2)} s, rebuilt from the other chorus`)
   })
 }

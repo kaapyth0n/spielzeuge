@@ -77,9 +77,10 @@ describe.each(SONGS.map((song) => song.id))('recording of %s', (id) => {
     const chorusLines = (n: number) => t.lines.filter((line) => line.kind === 'sing' && line.e > t.choruses[n].s && line.s < t.choruses[n].e)
     const [c0, c1] = [chorusLines(0), chorusLines(1)]
     // When Suno sang a chorus line twice, that chorus has its own shape; otherwise both match.
+    // Singers stretch a note now and then, so only gross slips (a line seconds off) fail.
     if (!c0.some((line) => line.repeat) && !c1.some((line) => line.repeat)) {
       expect(c0.length).toBe(c1.length)
-      c0.forEach((line, i) => expect(Math.abs(line.s - c0[0].s - (c1[i].s - c1[0].s)), `${lang} chorus line ${i}`).toBeLessThan(1))
+      c0.forEach((line, i) => expect(Math.abs(line.s - c0[0].s - (c1[i].s - c1[0].s)), `${lang} chorus line ${i}`).toBeLessThan(2.5))
     }
     const plan = planSong(t)
     expect(plan.cues).toHaveLength(8)

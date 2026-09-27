@@ -935,7 +935,12 @@
           ]
         }
       },
-      "outro": "Yo-ho-ho! Hooray, Little Boat!"
+      "outro": "Yo-ho-ho! Hooray, Little Boat!",
+      "suno": {
+        "clip": "191ee7f7-91e6-449a-b528-0808bbc064b6",
+        "model": "v6-mini"
+      },
+      "end": 166.0
     },
     {
       "id": "girl",
@@ -1164,7 +1169,12 @@
           ]
         }
       },
-      "outro": "Night-night, Matryona! La-la-la!"
+      "outro": "Night-night, Matryona! La-la-la!",
+      "suno": {
+        "clip": "5a00a759-90e6-40e3-84de-f25780d145f4",
+        "model": "v6-mini"
+      },
+      "end": 209.5
     },
     {
       "id": "owl",
