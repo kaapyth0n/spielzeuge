@@ -1,0 +1,1389 @@
+{
+  "songs": [
+    {
+      "id": "panda",
+      "color": "#3fae5a",
+      "paper": "#e2f2df",
+      "style": "cheerful children's song, bouncy ukulele, marimba, glockenspiel, hand claps, playful, bright clear female vocal, very clear diction, major key, 104 bpm, multilingual",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "bamboo": {
+          "ru": "бамбук",
+          "de": "Bambus",
+          "en": "bamboo",
+          "draw": "three green bamboo stalks with joints and two leaves"
+        },
+        "ball": {
+          "ru": "мячик",
+          "de": "Ball",
+          "en": "ball",
+          "draw": "a red-and-yellow striped beach ball"
+        },
+        "tie": {
+          "ru": "галстук",
+          "de": "Krawatte",
+          "en": "tie",
+          "draw": "a red necktie with a knot"
+        },
+        "flower": {
+          "ru": "цветок",
+          "de": "Blume",
+          "en": "flower",
+          "draw": "a pink daisy-like flower with a yellow centre on a green stem with a leaf"
+        },
+        "cloud": {
+          "ru": "облачко",
+          "de": "Wolke",
+          "en": "cloud",
+          "draw": "a fluffy white cloud with a pale blue outline shading"
+        },
+        "apple": {
+          "ru": "яблоко",
+          "de": "Apfel",
+          "en": "apple",
+          "draw": "a shiny red apple with a stem and one green leaf"
+        },
+        "drum": {
+          "ru": "барабан",
+          "de": "Trommel",
+          "en": "drum",
+          "draw": "a toy drum with red body, zigzag cord and two drumsticks"
+        },
+        "sofa": {
+          "ru": "диван",
+          "de": "Sofa",
+          "en": "sofa",
+          "draw": "a cosy blue two-seat sofa with round cushions"
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Пандёнок",
+          "hero": "Пандёнок",
+          "blurb": "Пандёнок жуёт бамбук и стучит в барабан",
+          "verse1": [
+            {
+              "text": "Хрум-хрум-хрум — жуёт бамбук,",
+              "pic": "bamboo",
+              "word": "бамбук"
+            },
+            {
+              "text": "Мячик прыгает: тук-тук!",
+              "pic": "ball",
+              "word": "мячик"
+            },
+            {
+              "text": "Красный галстук он надел,",
+              "pic": "tie",
+              "word": "галстук"
+            },
+            {
+              "text": "Цветик нюхал и запел!",
+              "pic": "flower",
+              "word": "цветик"
+            }
+          ],
+          "chorus": [
+            "Тук-тук-тук, пандёнок, пляши!",
+            "Тук-тук-тук, стучи от души!",
+            "Лапки вверх и лапки вниз —",
+            "Тук-тук-тук, пандёнок, кружись!"
+          ],
+          "verse2": [
+            {
+              "text": "Вот на небе облачко,",
+              "pic": "cloud",
+              "word": "облачко"
+            },
+            {
+              "text": "А в корзинке — яблочко!",
+              "pic": "apple",
+              "word": "яблочко"
+            },
+            {
+              "text": "Бьёт пандёнок в барабан,",
+              "pic": "drum",
+              "word": "барабан"
+            },
+            {
+              "text": "А потом — бух на диван!",
+              "pic": "sofa",
+              "word": "диван"
+            }
+          ]
+        },
+        "de": {
+          "title": "Kleiner Panda",
+          "hero": "Kleiner Panda",
+          "blurb": "Der kleine Panda kaut Bambus und trommelt",
+          "verse1": [
+            {
+              "text": "Panda kaut den Bambus fein,",
+              "pic": "bamboo",
+              "word": "Bambus"
+            },
+            {
+              "text": "Kickt den Ball ins Tor hinein!",
+              "pic": "ball",
+              "word": "Ball"
+            },
+            {
+              "text": "Bindet die Krawatte um,",
+              "pic": "tie",
+              "word": "Krawatte"
+            },
+            {
+              "text": "Mit der Blume tanzt er rum!",
+              "pic": "flower",
+              "word": "Blume"
+            }
+          ],
+          "chorus": [
+            "Tipp-tipp-tapp, Panda, tanz mit mir!",
+            "Tipp-tipp-tapp, klopf mal an die Tür!",
+            "Pfoten hoch und Pfoten runter,",
+            "Tipp-tipp-tapp, der Panda wird munter!"
+          ],
+          "verse2": [
+            {
+              "text": "Oben zieht die Wolke hin,",
+              "pic": "cloud",
+              "word": "Wolke"
+            },
+            {
+              "text": "Und im Korb ein Apfel drin!",
+              "pic": "apple",
+              "word": "Apfel"
+            },
+            {
+              "text": "Bumm, bumm, bumm — die Trommel klingt,",
+              "pic": "drum",
+              "word": "Trommel"
+            },
+            {
+              "text": "Plumps aufs Sofa! Panda springt.",
+              "pic": "sofa",
+              "word": "Sofa"
+            }
+          ]
+        },
+        "en": {
+          "title": "Panda Cub",
+          "hero": "Panda Cub",
+          "blurb": "The panda cub munches bamboo and bangs a drum",
+          "verse1": [
+            {
+              "text": "Crunch, crunch, crunch — he eats bamboo,",
+              "pic": "bamboo",
+              "word": "bamboo"
+            },
+            {
+              "text": "Bounce the ball and catch it too!",
+              "pic": "ball",
+              "word": "ball"
+            },
+            {
+              "text": "Puts a tie on, red and neat,",
+              "pic": "tie",
+              "word": "tie"
+            },
+            {
+              "text": "Sniffs a flower — oh, how sweet!",
+              "pic": "flower",
+              "word": "flower"
+            }
+          ],
+          "chorus": [
+            "Tap-tap-tap, little panda, dance!",
+            "Tap-tap-tap, give a spin and prance!",
+            "Paws up high and paws down low,",
+            "Tap-tap-tap, and round you go!"
+          ],
+          "verse2": [
+            {
+              "text": "Look up high — a fluffy cloud,",
+              "pic": "cloud",
+              "word": "cloud"
+            },
+            {
+              "text": "Picks an apple, sings out loud!",
+              "pic": "apple",
+              "word": "apple"
+            },
+            {
+              "text": "Boom, boom, boom — he beats the drum,",
+              "pic": "drum",
+              "word": "drum"
+            },
+            {
+              "text": "Then on the sofa — plop! — goes his tum!",
+              "pic": "sofa",
+              "word": "sofa"
+            }
+          ]
+        }
+      },
+      "outro": "Тук-тук, tipp-tapp, tap-tap — shhh!",
+      "suno": {
+        "clip": "b3227f65-72de-45ca-8ce2-88839c40c6e3",
+        "model": "v6-mini"
+      },
+      "end": 195.0
+    },
+    {
+      "id": "labubu",
+      "color": "#ff5c8a",
+      "paper": "#ffe3ec",
+      "style": "Funky kids pop, slap bass, bright synth stabs, wah guitar, handclaps, cheeky and playful, 108 bpm, F major, bright clear female vocal, clear diction, children's song",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "candy": {
+          "ru": "конфета",
+          "de": "Bonbon",
+          "en": "candy",
+          "draw": "Wrapped bonbon, wider than tall: a pink-and-white swirl in the middle and twisted see-through wrapper ends on both sides."
+        },
+        "rocket": {
+          "ru": "ракета",
+          "de": "Rakete",
+          "en": "rocket",
+          "draw": "White toy rocket standing upright, red pointed nose, red fins, round blue window, orange flame below."
+        },
+        "sock": {
+          "ru": "носок",
+          "de": "Socke",
+          "en": "sock",
+          "draw": "Long L-shaped sock with blue and yellow stripes, side view."
+        },
+        "whistle": {
+          "ru": "свисток",
+          "de": "Pfeife",
+          "en": "whistle",
+          "draw": "Yellow sports whistle, side view, with a red cord loop."
+        },
+        "crown": {
+          "ru": "корона",
+          "de": "Krone",
+          "en": "crown",
+          "draw": "Golden crown with three points, a round ball on each tip, and red and blue gems."
+        },
+        "crow": {
+          "ru": "ворона",
+          "de": "Krähe",
+          "en": "crow",
+          "draw": "Black crow standing, side view, yellow beak and legs, one white eye dot, grey wing edge."
+        },
+        "balloon": {
+          "ru": "шарик",
+          "de": "Luftballon",
+          "en": "balloon",
+          "draw": "Red oval balloon, taller than wide, with a small knot, a white shine spot and a curly string."
+        },
+        "lantern": {
+          "ru": "фонарик",
+          "de": "Laterne",
+          "en": "lantern",
+          "draw": "Colourful paper lantern like a St. Martin lantern: an upright cylinder with orange, red and yellow bands, a warm yellow glow inside, and a wire handle on a short stick. It is clearly not round, so it never looks like the balloon."
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Лабубу",
+          "hero": "Лабубу",
+          "blurb": "Озорной Лабубу шалит и танцует!",
+          "verse1": [
+            {
+              "text": "Лабубу стащил конфету (хи-хи!)",
+              "pic": "candy",
+              "word": "конфету"
+            },
+            {
+              "text": "Запустил под стол ракету (вжух!)",
+              "pic": "rocket",
+              "word": "ракету"
+            },
+            {
+              "text": "Натянул на нос носок,",
+              "pic": "sock",
+              "word": "носок"
+            },
+            {
+              "text": "Громко дунул в свой свисток! (фью-фью!)",
+              "pic": "whistle",
+              "word": "свисток"
+            }
+          ],
+          "chorus": [
+            "Лабубу, Лабубу — тук-тук-тук!",
+            "Озорник и шалун — ты мой друг!",
+            "Хлоп-хлоп-хлоп — и танцуем вдвоём,",
+            "Лабубу, мы с тобою поём!"
+          ],
+          "verse2": [
+            {
+              "text": "Лабубу надел корону,",
+              "pic": "crown",
+              "word": "корону"
+            },
+            {
+              "text": "Рассмешил в саду ворону (кар-кар!)",
+              "pic": "crow",
+              "word": "ворону"
+            },
+            {
+              "text": "Он надул большущий шарик",
+              "pic": "balloon",
+              "word": "шарик"
+            },
+            {
+              "text": "И зажёг цветной фонарик!",
+              "pic": "lantern",
+              "word": "фонарик"
+            }
+          ]
+        },
+        "de": {
+          "title": "Labubu",
+          "hero": "Labubu",
+          "blurb": "Labubu macht Quatsch und tanzt die ganze Nacht!",
+          "verse1": [
+            {
+              "text": "Labubu stibitzt ein Bonbon (hihi!)",
+              "pic": "candy",
+              "word": "Bonbon"
+            },
+            {
+              "text": "und schickt die Rakete davon (wusch!)",
+              "pic": "rocket",
+              "word": "Rakete"
+            },
+            {
+              "text": "Er zieht auf die Nase zwei Socken",
+              "pic": "sock",
+              "word": "Socken"
+            },
+            {
+              "text": "und bläst in die Pfeife – wir rocken! (pfiiiff!)",
+              "pic": "whistle",
+              "word": "Pfeife"
+            }
+          ],
+          "chorus": [
+            "Klopf-klopf, Labubu, tanz mit mir!",
+            "Klopf-klopf, die Party steigt bei dir!",
+            "Wir wackeln, wackeln hin und her,",
+            "Labubu, klopf – wir wollen mehr!"
+          ],
+          "verse2": [
+            {
+              "text": "Er trägt eine Krone bei Nacht",
+              "pic": "crown",
+              "word": "Krone"
+            },
+            {
+              "text": "und kitzelt die Krähe – die lacht! (krah-krah!)",
+              "pic": "crow",
+              "word": "Krähe"
+            },
+            {
+              "text": "Er pustet den Luftballon rund",
+              "pic": "balloon",
+              "word": "Luftballon"
+            },
+            {
+              "text": "und schwenkt die Laterne – so bunt!",
+              "pic": "lantern",
+              "word": "Laterne"
+            }
+          ]
+        },
+        "en": {
+          "title": "Labubu",
+          "hero": "Labubu",
+          "blurb": "Cheeky Labubu plays tricks and dances all night!",
+          "verse1": [
+            {
+              "text": "Labubu hides candy in his pocket (hee-hee!)",
+              "pic": "candy",
+              "word": "candy"
+            },
+            {
+              "text": "Zooms beneath the table on a rocket (whoosh!)",
+              "pic": "rocket",
+              "word": "rocket"
+            },
+            {
+              "text": "On his nose he pulls a stripy sock,",
+              "pic": "sock",
+              "word": "sock"
+            },
+            {
+              "text": "Then he blows his whistle — what a shock! (tweet-tweet!)",
+              "pic": "whistle",
+              "word": "whistle"
+            }
+          ],
+          "chorus": [
+            "Tap-tap, Labubu, tap-tap-tap,",
+            "Wiggle, giggle, clap-clap-clap!",
+            "Tap-tap, shake it to the beat,",
+            "Labubu's got the dancing feet!"
+          ],
+          "verse2": [
+            {
+              "text": "Now he's king! He wears a crown — ho-ho!",
+              "pic": "crown",
+              "word": "crown"
+            },
+            {
+              "text": "Then he tickles grumpy Mister Crow (caw-caw!)",
+              "pic": "crow",
+              "word": "Crow"
+            },
+            {
+              "text": "Next he blows a great big red balloon,",
+              "pic": "balloon",
+              "word": "balloon"
+            },
+            {
+              "text": "Swings a paper lantern to the tune!",
+              "pic": "lantern",
+              "word": "lantern"
+            }
+          ]
+        }
+      },
+      "outro": "Labubu! Hee-hee — hooray!",
+      "apart": [
+        [
+          "crown",
+          "crow"
+        ]
+      ]
+    },
+    {
+      "id": "kitten",
+      "color": "#ff9a3c",
+      "paper": "#ffeedd",
+      "style": "Gentle acoustic guitar and glockenspiel children's pop, sweet and playful, soft shakers, 96 bpm, G major, bright clear female vocal, clear diction, children's song",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "bowl": {
+          "ru": "миска",
+          "de": "Napf",
+          "en": "bowl",
+          "draw": "Light-blue round pet bowl seen from the side, white milk surface on top, one small highlight."
+        },
+        "sausage": {
+          "ru": "сосиска",
+          "de": "Würstchen",
+          "en": "sausage",
+          "draw": "Single pink-brown curved sausage with rounded ends and a white shine stripe."
+        },
+        "yarn": {
+          "ru": "клубок",
+          "de": "Knäuel",
+          "en": "yarn",
+          "draw": "Red ball of yarn with curved wrap lines and a loose wavy thread tail."
+        },
+        "flower": {
+          "ru": "цветок",
+          "de": "Blume",
+          "en": "flower",
+          "draw": "Pink five-petal flower with a yellow centre on a green stem with one leaf."
+        },
+        "butterfly": {
+          "ru": "бабочка",
+          "de": "Schmetterling",
+          "en": "butterfly",
+          "draw": "Orange butterfly seen from the front, symmetric round wings with dark dots, thin body, two antennae."
+        },
+        "frog": {
+          "ru": "лягушка",
+          "de": "Frosch",
+          "en": "frog",
+          "draw": "Bright green sitting frog, big round eyes on top, wide smile, folded legs."
+        },
+        "slipper": {
+          "ru": "тапочка",
+          "de": "Hausschuh",
+          "en": "slipper",
+          "draw": "Fluffy purple house slipper in side view with a white pom-pom on the toe."
+        },
+        "pillow": {
+          "ru": "подушка",
+          "de": "Kissen",
+          "en": "pillow",
+          "draw": "Puffy pale-yellow square pillow with pinched corners and a small dent in the middle (not purple, so it never looks like the slipper)."
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Котёнок",
+          "hero": "Котёнок",
+          "blurb": "Котёнок играет весь день и сладко засыпает.",
+          "verse1": [
+            {
+              "text": "Кис-кис-кис! Беги-ка к миске! (мяу!)",
+              "pic": "bowl",
+              "word": "миске"
+            },
+            {
+              "text": "Ам! — и нет уже сосиски!",
+              "pic": "sausage",
+              "word": "сосиски"
+            },
+            {
+              "text": "Лапкой катит он клубок,",
+              "pic": "yarn",
+              "word": "клубок"
+            },
+            {
+              "text": "Нюхает в саду цветок… (апчхи!)",
+              "pic": "flower",
+              "word": "цветок"
+            }
+          ],
+          "chorus": [
+            "Тук-тук-тук, Котёнок мой,",
+            "Тук-тук-тук, пляши со мной!",
+            "Лапкой — тук, и лапкой — тук,",
+            "Ты мой самый лучший друг!"
+          ],
+          "verse2": [
+            {
+              "text": "Ловит наш котёнок бабочку,",
+              "pic": "butterfly",
+              "word": "бабочку"
+            },
+            {
+              "text": "Ой! Поймал зато лягушку! (ква-ква!)",
+              "pic": "frog",
+              "word": "лягушку"
+            },
+            {
+              "text": "Спрятался бедняжка в тапочку,",
+              "pic": "slipper",
+              "word": "тапочку"
+            },
+            {
+              "text": "Спать ложится на подушку. (мур-мур!)",
+              "pic": "pillow",
+              "word": "подушку"
+            }
+          ]
+        },
+        "de": {
+          "title": "Kätzchen",
+          "hero": "Kätzchen",
+          "blurb": "Ein Kätzchen spielt den ganzen Tag und schläft dann ein.",
+          "verse1": [
+            {
+              "text": "Miez, miez, miez! Dein Napf ist voll! (miau!)",
+              "pic": "bowl",
+              "word": "Napf"
+            },
+            {
+              "text": "Mjam-mjam-mjam! Ein Würstchen – toll!",
+              "pic": "sausage",
+              "word": "Würstchen"
+            },
+            {
+              "text": "Kätzchen stupst das Knäuel an,",
+              "pic": "yarn",
+              "word": "Knäuel"
+            },
+            {
+              "text": "Schnuppert an der Blume, dann… (hatschi!)",
+              "pic": "flower",
+              "word": "Blume"
+            }
+          ],
+          "chorus": [
+            "Tipp-tapp, tipp-tapp, Kätzchen klein,",
+            "Tanz mit mir, du bist so fein!",
+            "Pfote tipp und Pfote tapp,",
+            "Und das Schwänzchen wippt – wipp-wapp!"
+          ],
+          "verse2": [
+            {
+              "text": "Kätzchen jagt den Schmetterling,",
+              "pic": "butterfly",
+              "word": "Schmetterling"
+            },
+            {
+              "text": "Doch – oh je! – ein Frosch, der springt! (quak-quak!)",
+              "pic": "frog",
+              "word": "Frosch"
+            },
+            {
+              "text": "Schwupps! Versteckt im Hausschuh drin!",
+              "pic": "slipper",
+              "word": "Hausschuh"
+            },
+            {
+              "text": "Legt sich dann aufs Kissen hin. (schnurr!)",
+              "pic": "pillow",
+              "word": "Kissen"
+            }
+          ]
+        },
+        "en": {
+          "title": "Kitty",
+          "hero": "Kitty",
+          "blurb": "A playful kitten's day, from breakfast to bedtime.",
+          "verse1": [
+            {
+              "text": "Morning, Kitty! Here's your bowl! (meow!)",
+              "pic": "bowl",
+              "word": "bowl"
+            },
+            {
+              "text": "Gulp! She eats a sausage whole!",
+              "pic": "sausage",
+              "word": "sausage"
+            },
+            {
+              "text": "Kitty rolls the yarn again,",
+              "pic": "yarn",
+              "word": "yarn"
+            },
+            {
+              "text": "Sniff-sniff-sniff a flower, then… (achoo!)",
+              "pic": "flower",
+              "word": "flower"
+            }
+          ],
+          "chorus": [
+            "Tap-tap-tap, my Kitty dear,",
+            "Tap-tap-tap, come dance right here!",
+            "Paw goes tap and paw goes tap,",
+            "Purr-purr-purr and clap-clap-clap!"
+          ],
+          "verse2": [
+            {
+              "text": "Chase, chase, chase the butterfly,",
+              "pic": "butterfly",
+              "word": "butterfly"
+            },
+            {
+              "text": "Oops! She's caught a frog – oh my! (ribbit!)",
+              "pic": "frog",
+              "word": "frog"
+            },
+            {
+              "text": "Eek! She's in a slipper, snug,",
+              "pic": "slipper",
+              "word": "slipper"
+            },
+            {
+              "text": "Then she gives her pillow a hug. (purr!)",
+              "pic": "pillow",
+              "word": "pillow"
+            }
+          ]
+        }
+      },
+      "outro": "Purr-purr-purr… sleep tight, Kitty!"
+    },
+    {
+      "id": "boat",
+      "color": "#2e86de",
+      "paper": "#e0eefc",
+      "style": "Joyful children's sea shanty, accordion, foot stomps, hand claps, upright bass, tin whistle, 104 bpm, D major, bright clear female vocal, clear diction, children's song",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "sun": {
+          "ru": "солнце",
+          "de": "Sonne",
+          "en": "sun",
+          "draw": "Round yellow sun with short rounded rays all around and a simple smiling face; clearly a circle, not a star."
+        },
+        "seagull": {
+          "ru": "чайка",
+          "de": "Möwe",
+          "en": "seagull",
+          "draw": "White bird with grey-tipped wings spread in a flat M shape, small yellow beak, side view."
+        },
+        "whale": {
+          "ru": "кит",
+          "de": "Wal",
+          "en": "whale",
+          "draw": "Big rounded blue whale in side view with a smile, tail up, white water spout from the top."
+        },
+        "fish": {
+          "ru": "рыбка",
+          "de": "Fisch",
+          "en": "fish",
+          "draw": "Small orange fish in side view with a triangle tail, one closed sleepy eye and a few scale arcs."
+        },
+        "island": {
+          "ru": "островок",
+          "de": "Insel",
+          "en": "island",
+          "draw": "Small sandy-yellow mound on a blue water strip with one green palm tree."
+        },
+        "crab": {
+          "ru": "краб",
+          "de": "Krabbe",
+          "en": "crab",
+          "draw": "Bright red crab seen from the front: round body, two big raised claws, three little legs on each side, eyes on short stalks."
+        },
+        "anchor": {
+          "ru": "якорь",
+          "de": "Anker",
+          "en": "anchor",
+          "draw": "Dark navy ship anchor with a ring on top, a crossbar and two curved arms with pointed tips."
+        },
+        "lighthouse": {
+          "ru": "маяк",
+          "de": "Leuchtturm",
+          "en": "lighthouse",
+          "draw": "Tall red-and-white striped tower with a small black roof and yellow light beams at the top."
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Кораблик",
+          "hero": "Кораблик",
+          "blurb": "Весёлый кораблик плывёт по морю за приключениями.",
+          "verse1": [
+            {
+              "text": "Утром с нами солнце дружит,",
+              "pic": "sun",
+              "word": "солнце"
+            },
+            {
+              "text": "Над волною чайка кружит,",
+              "pic": "seagull",
+              "word": "чайка"
+            },
+            {
+              "text": "Ой, какой огромный кит! (ого!)",
+              "pic": "whale",
+              "word": "кит"
+            },
+            {
+              "text": "Тише-тише — рыбка спит.",
+              "pic": "fish",
+              "word": "рыбка"
+            }
+          ],
+          "chorus": [
+            "Хлоп-хлоп-хлоп! Плыви, Кораблик,",
+            "По волнам — вперёд, вперёд!",
+            "Хлоп-хлоп-хлоп! Эй-хо, Кораблик",
+            "Нас по морю вдаль везёт!"
+          ],
+          "verse2": [
+            {
+              "text": "Вот зелёный островок! (ура!)",
+              "pic": "island",
+              "word": "островок"
+            },
+            {
+              "text": "Ходит боком краб-дружок, (щёлк-щёлк!)",
+              "pic": "crab",
+              "word": "краб"
+            },
+            {
+              "text": "Опускаем якорь — бряк!",
+              "pic": "anchor",
+              "word": "якорь"
+            },
+            {
+              "text": "Светит ночью нам маяк.",
+              "pic": "lighthouse",
+              "word": "маяк"
+            }
+          ]
+        },
+        "de": {
+          "title": "Schiffchen",
+          "hero": "Schiffchen",
+          "blurb": "Ein kleines Schiff fährt fröhlich übers weite Meer.",
+          "verse1": [
+            {
+              "text": "Morgens scheint die Sonne klar,",
+              "pic": "sun",
+              "word": "Sonne"
+            },
+            {
+              "text": "Kreisch-kreisch-kreisch – die Möwe, da!",
+              "pic": "seagull",
+              "word": "Möwe"
+            },
+            {
+              "text": "Guck, der große Wal macht zisch! (oho!)",
+              "pic": "whale",
+              "word": "Wal"
+            },
+            {
+              "text": "Pst! Da schläft ein kleiner Fisch.",
+              "pic": "fish",
+              "word": "Fisch"
+            }
+          ],
+          "chorus": [
+            "Klopf-klopf-klopf! Fahr, kleines Schiffchen,",
+            "Übers Meer, hinaus, hinaus!",
+            "Klopf-klopf-klopf! Ahoi, mein Schiffchen,",
+            "Alle singen mit – Applaus!"
+          ],
+          "verse2": [
+            {
+              "text": "Land in Sicht! Die Insel, schau! (hurra!)",
+              "pic": "island",
+              "word": "Insel"
+            },
+            {
+              "text": "Seitwärts läuft die Krabbe – schlau! (schnipp-schnapp!)",
+              "pic": "crab",
+              "word": "Krabbe"
+            },
+            {
+              "text": "Runter mit dem Anker, schnell!",
+              "pic": "anchor",
+              "word": "Anker"
+            },
+            {
+              "text": "Nachts, da strahlt der Leuchtturm hell.",
+              "pic": "lighthouse",
+              "word": "Leuchtturm"
+            }
+          ]
+        },
+        "en": {
+          "title": "Little Boat",
+          "hero": "Little Boat",
+          "blurb": "A brave little boat sails across the sea.",
+          "verse1": [
+            {
+              "text": "Rise and shine! The sun! Hooray!",
+              "pic": "sun",
+              "word": "sun"
+            },
+            {
+              "text": "Flap, flap, flap! A seagull – hey!",
+              "pic": "seagull",
+              "word": "seagull"
+            },
+            {
+              "text": "Look! A giant whale goes swish! (whoa!)",
+              "pic": "whale",
+              "word": "whale"
+            },
+            {
+              "text": "Shh… a sleepy little fish.",
+              "pic": "fish",
+              "word": "fish"
+            }
+          ],
+          "chorus": [
+            "Tap-tap-tap, my Little Boat,",
+            "Tap-tap-tap, we bob and float!",
+            "Clap-clap-clap! Yo-ho, heave-ho!",
+            "Over waves we go, go, go!"
+          ],
+          "verse2": [
+            {
+              "text": "Land ahoy! An island, see? (wow!)",
+              "pic": "island",
+              "word": "island"
+            },
+            {
+              "text": "Sideways walks a crab – tee-hee!",
+              "pic": "crab",
+              "word": "crab"
+            },
+            {
+              "text": "Down, down, down, the anchor goes (clank!)",
+              "pic": "anchor",
+              "word": "anchor"
+            },
+            {
+              "text": "And at night the lighthouse glows.",
+              "pic": "lighthouse",
+              "word": "lighthouse"
+            }
+          ]
+        }
+      },
+      "outro": "Yo-ho-ho! Hooray, Little Boat!"
+    },
+    {
+      "id": "girl",
+      "color": "#f5b400",
+      "paper": "#fff4d6",
+      "style": "Bouncy retro soul-pop, piano, walking bass, tambourine, brass stabs, hand claps, 108 bpm, C major, bright clear female vocal, clear diction, children's song",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "rooster": {
+          "ru": "петушок",
+          "de": "Hahn",
+          "en": "rooster",
+          "draw": "Side-view rooster: red comb and wattle, orange-brown body, curved tail feathers in green/blue/red, yellow beak and legs."
+        },
+        "bun": {
+          "ru": "пирожок",
+          "de": "Brötchen",
+          "en": "bun",
+          "draw": "One golden-brown oval baked bun with a shiny lighter top and a small curved seam; warm brown outline. Reads as пирожок, Brötchen and bun."
+        },
+        "scooter": {
+          "ru": "самокат",
+          "de": "Roller",
+          "en": "scooter",
+          "draw": "Pink kick scooter in side view: flat deck, two small black wheels, tall T-shaped handlebar with purple grips."
+        },
+        "grapes": {
+          "ru": "виноград",
+          "de": "Trauben",
+          "en": "grapes",
+          "draw": "Triangular bunch of round purple grapes with a short brown stem and one small green leaf on top."
+        },
+        "pencil": {
+          "ru": "карандашик",
+          "de": "Buntstift",
+          "en": "pencil",
+          "draw": "Long diagonal yellow pencil with pink eraser and silver band at one end, sharpened wooden tip with a red point."
+        },
+        "lamb": {
+          "ru": "барашек",
+          "de": "Schaf",
+          "en": "lamb",
+          "draw": "Fluffy white lamb, wool as a bumpy cloud outline, dark grey face and four thin dark legs, small ears, smiling."
+        },
+        "book": {
+          "ru": "книжка",
+          "de": "Buch",
+          "en": "book",
+          "draw": "Open book seen from the front, red cover edges, two cream pages with a few grey text lines and a small pink heart on one page."
+        },
+        "teddy": {
+          "ru": "мишка",
+          "de": "Teddy",
+          "en": "teddy",
+          "draw": "Sitting brown teddy bear: round head, round ears with lighter insides, tan muzzle, small blue bow at the neck."
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Матрёна",
+          "hero": "Матрёна",
+          "blurb": "Весёлый день девочки Матрёны — пой и хлопай!",
+          "verse1": [
+            {
+              "text": "Будит утром петушок (ку-ка-ре-ку!)",
+              "pic": "rooster",
+              "word": "петушок"
+            },
+            {
+              "text": "Ам! Румяный пирожок!",
+              "pic": "bun",
+              "word": "пирожок"
+            },
+            {
+              "text": "А потом — на самокат! (вжух!)",
+              "pic": "scooter",
+              "word": "самокат"
+            },
+            {
+              "text": "И на полдник — виноград.",
+              "pic": "grapes",
+              "word": "виноград"
+            }
+          ],
+          "chorus": [
+            "Тук-тук-тук, моя Матрёна,",
+            "Улыбайся целый день!",
+            "Хлоп-хлоп-хлоп, моя Матрёна,",
+            "Нам плясать с тобой не лень!"
+          ],
+          "verse2": [
+            {
+              "text": "Где же, где же карандашик?",
+              "pic": "pencil",
+              "word": "карандашик"
+            },
+            {
+              "text": "Раз-два-три — готов барашек! (бе-е!)",
+              "pic": "lamb",
+              "word": "барашек"
+            },
+            {
+              "text": "Перед сном читаем книжку,",
+              "pic": "book",
+              "word": "книжку"
+            },
+            {
+              "text": "Обнимаем крепко мишку.",
+              "pic": "teddy",
+              "word": "мишку"
+            }
+          ]
+        },
+        "de": {
+          "title": "Matrjona",
+          "hero": "Matrjona",
+          "blurb": "Matrjonas fröhlicher Tag — sing und klatsch mit!",
+          "verse1": [
+            {
+              "text": "Früh am Morgen kräht der Hahn (kikeriki!)",
+              "pic": "rooster",
+              "word": "Hahn"
+            },
+            {
+              "text": "Mjam! Jetzt ist das Brötchen dran!",
+              "pic": "bun",
+              "word": "Brötchen"
+            },
+            {
+              "text": "Los, wir fahren Roller, ja! (wusch!)",
+              "pic": "scooter",
+              "word": "Roller"
+            },
+            {
+              "text": "Und dann sind die Trauben da!",
+              "pic": "grapes",
+              "word": "Trauben"
+            }
+          ],
+          "chorus": [
+            "Tipp-tapp, tipp-tapp, hey, Matrjona,",
+            "Lach und sing den ganzen Tag!",
+            "Klopf-klopf, klopf-klopf, hey, Matrjona,",
+            "Weil dich jeder gerne mag!"
+          ],
+          "verse2": [
+            {
+              "text": "Wo ist denn der Buntstift? Na?",
+              "pic": "pencil",
+              "word": "Buntstift"
+            },
+            {
+              "text": "Eins, zwei, drei — ein Schaf! Hurra! (mäh!)",
+              "pic": "lamb",
+              "word": "Schaf"
+            },
+            {
+              "text": "Abends gibt's ein Buch — wie fein!",
+              "pic": "book",
+              "word": "Buch"
+            },
+            {
+              "text": "Kuschlig schläft der Teddy ein.",
+              "pic": "teddy",
+              "word": "Teddy"
+            }
+          ]
+        },
+        "en": {
+          "title": "Matryona",
+          "hero": "Matryona",
+          "blurb": "Matryona's happy day — sing and clap along!",
+          "verse1": [
+            {
+              "text": "Wake up! Hear the rooster crow! (cock-a-doodle-doo!)",
+              "pic": "rooster",
+              "word": "rooster"
+            },
+            {
+              "text": "Munch a yummy bun — let's go!",
+              "pic": "bun",
+              "word": "bun"
+            },
+            {
+              "text": "Zoom! She rides her scooter fast (whee!)",
+              "pic": "scooter",
+              "word": "scooter"
+            },
+            {
+              "text": "Then a snack of grapes at last!",
+              "pic": "grapes",
+              "word": "grapes"
+            }
+          ],
+          "chorus": [
+            "Tap-tap, tap-tap, hey, Matryona,",
+            "Smile and shine the whole day long!",
+            "Clap-clap, clap-clap, hey, Matryona,",
+            "Sing our happy little song!"
+          ],
+          "verse2": [
+            {
+              "text": "Where, oh where's her pencil? There!",
+              "pic": "pencil",
+              "word": "pencil"
+            },
+            {
+              "text": "Swish! She draws a lamb with care (baa!)",
+              "pic": "lamb",
+              "word": "lamb"
+            },
+            {
+              "text": "Story time! The book is ready,",
+              "pic": "book",
+              "word": "book"
+            },
+            {
+              "text": "Snuggle, snuggle, sleepy teddy.",
+              "pic": "teddy",
+              "word": "teddy"
+            }
+          ]
+        }
+      },
+      "outro": "Night-night, Matryona! La-la-la!"
+    },
+    {
+      "id": "owl",
+      "color": "#4b5bd6",
+      "paper": "#e4e7fb",
+      "style": "Gentle lullaby pop, felt piano, music box, pizzicato strings, soft steady brushed beat, dreamy, 92 bpm, F major, bright clear female vocal, clear diction, children's song",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "star": {
+          "ru": "звезда",
+          "de": "Stern",
+          "en": "star",
+          "draw": "Plump golden-yellow five-pointed star with rounded tips and a warm gold outline; nothing else around it."
+        },
+        "nest": {
+          "ru": "гнездо",
+          "de": "Nest",
+          "en": "nest",
+          "draw": "Round brown bowl-shaped nest of woven twigs seen from the side, two small pale-blue eggs peeking over the rim, no bird."
+        },
+        "moon": {
+          "ru": "луна",
+          "de": "Mond",
+          "en": "moon",
+          "draw": "Big pale lemon-cream crescent moon opening to the right, with a sleepy smiling face; clearly paler than the star."
+        },
+        "pine_tree": {
+          "ru": "сосна",
+          "de": "Tanne",
+          "en": "pine tree",
+          "draw": "Dark-green conifer made of three stacked triangles on a short brown trunk; generic evergreen so it reads as сосна, Tanne and pine tree."
+        },
+        "hedgehog": {
+          "ru": "ежонок",
+          "de": "Igel",
+          "en": "hedgehog",
+          "draw": "Side-view baby hedgehog: brown spiky back as zigzag outline, cream face and belly, black button nose, tiny feet."
+        },
+        "fox": {
+          "ru": "лисёнок",
+          "de": "Fuchs",
+          "en": "fox",
+          "draw": "Sitting orange fox cub with pointy ears, white chest and cheeks, big bushy tail with a white tip, friendly smile."
+        },
+        "frog": {
+          "ru": "лягушка",
+          "de": "Frosch",
+          "en": "frog",
+          "draw": "Bright-green frog sitting front-on, big round eyes on top of the head, wide smile, bent legs."
+        },
+        "pillow": {
+          "ru": "подушка",
+          "de": "Kissen",
+          "en": "pillow",
+          "draw": "Soft light-blue rectangular pillow with puffy rounded corners and a few white polka dots (no stars)."
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Совушка",
+          "hero": "Совушка",
+          "blurb": "Совушка летает ночью и встречает друзей.",
+          "verse1": [
+            {
+              "text": "Загорается звезда,",
+              "pic": "star",
+              "word": "звезда"
+            },
+            {
+              "text": "Ух-ху! Совка из гнезда!",
+              "pic": "nest",
+              "word": "гнезда"
+            },
+            {
+              "text": "Светит жёлтая луна,",
+              "pic": "moon",
+              "word": "луна"
+            },
+            {
+              "text": "Машет лапами сосна (ш-ш-ш!)",
+              "pic": "pine_tree",
+              "word": "сосна"
+            }
+          ],
+          "chorus": [
+            "Тук-тук, Совушка-сова,",
+            "Крылья — раз и крылья — два!",
+            "Хлоп-хлоп, Совушка-сова,",
+            "Ух-ху-ху! Летит она."
+          ],
+          "verse2": [
+            {
+              "text": "Топ-топ-топ — спешит ежонок,",
+              "pic": "hedgehog",
+              "word": "ежонок"
+            },
+            {
+              "text": "В гости к ней бежит лисёнок (тяв-тяв!)",
+              "pic": "fox",
+              "word": "лисёнок"
+            },
+            {
+              "text": "Ква-ква-ква! — поёт лягушка,",
+              "pic": "frog",
+              "word": "лягушка"
+            },
+            {
+              "text": "Баю-бай! Вот и подушка.",
+              "pic": "pillow",
+              "word": "подушка"
+            }
+          ]
+        },
+        "de": {
+          "title": "Eulchen",
+          "hero": "Eulchen",
+          "blurb": "Das Eulchen fliegt nachts und trifft seine Freunde.",
+          "verse1": [
+            {
+              "text": "Oben leuchtet hell ein Stern,",
+              "pic": "star",
+              "word": "Stern"
+            },
+            {
+              "text": "Eulchen fliegt vom Nest so gern (uhu!)",
+              "pic": "nest",
+              "word": "Nest"
+            },
+            {
+              "text": "Gelb und freundlich lacht der Mond,",
+              "pic": "moon",
+              "word": "Mond"
+            },
+            {
+              "text": "Wo sie in der Tanne wohnt (sch-sch!)",
+              "pic": "pine_tree",
+              "word": "Tanne"
+            }
+          ],
+          "chorus": [
+            "Tipp-tapp, tipp-tapp, kleines Eulchen,",
+            "Flieg und flatter durch die Nacht!",
+            "Klopf-klopf, klopf-klopf, kleines Eulchen,",
+            "Uhu-hu, die Eule wacht!"
+          ],
+          "verse2": [
+            {
+              "text": "Trapp-trapp, kommt ein Igel — schau!",
+              "pic": "hedgehog",
+              "word": "Igel"
+            },
+            {
+              "text": "Und ein roter Fuchs, ganz schlau (hihi!)",
+              "pic": "fox",
+              "word": "Fuchs"
+            },
+            {
+              "text": "Quak-quak! Singt ein Frosch am Teich,",
+              "pic": "frog",
+              "word": "Frosch"
+            },
+            {
+              "text": "Gähn! Und ab ins Kissen — weich!",
+              "pic": "pillow",
+              "word": "Kissen"
+            }
+          ]
+        },
+        "en": {
+          "title": "Little Owl",
+          "hero": "Little Owl",
+          "blurb": "Little Owl flies at night and meets her friends.",
+          "verse1": [
+            {
+              "text": "Twinkle, twinkle, star — hello!",
+              "pic": "star",
+              "word": "star"
+            },
+            {
+              "text": "Owl flies from her nest below (hoo-hoo!)",
+              "pic": "nest",
+              "word": "nest"
+            },
+            {
+              "text": "Up above, the moon will shine,",
+              "pic": "moon",
+              "word": "moon"
+            },
+            {
+              "text": "Whoosh! She lands upon the pine (shh-shh!)",
+              "pic": "pine_tree",
+              "word": "pine"
+            }
+          ],
+          "chorus": [
+            "Tap-tap, tap-tap, Little Owl,",
+            "Flap, flap, flap your wings and fly!",
+            "Clap-clap, clap-clap, Little Owl,",
+            "Hoo-hoo-hoo across the sky!"
+          ],
+          "verse2": [
+            {
+              "text": "Tip-toe comes a hedgehog — hi!",
+              "pic": "hedgehog",
+              "word": "hedgehog"
+            },
+            {
+              "text": "Then a little fox runs by (yip-yip!)",
+              "pic": "fox",
+              "word": "fox"
+            },
+            {
+              "text": "Ribbit! Sings the frog — goodnight!",
+              "pic": "frog",
+              "word": "frog"
+            },
+            {
+              "text": "Yawn! She hugs her pillow tight.",
+              "pic": "pillow",
+              "word": "pillow"
+            }
+          ]
+        }
+      },
+      "outro": "Night-night, Little Owl! Hoo-hoo!"
+    }
+  ]
+}

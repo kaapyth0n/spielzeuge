@@ -13,6 +13,7 @@ export default defineConfig({
         sobachka: resolve(__dirname, 'sobachka/index.html'),
         slimeCheck: resolve(__dirname, 'slime-check/index.html'),
         morozhenka: resolve(__dirname, 'morozhenka/index.html'),
+        pesenki: resolve(__dirname, 'pesenki/index.html'),
       },
     },
   },

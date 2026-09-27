@@ -6,9 +6,11 @@ Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуня
 
 Слайм Чек is Veronika’s slime-care game. [Game details and checks](docs/slime-check.md).
 
+**Песенки** is Matryona’s second game: a real sung song plays, and you tap the picture of what was just sung. Right away, and the song flows on; otherwise it waits after the line. In the chorus you tap the hero to keep the music going, or it slows down and runs backwards («уй-уй-уй»). A finished song unlocks speed-ups, up to a chipmunk-voiced rocket. Songs were made with Suno, all three languages in one recording. [Design, song pipeline and checks](docs/pesenki.md).
+
 **Мороженка** is Matryona’s game: a scoop of ice cream spits fire and flies with your voice. Say «А» to go up, «И» right, «О» left and «У» down, avoid the pencil-drawn walls and land in the cone. There are 12 rounds, then endless surprise maps. Buttons work too, and the ice cream can learn a child’s own voice. [Design, voice steering and checks](docs/morozhenka.md).
 
-Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`. Собачка, Слайм Чек and Мороженка also have visible RU/DE/EN selectors in their top corners.
+Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`. Собачка, Слайм Чек, Мороженка and Песенки also have visible RU/DE/EN selectors in their top corners.
 
 ## Required for every game
 
@@ -28,6 +30,7 @@ Verify all three languages, narration calls, effects, mute, saved preferences an
 | `/sobachka/` | Собачка — care for a puppy, decorate its room and discover three games |
 | `/slime-check/` | Слайм Чек — Veronika’s slime-care, dress-up and stretching game |
 | `/morozhenka/` | Мороженка — Matryona’s voice-steered ice cream: fly through pencil caves into the cone |
+| `/pesenki/` | Песенки — Matryona’s song game: hear a line, tap its picture, drum the chorus, unlock speed-ups |
 
 ### Собачка
 
@@ -62,6 +65,8 @@ npm run preview
 ```
 
 `npm run test:morozhenka` checks Мороженка in the browser, including steering through Chrome’s fake microphone.
+
+`npm run test:pesenki` plays Песенки in the browser: pictures, waiting, rewinds, chorus drumming, speed-ups, languages, mute and five screen sizes.
 
 Kuckuck query helpers: `/kuckuck/?lang=ru|de|en` and `/kuckuck/?visitor=cat|dog|bird|duck|bunny|mouse|cow|bear|frog|capybara|fox|elephant|owl|hedgehog|penguin|sheep|pig|horse|rooster|hen|bee|goat|donkey|goose|cuckoo|monkey`.
 

@@ -6,6 +6,8 @@ import './catalog.css'
 import { slimeText } from './slime-copy.ts'
 import { scoopConeSvg } from './morozhenka-svg.ts'
 import { MOROZHENKA_COPY } from './morozhenka-copy.ts'
+import { PESENKI_COPY } from './pesenki-copy.ts'
+import { pandaHero } from './pesenki-hero-panda.ts'
 import { puppy } from './sobachka-art.ts'
 import { PUPPY_COPY } from './sobachka-copy.ts'
 import { bindQuietLang } from './lang-ui.ts'
@@ -24,6 +26,8 @@ function applyCatalog(lang: Lang): void {
   setText('[data-i18n="sobachka-blurb"]', PUPPY_COPY[lang].tagline)
   setText('[data-i18n="morozhenka-name"]', MOROZHENKA_COPY[lang].name)
   setText('[data-i18n="morozhenka-blurb"]', `${MOROZHENKA_COPY[lang].byline}. ${MOROZHENKA_COPY[lang].tagline}`)
+  setText('[data-i18n="pesenki-name"]', PESENKI_COPY[lang].name)
+  setText('[data-i18n="pesenki-blurb"]', `${PESENKI_COPY[lang].byline}. ${PESENKI_COPY[lang].tagline}`)
   document.title = copy.documentTitle
   const meta = document.querySelector('meta[name="description"]')
   if (meta) meta.setAttribute('content', copy.description)
@@ -49,6 +53,8 @@ const puppyArt = document.querySelector('#catalog-puppy')
 if (puppyArt) puppyArt.innerHTML = puppy()
 const scoopArt = document.querySelector('#catalog-morozhenka')
 if (scoopArt) scoopArt.innerHTML = scoopConeSvg('mint', 0, true)
+const pesenkiArt = document.querySelector('#catalog-pesenki')
+if (pesenkiArt) pesenkiArt.innerHTML = pandaHero
 bindQuietLang(applyCatalog)
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
