@@ -12,6 +12,7 @@ export default defineConfig({
         chunyashka: resolve(__dirname, 'chunyashka/index.html'),
         sobachka: resolve(__dirname, 'sobachka/index.html'),
         slimeCheck: resolve(__dirname, 'slime-check/index.html'),
+        morozhenka: resolve(__dirname, 'morozhenka/index.html'),
       },
     },
   },

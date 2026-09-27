@@ -340,3 +340,6 @@ a {
 .toy-card--sobachka .toy-card-art { background: #e6dac2; }
 .toy-card--sobachka .puppy-svg { width: 102px; height: 102px; }
 .toy-card--sobachka .puppy-closed-eyes { display: none; }
+
+.toy-card--morozhenka .toy-card-art { background: #fbf5e9; }
+.toy-card--morozhenka .mz-scoop-svg { width: 86px; height: 86px; transform: translateX(6px) rotate(-6deg); }

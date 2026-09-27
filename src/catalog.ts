@@ -4,6 +4,8 @@ import '@fontsource/pt-serif/latin-ext-400.css'
 import '@fontsource/pt-serif/latin-700.css'
 import './catalog.css'
 import { slimeText } from './slime-copy.ts'
+import { scoopConeSvg } from './morozhenka-svg.ts'
+import { MOROZHENKA_COPY } from './morozhenka-copy.ts'
 import { puppy } from './sobachka-art.ts'
 import { PUPPY_COPY } from './sobachka-copy.ts'
 import { bindQuietLang } from './lang-ui.ts'
@@ -20,6 +22,8 @@ function applyCatalog(lang: Lang): void {
   setText('[data-i18n="slime-blurb"]', slimeText('Игра Вероники. Заботься, наряжай и тяни!',lang))
   setText('[data-i18n="sobachka-name"]', PUPPY_COPY[lang].name)
   setText('[data-i18n="sobachka-blurb"]', PUPPY_COPY[lang].tagline)
+  setText('[data-i18n="morozhenka-name"]', MOROZHENKA_COPY[lang].name)
+  setText('[data-i18n="morozhenka-blurb"]', `${MOROZHENKA_COPY[lang].byline}. ${MOROZHENKA_COPY[lang].tagline}`)
   document.title = copy.documentTitle
   const meta = document.querySelector('meta[name="description"]')
   if (meta) meta.setAttribute('content', copy.description)
@@ -43,6 +47,8 @@ function applyCatalog(lang: Lang): void {
 
 const puppyArt = document.querySelector('#catalog-puppy')
 if (puppyArt) puppyArt.innerHTML = puppy()
+const scoopArt = document.querySelector('#catalog-morozhenka')
+if (scoopArt) scoopArt.innerHTML = scoopConeSvg('mint', 0, true)
 bindQuietLang(applyCatalog)
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
