@@ -176,7 +176,8 @@ try {
   await page.waitForURL(/morozhenka/)
   await page.locator('.mz-title').waitFor()
   await page.waitForTimeout(250)
-  assert.ok((await spoken(page)).some((s) => s.text.includes('Мороженка')), 'welcome is narrated')
+  // The voice gets «Морожен-ка» so Milena stresses морОженка (see pronounce()).
+  assert.ok((await spoken(page)).some((s) => s.text.includes('Морожен-ка')), 'welcome is narrated with the right stress')
   await page.screenshot({ path: 'tmp/morozhenka-title.png' })
 
   // Flavor, control mode and play with buttons.

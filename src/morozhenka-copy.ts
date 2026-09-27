@@ -79,6 +79,18 @@ export interface MorozhenkaCopy {
   surprisesOpened: string
 }
 
+/**
+ * How narration should say a text. Apple's Russian voice (Milena, iPad and Mac)
+ * reads «мороженка» like «тушёнка» — «морожЕнка» — and ignores the stress
+ * mark U+0301. Splitting off the suffix makes it say «морОжен» as in
+ * «мороженое»: a hyphen for -ка/-ки (read as the particle «-ка», no pause),
+ * a space for other endings, where the hyphen is merged back.
+ */
+export function pronounce(text: string, lang: Lang): string {
+  if (lang !== 'ru') return text
+  return text.replace(/([Мм]орожен)(к[а-яё]*)/g, (_, stem: string, tail: string) => `${stem}${/^к[аи]$/.test(tail) ? '-' : ' '}${tail}`)
+}
+
 /** Letters shown on the buttons and read out in hints. */
 export const VOWEL_LETTER: Record<Lang, Record<Vowel, string>> = {
   ru: { a: 'А', o: 'О', u: 'У', i: 'И', e: 'Э' },

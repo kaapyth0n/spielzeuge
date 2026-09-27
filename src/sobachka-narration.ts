@@ -24,9 +24,18 @@ export class PuppyNarration {
   private blocked = false
 
   private preferences: () => { lang: Lang; enabled: boolean }
+  private pronounce: (text: string, lang: Lang) => string
 
-  constructor(preferences: () => { lang: Lang; enabled: boolean }) {
+  /**
+   * `pronounce` may respell words the device voice stresses wrongly; the text
+   * on screen stays as written.
+   */
+  constructor(
+    preferences: () => { lang: Lang; enabled: boolean },
+    pronounce: (text: string, lang: Lang) => string = (text) => text,
+  ) {
     this.preferences = preferences
+    this.pronounce = pronounce
     if (!this.supported()) return
     window.speechSynthesis.getVoices()
     window.speechSynthesis.addEventListener('voiceschanged', () =>
@@ -109,7 +118,7 @@ export class PuppyNarration {
   }
 
   private enqueue(text: string, lang: Lang): void {
-    const utterance = new SpeechSynthesisUtterance(text)
+    const utterance = new SpeechSynthesisUtterance(this.pronounce(text, lang))
     utterance.lang = SPEECH_LOCALE[lang]
     utterance.rate = 0.86
     const voices = window.speechSynthesis

@@ -5,7 +5,7 @@ import '@fontsource/pt-serif/latin-700.css'
 import './morozhenka.css'
 import { loadLang, saveLang, isLang, type Lang } from './languages.ts'
 import { PuppyNarration } from './sobachka-narration.ts'
-import { MOROZHENKA_COPY, VOWEL_LETTER, VOWEL_SOUND, type Letters } from './morozhenka-copy.ts'
+import { MOROZHENKA_COPY, VOWEL_LETTER, VOWEL_SOUND, pronounce, type Letters } from './morozhenka-copy.ts'
 import { averageFeatures, featureDistance, type Vowel } from './morozhenka-dsp.ts'
 import { MorozhenkaAudio } from './morozhenka-audio.ts'
 import { VoiceInput, type VoiceReading, type VoiceStatus } from './morozhenka-voice.ts'
@@ -77,7 +77,7 @@ let lang: Lang = loadLang()
 let copy = MOROZHENKA_COPY[lang]
 let screen: Screen = 'title'
 
-const narration = new PuppyNarration(() => ({ lang, enabled: save.sound }))
+const narration = new PuppyNarration(() => ({ lang, enabled: save.sound }), pronounce)
 const audio = new MorozhenkaAudio(() => save.sound)
 let lastSpeechAt = 0
 const speechBusy = (): boolean => {

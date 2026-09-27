@@ -13,3 +13,14 @@ describe('speakable narration text', () => {
     expect(speakable('  Раунд 2.\n Вправо ✓ ')).toBe('Раунд 2. Вправо')
   })
 })
+
+describe('Мороженка pronunciation', () => {
+  it('splits the suffix so the voice stresses морОжен-, and leaves other words alone', async () => {
+    const { pronounce } = await import('./morozhenka-copy.ts')
+    expect(pronounce('Мороженка. Скажи А — и мороженка полетит!', 'ru')).toBe('Морожен-ка. Скажи А — и морожен-ка полетит!')
+    expect(pronounce('Научи мороженку своему голосу', 'ru')).toBe('Научи морожен ку своему голосу')
+    expect(pronounce('две мороженки', 'ru')).toBe('две морожен-ки')
+    expect(pronounce('мороженое и мороженщик', 'ru')).toBe('мороженое и мороженщик')
+    expect(pronounce('Мороженка', 'de')).toBe('Мороженка')
+  })
+})
