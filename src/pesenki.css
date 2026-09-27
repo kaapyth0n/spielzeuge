@@ -514,6 +514,82 @@ button {
   border: 4px dotted var(--gold);
 }
 
+.ps-song.is-sleeping .ps-art {
+  filter: grayscale(0.75) opacity(0.62);
+}
+
+.ps-song.is-sleeping .ps-blob {
+  opacity: 0.45;
+}
+
+.ps-song.is-sleeping .ps-pencil {
+  stroke-dasharray: 5 7;
+  opacity: 0.6;
+}
+
+/* Sleeping heroes keep their eyes shut. */
+.ps-song.is-sleeping .hero-eyes {
+  transform-box: view-box;
+  transform: scaleY(0.12);
+}
+
+.ps-song.is-sleeping .ps-song-name {
+  color: var(--graphite-soft);
+}
+
+.ps-zzz {
+  position: absolute;
+  right: 6%;
+  top: 2%;
+  font-family: var(--hand);
+  font-size: calc(var(--disc) * 0.16);
+  line-height: 1;
+  color: var(--graphite-soft);
+  animation: ps-zzz 2.4s ease-in-out infinite;
+}
+
+.ps-zzz span {
+  display: inline-block;
+  font-size: 0.8em;
+  transform: translateY(-0.5em);
+}
+
+.ps-zzz span + span {
+  font-size: 0.65em;
+  transform: translateY(-1.1em);
+}
+
+@keyframes ps-zzz {
+  50% {
+    transform: translate(3px, -5px);
+    opacity: 0.6;
+  }
+}
+
+.ps-song.is-stirring .ps-art {
+  animation: ps-stir 0.7s ease-in-out;
+}
+
+.ps-song.is-stirring .hero-eyes {
+  animation: ps-peek 0.7s ease-in-out;
+}
+
+@keyframes ps-stir {
+  25% {
+    transform: rotate(-6deg) scale(1.05);
+  }
+  60% {
+    transform: rotate(5deg) scale(1.02);
+  }
+}
+
+@keyframes ps-peek {
+  20%,
+  60% {
+    transform: scaleY(1);
+  }
+}
+
 .ps-foot {
   margin-top: auto;
   padding-top: 22px;
@@ -1218,6 +1294,25 @@ button {
   fill: var(--gold);
   stroke: var(--graphite);
   stroke-width: 1.6;
+}
+
+.ps-finish-pick.is-golden {
+  font-family: var(--hand);
+  font-size: clamp(20px, 3vmin, 28px);
+  color: #9a6b00;
+}
+
+.ps-hero.is-cheering .ps-hero-art {
+  animation: ps-cheer 0.55s cubic-bezier(0.3, 1.4, 0.5, 1) 4;
+}
+
+@keyframes ps-cheer {
+  40% {
+    transform: translateY(-9%) rotate(-4deg);
+  }
+  70% {
+    transform: translateY(0) rotate(3deg);
+  }
 }
 
 .ps-finish-pick {

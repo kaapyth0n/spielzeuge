@@ -1384,6 +1384,464 @@
         }
       },
       "outro": "Night-night, Little Owl! Hoo-hoo!"
+    },
+    {
+      "id": "icecream",
+      "color": "#3cc9a7",
+      "paper": "#dff7f0",
+      "style": "Sunny calypso kids pop, steel drums, bongos, bouncy bass, slide whistle, C major, 108 bpm, playful, bright clear female vocal, clear diction, children's song",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "sun": {
+          "ru": "солнце",
+          "de": "Sonne",
+          "en": "sun",
+          "draw": "Round yellow sun with short orange triangle rays and a simple smile."
+        },
+        "plane": {
+          "ru": "самолёт",
+          "de": "Flugzeug",
+          "en": "plane",
+          "draw": "Side view of a white airplane with blue wings and tail and three round blue windows."
+        },
+        "fire": {
+          "ru": "огонь",
+          "de": "Feuer",
+          "en": "fire",
+          "draw": "Teardrop flame, orange outside with a yellow inner flame, no logs. Keep it orange, not red, so it never reads as the cherry or the sun."
+        },
+        "cherry": {
+          "ru": "вишня",
+          "de": "Kirsche",
+          "en": "cherry",
+          "draw": "Two glossy dark-red cherries on a forked green stem with one small leaf."
+        },
+        "snowflake": {
+          "ru": "снежинка",
+          "de": "Schneeflocke",
+          "en": "snowflake",
+          "draw": "Light-blue six-armed snowflake with small V-shaped branches."
+        },
+        "pencil": {
+          "ru": "карандаш",
+          "de": "Bleistift",
+          "en": "pencil",
+          "draw": "Diagonal yellow hexagonal pencil with a pink eraser, a wood-coloured sharpened end and a grey tip."
+        },
+        "stone": {
+          "ru": "камень",
+          "de": "Stein",
+          "en": "stone",
+          "draw": "Lumpy grey rock with two closed sleepy eyes (the sleepy stone from the Мороженка game)."
+        },
+        "cone": {
+          "ru": "рожок",
+          "de": "Waffel",
+          "en": "cone",
+          "draw": "Empty light-brown waffle cone with a cross-hatch pattern, point down, no scoop, so it cannot be mistaken for the hero."
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Мороженка",
+          "hero": "Мороженка",
+          "blurb": "Мороженка летит домой — помоги ей!",
+          "verse1": [
+            {
+              "text": "Ой-ой, как жарко! Солнце жжёт!",
+              "pic": "sun",
+              "word": "Солнце"
+            },
+            {
+              "text": "А в небе мчится самолёт!",
+              "pic": "plane",
+              "word": "самолёт"
+            },
+            {
+              "text": "Сказала «А» — огонь! Домой! (пых-пых!)",
+              "pic": "fire",
+              "word": "огонь"
+            },
+            {
+              "text": "Висит на ветке вишня — стой! (ам-ам!)",
+              "pic": "cherry",
+              "word": "вишня"
+            }
+          ],
+          "chorus": [
+            "Тук-тук! Мороженка, лети!",
+            "Тук-тук! Всё небо впереди!",
+            "Тук-тук! Скажи погромче: А-а-а!",
+            "Мороженка летит — ура!"
+          ],
+          "verse2": [
+            {
+              "text": "Поймала на лету снежинку! (брр!)",
+              "pic": "snowflake",
+              "word": "снежинку"
+            },
+            {
+              "text": "Рисует карандаш тропинку,",
+              "pic": "pencil",
+              "word": "карандаш"
+            },
+            {
+              "text": "Тихонько мимо камня — скок! (тсс!)",
+              "pic": "stone",
+              "word": "камня"
+            },
+            {
+              "text": "И плюх — в хрустящий свой рожок!",
+              "pic": "cone",
+              "word": "рожок"
+            }
+          ]
+        },
+        "de": {
+          "title": "Eiskugel",
+          "hero": "Eiskugel",
+          "blurb": "Die Eiskugel fliegt nach Hause – hilf ihr!",
+          "verse1": [
+            {
+              "text": "Puh! Da brennt die Sonne grell!",
+              "pic": "sun",
+              "word": "Sonne"
+            },
+            {
+              "text": "Oben saust ein Flugzeug schnell!",
+              "pic": "plane",
+              "word": "Flugzeug"
+            },
+            {
+              "text": "„A!“ – und schon mit Feuer ab! (pff, pff!)",
+              "pic": "fire",
+              "word": "Feuer"
+            },
+            {
+              "text": "Oh! Da hängt 'ne Kirsche – schnapp! (mmh!)",
+              "pic": "cherry",
+              "word": "Kirsche"
+            }
+          ],
+          "chorus": [
+            "Tipp-tapp! Eiskugel, flieg los!",
+            "Tipp-tapp! Himmel, weit und groß!",
+            "Tipp-tapp! Ruf ganz laut: A-a-a!",
+            "Eiskugel fliegt – hurra, hurra!"
+          ],
+          "verse2": [
+            {
+              "text": "Brr! Da fällt 'ne Schneeflocke – kalt!",
+              "pic": "snowflake",
+              "word": "Schneeflocke"
+            },
+            {
+              "text": "Kritzel-kratzel – Bleistift malt!",
+              "pic": "pencil",
+              "word": "Bleistift"
+            },
+            {
+              "text": "Psst! Vorbei am müden Stein! (chrrr!)",
+              "pic": "stone",
+              "word": "Stein"
+            },
+            {
+              "text": "Plumps! – in ihre Waffel rein!",
+              "pic": "cone",
+              "word": "Waffel"
+            }
+          ]
+        },
+        "en": {
+          "title": "Ice Cream",
+          "hero": "Ice Cream",
+          "blurb": "Ice Cream is flying home — help her!",
+          "verse1": [
+            {
+              "text": "She's melting in the sun! Oh no!",
+              "pic": "sun",
+              "word": "sun"
+            },
+            {
+              "text": "Up high she sees a plane — let's go!",
+              "pic": "plane",
+              "word": "plane"
+            },
+            {
+              "text": "She sings out “Ah!” — and fire! Away! (whoosh!)",
+              "pic": "fire",
+              "word": "fire"
+            },
+            {
+              "text": "She stops to eat a cherry — yay! (yum!)",
+              "pic": "cherry",
+              "word": "cherry"
+            }
+          ],
+          "chorus": [
+            "Tap-tap! Ice Cream, fly up high!",
+            "Tap-tap! Through the big blue sky!",
+            "Tap-tap! Sing it loud: Ah-ah-ah!",
+            "Ice Cream flies — hooray, ta-da!"
+          ],
+          "verse2": [
+            {
+              "text": "Brrr! Cool! She hugs a snowflake close,",
+              "pic": "snowflake",
+              "word": "snowflake"
+            },
+            {
+              "text": "She follows where the pencil goes,",
+              "pic": "pencil",
+              "word": "pencil"
+            },
+            {
+              "text": "Shh! Tiptoe past the sleepy stone, (zzz...)",
+              "pic": "stone",
+              "word": "stone"
+            },
+            {
+              "text": "And plop! Right in her waffle cone!",
+              "pic": "cone",
+              "word": "cone"
+            }
+          ]
+        }
+      },
+      "outro": "Ice Cream is home — yippee!"
+    },
+    {
+      "id": "caterpillar",
+      "color": "#8cc63f",
+      "paper": "#eff9dd",
+      "style": "Whimsical storybook kids song, pizzicato strings, xylophone, playful bassoon, light clarinet, F major, 96 bpm, bright clear female vocal, clear diction, children's song",
+      "order": [
+        "ru",
+        "de",
+        "en"
+      ],
+      "pictures": {
+        "leaf": {
+          "ru": "листок",
+          "de": "Blatt",
+          "en": "leaf",
+          "draw": "Single bright green leaf with a lighter centre vein and a short stem, tilted slightly."
+        },
+        "pear": {
+          "ru": "груша",
+          "de": "Birne",
+          "en": "pear",
+          "draw": "Golden-yellow pear with a brown stem and one small green leaf. Classic pear shape, clearly not round."
+        },
+        "strawberry": {
+          "ru": "клубника",
+          "de": "Erdbeere",
+          "en": "strawberry",
+          "draw": "Red heart-shaped strawberry with tiny yellow seed dots and a green leafy crown."
+        },
+        "carrot": {
+          "ru": "морковь",
+          "de": "Möhre",
+          "en": "carrot",
+          "draw": "Long orange carrot, point down, with a few horizontal lines and a bushy green top."
+        },
+        "mushroom": {
+          "ru": "гриб",
+          "de": "Pilz",
+          "en": "mushroom",
+          "draw": "Friendly brown-capped mushroom with a cream stem, no spots (not red, so it is not a fly agaric and not confused with the strawberry)."
+        },
+        "watermelon": {
+          "ru": "арбуз",
+          "de": "Melone",
+          "en": "watermelon",
+          "draw": "Big half-moon slice of watermelon: dark-green rind, thin white band, pink-red flesh with black seeds."
+        },
+        "flower": {
+          "ru": "цветок",
+          "de": "Blume",
+          "en": "flower",
+          "draw": "Same id and words as the panda song's flower, so the same sticker: pink daisy-like flower with a round yellow centre on a short green stem. Keep any stem leaf tiny so it never competes with the leaf picture."
+        },
+        "butterfly": {
+          "ru": "бабочка",
+          "de": "Schmetterling",
+          "en": "butterfly",
+          "draw": "Symmetric butterfly with big blue-violet wings with round dots, a small dark body and two curled antennae."
+        }
+      },
+      "langs": {
+        "ru": {
+          "title": "Гусеничка",
+          "hero": "Гусеничка",
+          "blurb": "Гусеничка всё ест и ест — а что потом?",
+          "verse1": [
+            {
+              "text": "Гусеничка ест листок! (хрум!)",
+              "pic": "leaf",
+              "word": "листок"
+            },
+            {
+              "text": "Ам! Кусает грушу в бок!",
+              "pic": "pear",
+              "word": "грушу"
+            },
+            {
+              "text": "Ням-ням! Сладкая клубника!",
+              "pic": "strawberry",
+              "word": "клубника"
+            },
+            {
+              "text": "Хрум-хрум! А морковь — гляди-ка!",
+              "pic": "carrot",
+              "word": "морковь"
+            }
+          ],
+          "chorus": [
+            "Топ-топ, гусеничка, топай!",
+            "Топ-топ, ножками пошлёпай!",
+            "Топ-топ! Вверх и вниз — вперёд!",
+            "Гусеничка всё ползёт!"
+          ],
+          "verse2": [
+            {
+              "text": "Пробует грибок на вкус,",
+              "pic": "mushroom",
+              "word": "грибок"
+            },
+            {
+              "text": "Ух, какой большой арбуз! (ого!)",
+              "pic": "watermelon",
+              "word": "арбуз"
+            },
+            {
+              "text": "Сладко спит в цветке — ах, лапочка! (хр-р-р...)",
+              "pic": "flower",
+              "word": "цветке"
+            },
+            {
+              "text": "А проснулась — вот так бабочка! (порх-порх!)",
+              "pic": "butterfly",
+              "word": "бабочка"
+            }
+          ]
+        },
+        "de": {
+          "title": "Räupchen",
+          "hero": "Räupchen",
+          "blurb": "Das Räupchen futtert und futtert – und dann?",
+          "verse1": [
+            {
+              "text": "Mampf! Das Räupchen frisst ein Blatt,",
+              "pic": "leaf",
+              "word": "Blatt"
+            },
+            {
+              "text": "Und dazu 'ne Birne. Satt?",
+              "pic": "pear",
+              "word": "Birne"
+            },
+            {
+              "text": "Nein! Noch eine Erdbeere! (mmh!)",
+              "pic": "strawberry",
+              "word": "Erdbeere"
+            },
+            {
+              "text": "Knack, knack, knack! Dann eine Möhre!",
+              "pic": "carrot",
+              "word": "Möhre"
+            }
+          ],
+          "chorus": [
+            "Tripp-trapp! Räupchen, krabbel, krabbel!",
+            "Tripp-trapp! Wackel, wackel, zappel!",
+            "Tripp-trapp! Füßchen: eins, zwei, drei!",
+            "Räupchen krabbelt schnell vorbei!"
+          ],
+          "verse2": [
+            {
+              "text": "Dann probiert's 'nen Pilz, ganz klein,",
+              "pic": "mushroom",
+              "word": "Pilz"
+            },
+            {
+              "text": "Schwupp! Und die Melone – rein! (uff!)",
+              "pic": "watermelon",
+              "word": "Melone"
+            },
+            {
+              "text": "Schläft es ein – die Blume schwingt, (chrrr...)",
+              "pic": "flower",
+              "word": "Blume"
+            },
+            {
+              "text": "Wacht es auf – ein Schmetterling! (flatter-flatter!)",
+              "pic": "butterfly",
+              "word": "Schmetterling"
+            }
+          ]
+        },
+        "en": {
+          "title": "Caterpillar",
+          "hero": "Caterpillar",
+          "blurb": "A wiggly caterpillar eats and eats — then what?",
+          "verse1": [
+            {
+              "text": "She nibbles on a leaf with care,",
+              "pic": "leaf",
+              "word": "leaf"
+            },
+            {
+              "text": "Then yum! A big and juicy pear! (chomp-chomp!)",
+              "pic": "pear",
+              "word": "pear"
+            },
+            {
+              "text": "So red and sweet — a strawberry!",
+              "pic": "strawberry",
+              "word": "strawberry"
+            },
+            {
+              "text": "She crunches on a carrot — whee!",
+              "pic": "carrot",
+              "word": "carrot"
+            }
+          ],
+          "chorus": [
+            "Tap-tap! Little caterpillar, crawl!",
+            "Tap-tap! Wiggle, wiggle, don't you fall!",
+            "Tap-tap! Tiny feet go one, two, three!",
+            "Caterpillar, crawl with me!"
+          ],
+          "verse2": [
+            {
+              "text": "She tries a tiny mushroom — slow,",
+              "pic": "mushroom",
+              "word": "mushroom"
+            },
+            {
+              "text": "She gobbles watermelon — whoa! (burp!)",
+              "pic": "watermelon",
+              "word": "watermelon"
+            },
+            {
+              "text": "She snoozes in a flower — sigh... (zzz...)",
+              "pic": "flower",
+              "word": "flower"
+            },
+            {
+              "text": "And wakes up as a butterfly! (flutter-flutter!)",
+              "pic": "butterfly",
+              "word": "butterfly"
+            }
+          ]
+        }
+      },
+      "outro": "Caterpillar flies away — hooray!"
     }
   ]
 }

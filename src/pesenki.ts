@@ -10,7 +10,7 @@ import { PuppyNarration } from './sobachka-narration.ts'
 import { SongPlayer } from './pesenki-player.ts'
 import { PesenkiSfx } from './pesenki-sfx.ts'
 import { PESENKI_COPY } from './pesenki-copy.ts'
-import { PICTURES, SONGS, loadTiming, pictureWord, songById, type Song } from './pesenki-songs.ts'
+import { PICTURES, SLEEPING, SONGS, loadTiming, pictureWord, songById, type Song } from './pesenki-songs.ts'
 import { heroSvg, pictureSvg, speedSvg } from './pesenki-art.ts'
 import { hatch, markerBlob, pencilCircle, pencilPill } from './pesenki-draw.ts'
 import { PESENKI_KEY, finishSong, openLevels, progressOf, restoreSave, type PesenkiSave } from './pesenki-state.ts'
@@ -78,6 +78,8 @@ interface Session {
   loaded: number
   /** Level that just opened on the finish card (sparkles once). */
   fresh: number
+  /** All speed-ups just finished for the first time. */
+  golden: boolean
   line: number
   sung: number
   lastTick: number
@@ -176,13 +178,22 @@ function shelfMarkup(): string {
       </button>
     </li>`
   }).join('')
+  const sleeping = SLEEPING.map((song, index) => {
+    const title = song.title[lang]
+    return `<li style="--i:${SONGS.length + index}">
+      <button type="button" class="ps-song is-sleeping" data-sleeping="${song.id}" style="--song:${song.color};--paper:${song.paper}" aria-label="${esc(copy.asleep(title))}">
+        <span class="ps-disc">${ring(hashText(song.id), song.paper, 2.6)}<span class="ps-art">${heroSvg(song.id)}</span><span class="ps-zzz" aria-hidden="true">z<span>z</span><span>z</span></span></span>
+        <span class="ps-song-name">${esc(title)}</span>
+      </button>
+    </li>`
+  }).join('')
   return `<section class="ps-shelf" aria-labelledby="ps-title">
     <div class="ps-heading">
       <h1 id="ps-title" class="ps-title">${esc(copy.name)}</h1>
       <p class="ps-byline">${esc(copy.byline)}</p>
     </div>
     <p class="ps-pick">${esc(copy.pick)}</p>
-    <ul class="ps-grid" aria-label="${esc(copy.pick)}">${items}</ul>
+    <ul class="ps-grid" aria-label="${esc(copy.pick)}">${items}${sleeping}</ul>
     <footer class="ps-foot">
       <p>${esc(copy.credits)}</p>
       ${persistent ? '' : `<p>${esc(copy.noStorage)}</p>`}
@@ -323,6 +334,7 @@ async function openSong(song: Song, level?: number): Promise<void> {
     conductor: null,
     loaded: 0,
     fresh: -1,
+    golden: false,
     line: -2,
     sung: -1,
     lastTick: 0,
@@ -609,9 +621,13 @@ function heroTapFx(perfect: boolean): void {
 function finish(s: Session, stars: number, total: number): void {
   s.stage = 'finished'
   hideChoices()
+  const before = progressOf(save, s.song.id).done
   const opened = finishSong(save, s.song.id, s.level, stars)
   persist()
   s.fresh = opened ? s.level + 1 : -1
+  // The rocket speed done for the first time: the song's circle turns gold.
+  s.golden = before < LEVELS.length && progressOf(save, s.song.id).done >= LEVELS.length
+  el('.ps-hero')?.classList.add('is-cheering')
   sfx.play('alarm')
   window.setTimeout(() => sfx.play('cheer'), 700)
   refreshTop()
@@ -620,7 +636,7 @@ function finish(s: Session, stars: number, total: number): void {
   renderFinish(s, stars, total)
   const lines = [copy.done]
   if (total > 0) lines.push(stars === total ? copy.perfectSong : copy.starsLine(stars, total))
-  lines.push(s.fresh >= 0 ? copy.newSpeed : copy.pickSpeed)
+  lines.push(s.golden ? copy.allSpeeds : s.fresh >= 0 ? copy.newSpeed : copy.pickSpeed)
   window.setTimeout(() => {
     if (session === s && s.stage === 'finished') say(...lines)
   }, 900)
@@ -654,7 +670,7 @@ function renderFinish(s: Session, stars: number, total: number): void {
   card.innerHTML = `<div class="ps-finish-card" role="dialog" aria-label="${esc(copy.done)}">
     <p class="ps-finish-title">${esc(copy.done)}</p>
     ${total > 0 ? `<p class="ps-collection" role="img" aria-label="${esc(copy.starsLine(stars, total))}">${found}</p>` : ''}
-    <p class="ps-finish-pick">${esc(s.fresh >= 0 ? copy.newSpeed : copy.pickSpeed)}</p>
+    <p class="ps-finish-pick ${s.golden ? 'is-golden' : ''}">${esc(s.golden ? copy.allSpeeds : s.fresh >= 0 ? copy.newSpeed : copy.pickSpeed)}</p>
     <div class="ps-speeds ps-speeds-big" role="group" aria-label="${esc(copy.speedUps)}">${speeds}</div>
     <div class="ps-finish-row">
       <button type="button" class="ps-button" data-action="again">${icon('again')}<span>${esc(copy.again)}</span></button>
@@ -852,7 +868,7 @@ root.addEventListener('pointerdown', (event) => {
 })
 
 root.addEventListener('click', (event) => {
-  const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action], [data-song], [data-pic], [data-level]')
+  const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action], [data-song], [data-sleeping], [data-pic], [data-level]')
   if (!target) return
   const action = target.dataset.action
   if (action === 'home') {
@@ -863,6 +879,15 @@ root.addEventListener('click', (event) => {
   if (action === 'hero') {
     // Pointer taps were handled on pointerdown; keyboard and screen readers click.
     if ((event as PointerEvent).detail === 0) tapHero()
+    return
+  }
+  if (target.dataset.sleeping) {
+    // A song that is not recorded yet: its hero stretches and goes back to sleep.
+    sfx.play('pop')
+    begin(copy.sleeping)
+    target.classList.remove('is-stirring')
+    void target.offsetWidth
+    target.classList.add('is-stirring')
     return
   }
   if (target.dataset.song) {

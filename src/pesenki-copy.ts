@@ -37,6 +37,9 @@ export interface PesenkiCopy {
   privacy: string
   noAudio: string
   noStorage: string
+  sleeping: string
+  asleep: (title: string) => string
+  allSpeeds: string
 }
 
 export const PESENKI_COPY: Record<Lang, PesenkiCopy> = {
@@ -77,6 +80,9 @@ export const PESENKI_COPY: Record<Lang, PesenkiCopy> = {
     privacy: 'Всё работает на устройстве. Ничего не записывается.',
     noAudio: 'Этот браузер не умеет играть песенки.',
     noStorage: 'Успехи не сохранятся на этом устройстве.',
+    sleeping: 'Эта песенка ещё спит. Скоро проснётся!',
+    allSpeeds: 'Все ускорения пройдены! Кружок стал золотым!',
+    asleep: (title) => `${title} — спит`,
   },
   de: {
     name: 'Liedchen',
@@ -115,6 +121,9 @@ export const PESENKI_COPY: Record<Lang, PesenkiCopy> = {
     privacy: 'Alles läuft auf dem Gerät. Nichts wird aufgenommen.',
     noAudio: 'Dieser Browser kann keine Lieder abspielen.',
     noStorage: 'Fortschritte werden auf diesem Gerät nicht gespeichert.',
+    sleeping: 'Dieses Lied schläft noch. Bald wacht es auf!',
+    allSpeeds: 'Alle Turbos geschafft! Der Kreis ist jetzt golden!',
+    asleep: (title) => `${title} — schläft`,
   },
   en: {
     name: 'Little Songs',
@@ -153,5 +162,8 @@ export const PESENKI_COPY: Record<Lang, PesenkiCopy> = {
     privacy: 'Everything runs on this device. Nothing is recorded.',
     noAudio: 'This browser cannot play the songs.',
     noStorage: 'Progress will not be saved on this device.',
+    sleeping: 'This song is still asleep. It will wake up soon!',
+    allSpeeds: 'Every speed-up done! The circle turned gold!',
+    asleep: (title) => `${title} — asleep`,
   },
 }

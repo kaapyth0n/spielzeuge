@@ -18,7 +18,7 @@
 
 ## Playing
 
-- **Shelf:** one circle per song. Five dots under each circle show which speed-ups are done. After all five, the circle gets a gold ring. The last song played is underlined.
+- **Shelf:** her ten circles, one per song. Five dots under each circle show which speed-ups are done. After all five, the circle gets a gold ring. The last song played is underlined. A song that is not recorded yet shows its hero asleep (grey, eyes shut, «zzz», a dashed ring); tapping it makes the hero stretch and the narrator says the song is still asleep.
 - **Start:** the hero breathes and a pencil hand points at it. One tap starts the song after a short intro.
 - **Verse lines:** 3 to 5 picture circles pop up just before each line. The karaoke line under the hero shows the words and lights them as they are sung. The picture word is an empty circle. A wrong picture shakes and greys out; nothing else happens. The right one flies onto the clock, fills the circle in the karaoke line and the song goes on.
 - **Waiting:** if the line ends without the right picture, the song stops between lines. A soft clock ticks. The first time, the narrator asks “Что спели? Найди картинку!”. After 6.5 s the song rewinds «уй-уй-уй» and sings the line again. After the second replay the right picture glows. Tapping the hero while waiting also sings the line again.

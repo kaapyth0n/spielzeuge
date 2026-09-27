@@ -79,11 +79,22 @@ async function openAndStart(page, song = 'panda') {
 {
   const { context, page, errors } = await fresh()
   step('shelf greets in Russian and lists the songs')
-  const songs = await page.locator('.ps-song').count()
+  const songs = await page.locator('.ps-song[data-song]').count()
   assert.ok(songs >= 1)
   await page.waitForTimeout(200)
   const spoken = await page.evaluate(() => window.spoken)
   assert.ok(spoken.some((u) => u.text.includes('Песенки') && u.lang === 'ru-RU'), JSON.stringify(spoken))
+
+  step('the shelf always shows the ten circles of the drawing; unrecorded songs sleep')
+  assert.equal(songs + (await page.locator('.ps-song.is-sleeping').count()), 10)
+  const sleeper = page.locator('.ps-song.is-sleeping').first()
+  if (await sleeper.count()) {
+    await page.evaluate(() => (window.spoken = []))
+    await sleeper.click()
+    await page.waitForTimeout(150)
+    assert.equal((await state(page)).screen, 'shelf')
+    assert.ok((await page.evaluate(() => window.spoken)).some((u) => u.text.includes('ещё спит')))
+  }
 
   step('a song opens, waits for the hero tap, then plays from the intro')
   await page.click('.ps-song[data-song="panda"]')
