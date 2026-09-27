@@ -14,6 +14,7 @@ export default defineConfig({
         slimeCheck: resolve(__dirname, 'slime-check/index.html'),
         morozhenka: resolve(__dirname, 'morozhenka/index.html'),
         pesenki: resolve(__dirname, 'pesenki/index.html'),
+        bolnica: resolve(__dirname, 'bolnica/index.html'),
       },
     },
   },

@@ -21,7 +21,8 @@
     "test:slime-visitors": "node scripts/slime-visitors-spec.mjs",
     "test:slime-family": "node scripts/slime-family-spec.mjs",
     "test:morozhenka": "node scripts/morozhenka-spec.mjs",
-    "test:pesenki": "node scripts/pesenki-spec.mjs"
+    "test:pesenki": "node scripts/pesenki-spec.mjs",
+    "test:bolnica": "node scripts/bolnica-spec.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.62.1",
@@ -31,6 +32,7 @@
   },
   "dependencies": {
     "@fontsource/andika": "^5.3.0",
+    "@fontsource/balsamiq-sans": "^5.3.0",
     "@fontsource/pangolin": "^5.3.0",
     "@fontsource/pt-serif": "^5.3.0"
   }

@@ -342,6 +342,13 @@ a {
 .toy-card--sobachka .puppy-closed-eyes { display: none; }
 
 .toy-card--morozhenka .toy-card-art { background: #fbf5e9; }
+.toy-card--bolnica .toy-card-art {
+  background-color: #d8f1ea;
+  background-image: linear-gradient(#c0e5d9 2px, transparent 2px), linear-gradient(90deg, #c0e5d9 2px, transparent 2px);
+  background-size: 16px 16px;
+  overflow: hidden;
+}
+.toy-card--bolnica .toy-card-art svg { width: 92px; height: 92px; transform: translateY(6px); }
 .toy-card--morozhenka .mz-scoop-svg { width: 86px; height: 86px; transform: translateX(6px) rotate(-6deg); }
 
 .toy-card--pesenki .toy-card-art { background: #e2f2df; border-radius: 50%; box-shadow: inset 0 0 0 2.5px #3b3a40; }
