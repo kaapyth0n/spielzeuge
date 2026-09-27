@@ -137,18 +137,22 @@ async function openAndStart(page, song = 'panda') {
 
   step('pictures found while the song keeps going count as fast')
   s = await until(page, (s) => s.shown === 1, 'second pictures')
+  await page.waitForTimeout(400)
   await page.click(`.ps-choice[data-pic="${s.target}"]`)
   s = await until(page, (s) => s.answered === 2, 'second answer')
   assert.ok(s.fast >= 1, 'a fast answer')
 
   step('keyboard: digits pick pictures')
   s = await until(page, (s) => s.shown === 2, 'third pictures')
+  // Taps in the first 350 ms after new circles appear are ignored (double-tap guard).
+  await page.waitForTimeout(400)
   const digit = s.choices.indexOf(s.target) + 1
   await page.keyboard.press(String(digit))
   await until(page, (s) => s.answered === 3, 'keyboard answer')
 
   step('chorus: tapping keeps the song going, stopping rewinds it')
   s = await until(page, (s) => s.shown === 3, 'fourth pictures')
+  await page.waitForTimeout(400)
   await page.click(`.ps-choice[data-pic="${s.target}"]`)
   s = await until(page, (s) => s.chorus === 0, 'chorus', 8000)
   assert.equal(await page.locator('.ps-hero.is-chorus').count(), 1)
