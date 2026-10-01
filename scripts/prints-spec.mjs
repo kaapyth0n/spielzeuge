@@ -52,6 +52,58 @@ try{
  // Cancellation releases the drag and preserves the previous activity.
  await page.locator('[data-friend="0"]').dispatchEvent('pointerdown',{pointerId:2,clientX:pos.x,clientY:pos.y,pointerType:'touch',bubbles:true});
  await page.locator('#world').dispatchEvent('pointercancel',{pointerId:2,pointerType:'touch',bubbles:true});assert.equal(await page.locator('.dragging').count(),0);
+ // Shared swing: deterministic roles, moving equipment and geometric attachment.
+ const transfer = async (id, activity) => {
+   const friend = page.locator(`[data-friend="${id}"]`)
+   const position = await friend.evaluate(n => {
+     const p = document.querySelector('#world').createSVGPoint()
+     const q = p.matrixTransform(n.getScreenCTM()); return { x:q.x, y:q.y }
+   })
+   const destination = await page.locator(`.equipment[data-activity="${activity}"]`).evaluate(n => {
+     const p = document.querySelector('#world').createSVGPoint()
+     const q = p.matrixTransform(n.getScreenCTM()); return { x:q.x, y:q.y }
+   })
+   await friend.dispatchEvent('pointerdown', { pointerId:8, clientX:position.x, clientY:position.y, pointerType:'touch', bubbles:true })
+   await page.locator('#world').dispatchEvent('pointermove', { pointerId:8, clientX:destination.x, clientY:destination.y, pointerType:'touch', bubbles:true })
+   await page.locator('#world').dispatchEvent('pointerup', { pointerId:8, clientX:destination.x, clientY:destination.y, pointerType:'touch', bubbles:true })
+ }
+ for (const count of [1,2,3]) {
+   if (count > 1) await transfer(count-1, 0)
+   await page.waitForFunction(n => document.querySelectorAll('[data-swing-role="rider"]').length === 1 && document.querySelectorAll('[data-swing-role^="pusher"]').length === n-1, count)
+   await page.waitForFunction(() => document.querySelector('[data-swing-role="rider"]').dataset.phase === 'swing-rider')
+   await page.waitForTimeout(600)
+   const samples = await page.evaluate(async () => {
+     const out = []
+     for (let i=0;i<65;i++) {
+       const rider = document.querySelector('[data-swing-role="rider"]')
+       const moving = document.querySelector('.swing-moving')
+       const point = document.querySelector('#world').createSVGPoint()
+       point.y = 35
+       const hips = point.matrixTransform(rider.querySelector('.pose').getCTM())
+       point.y = 69
+       const seat = point.matrixTransform(moving.getCTM())
+       out.push({ error:Math.hypot(hips.x-seat.x,hips.y-seat.y), angle:+moving.dataset.angle,
+         arms:[...document.querySelectorAll('[data-swing-role^="pusher"] .arms')].map(n=>n.getAttribute('d')) })
+       await new Promise(requestAnimationFrame)
+     }
+     return out
+   })
+   assert.ok(samples.every(s=>s.error<.02), 'rider remains on moving seat')
+   assert.ok(new Set(samples.map(s=>s.angle)).size>20, 'ropes and seat move')
+   if (count>1) assert.ok(new Set(samples.map(s=>s.arms.join())).size>2, 'helpers reach in sync')
+   await page.screenshot({path:`tmp/prints/${name}-swing-${count}.png`})
+ }
+ await transfer(0, 6)
+ await page.waitForFunction(()=>document.querySelector('[data-friend="1"]').dataset.swingRole==='rider')
+ await transfer(0, 0)
+ await page.waitForFunction(()=>document.querySelector('[data-friend="0"]').dataset.swingRole.startsWith('pusher'))
+ await transfer(2, 7)
+ await page.waitForFunction(()=>document.querySelector('[data-friend="2"]').dataset.swingRole==='')
+ await transfer(2, 0)
+ await page.waitForFunction(()=>document.querySelectorAll('[data-swing-role^="pusher"]').length===2)
+ for (const id of [0,1,2]) await transfer(id, 6)
+ await page.waitForFunction(()=>document.querySelectorAll('[data-swing-role="rider"]').length===0 && Math.abs(+document.querySelector('.swing-moving').dataset.angle)<.001)
+ await transfer(0, 0)
  await page.screenshot({path:`tmp/prints/${name}.png`})
  await page.click('#sound');const spoken=await page.evaluate(()=>window.__spoken.length);await page.click('#replay');assert.equal(await page.evaluate(()=>window.__spoken.length),spoken)
  await page.click('#restart');assert.equal(await page.locator('.character').count(),0);await page.fill('#count','20');await page.locator('#count').dispatchEvent('change');for(let i=0;i<20;i++)await page.mouse.click(field.x+field.width*.5,field.y+field.height*.5);assert.equal(await page.locator('.character').count(),20)

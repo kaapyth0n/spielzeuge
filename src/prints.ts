@@ -3,6 +3,7 @@ import { loadLang, saveLang, SPEECH_LOCALE, type Lang } from './languages'
 import { PRINTS_COPY } from './prints-copy'
 import { ACTIVITIES, COLORS, countWithinBounds, fingerprintPaths, nearestActivity } from './prints-state'
 import { slidePose, footballPose, approach } from './prints-motion'
+import { assignSwingRoles, swingPose, swingHelperPose, type SwingRole } from './prints-swing'
 const NS='http://www.w3.org/2000/svg'
 const root=document.querySelector<HTMLDivElement>('#app')!
 let lang=loadLang(), muted=false
@@ -18,6 +19,8 @@ const abort=new AbortController()
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches
 interface Friend {id:number;x:number;y:number;originX:number;originY:number;activity:number;born:number;node:SVGGElement;pose:SVGGElement;parts:SVGGElement;drag:boolean;moving:boolean;routeTime:number}
 const friends:Friend[]=[]
+let swingRoles = new Map<number, SwingRole>()
+let swingAngle = 0, swingClock = 0
 let drag:{id:number;pointer:number;ox:number;oy:number}|undefined
 function speak(text:string){if(disposed||muted)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=SPEECH_LOCALE[lang];u.rate=.88;speechSynthesis.speak(u)}catch{}}
 function stopAudio(){try{speechSynthesis.cancel()}catch{};for(const s of sources){try{s.stop();s.disconnect()}catch{}}sources.clear()}
@@ -25,7 +28,7 @@ function chime(high=false){if(muted||disposed)return;try{audio??=new AudioContex
 function hint(){return alive?PRINTS_COPY[lang].play:friends.length>=desired?PRINTS_COPY[lang].awaken:PRINTS_COPY[lang].stamp}
 function update(){const c=PRINTS_COPY[lang];document.documentElement.lang=lang;document.title=c.title;$<HTMLElement>('.title').textContent=c.title;$<HTMLElement>('.instructions').textContent=hint();$<HTMLElement>('.home').setAttribute('aria-label',c.home);$<HTMLSelectElement>('#language').value=lang;$('#language').setAttribute('aria-label',c.language);$('#sound').textContent=muted?'🔇':'♪';$('#sound').setAttribute('aria-label',c.sound);$('#sound').setAttribute('aria-pressed',String(!muted));$('#replay').setAttribute('aria-label',c.replay);$('label').textContent=c.count;$('#minus').setAttribute('aria-label',`${c.count} −`);$('#plus').setAttribute('aria-label',`${c.count} +`);$('#restart').setAttribute('aria-label',c.restart);$('#restart').setAttribute('title',c.restart);next.setAttribute('aria-label',c.next);next.disabled=alive||friends.length!==desired;$('.progress').textContent=`${friends.length} / ${desired}`;$('.note').textContent=c.quiet;svg.setAttribute('aria-label',hint());input.disabled=alive;for(const id of ['minus','plus'])$<HTMLButtonElement>('#'+id).disabled=alive;$<HTMLButtonElement>('#minus').disabled=alive||desired===1;$<HTMLButtonElement>('#plus').disabled=alive||desired===20;friends.forEach(f=>f.node.setAttribute('aria-label',`${c.friend} ${f.id+1}`));scenery.querySelectorAll<SVGTextElement>('.equip-label').forEach((n,i)=>n.textContent=c.activities[i]);scenery.querySelectorAll<SVGGElement>('.equipment').forEach((n,i)=>n.setAttribute('aria-label',c.activities[i]))}
 const art=[
- `<path d="M-68 45L-42-63H42L68 45M-42-63L-17 45M42-63L17 45" stroke="#b8946a" stroke-width="8" fill="none"/><path d="M-24-61V6M24-61V6" stroke="#677873" stroke-width="3"/><rect x="-34" y="4" width="68" height="12" rx="6" fill="#edb856"/>`,
+ `<path d="M-68 45L-42-63H42L68 45M-42-63L-17 45M42-63L17 45" stroke="#b8946a" stroke-width="8" fill="none"/><g class="swing-moving" transform="translate(0 -61)"><path d="M-24 0V69M24 0V69" stroke="#677873" stroke-width="3"/><rect x="-34" y="69" width="68" height="12" rx="6" fill="#edb856"/></g>`,
  `<ellipse cy="28" rx="73" ry="25" fill="#e2987e"/><ellipse cy="19" rx="73" ry="25" fill="#f7c981"/><path d="M0 20V-45M-53 3V-22Q0-50 53-22V3M-53-22H53" fill="none" stroke="#63a9a4" stroke-width="7"/><circle cy="-45" r="7" fill="#e98771"/>`,
  `<path d="M-58 43V-54H-14L57 29Q73 47 89 34" fill="none" stroke="#ce9a61" stroke-width="8"/><path d="M-22-46Q-7 10 58 34H84" fill="none" stroke="#80b7ce" stroke-width="20"/><path d="M-58-31H-28M-58-9H-28M-58 14H-28" stroke="#ce9a61" stroke-width="6"/><path d="M-67-55L-38-79L-10-55" fill="#e68e77"/>`,
  `<path d="M-62 46L-45-65H45L63 46Z" fill="#bcb1d0" stroke="#998daa" stroke-width="5"/>${Array.from({length:12},(_,i)=>`<ellipse cx="${-30+i%3*30+(i%2?5:0)}" cy="${-42+Math.floor(i/3)*24}" rx="7" ry="4" fill="${COLORS[i%7]}" transform="rotate(${i*19} ${-30+i%3*30} ${-42+Math.floor(i/3)*24})"/>`).join('')}`,
@@ -43,7 +46,27 @@ function render(dt: number) {
   const ball = scenery.querySelector('.football-ball')
   const rally = footballPose(elapsed)
   ball?.setAttribute('transform', `translate(${rally.ballX} ${rally.ballY}) rotate(${elapsed*160})`)
+  const previousRoles = swingRoles
+  swingRoles = assignSwingRoles(alive ? friends : [], previousRoles)
   for (const f of friends) {
+    if (swingRoles.get(f.id) !== previousRoles.get(f.id)) f.moving = true
+  }
+  const rider = friends.find(f => swingRoles.get(f.id) === 'rider')
+  // Board a stationary seat first. On dismount, ease the empty seat home.
+  if (rider && !rider.moving && !rider.drag) swingClock += dt
+  else swingClock = 0
+  const targetAngle = rider && !rider.moving ? Math.sin(swingClock * 1.6) * .42 : 0
+  swingAngle += (targetAngle - swingAngle) * Math.min(1, dt * 9)
+  const pendulum = swingPose(swingAngle)
+  const movingSwing = scenery.querySelector<SVGGElement>('.swing-moving')!
+  movingSwing.setAttribute('transform', `translate(0 -61) rotate(${pendulum.degrees})`)
+  movingSwing.dataset.angle = String(swingAngle)
+  movingSwing.dataset.seatX = String(spots[0].x + pendulum.seat.x)
+  movingSwing.dataset.seatY = String(spots[0].y + pendulum.seat.y)
+  let waitingIndex = 0
+  for (const f of friends) {
+    const role = swingRoles.get(f.id)
+    f.node.dataset.swingRole = role ?? ''
     let rotation = 0, scale = 1, phase = 'idle', kick = 0
     const a = elapsed + f.id*.71
     const growth = Math.min(1, Math.max(0, (elapsed-f.born)/.85))
@@ -54,7 +77,21 @@ function render(dt: number) {
         const p = spots[f.activity]
         let tx = p.x, ty = p.y
         switch (f.activity) {
-          case 0: tx += Math.sin(a*1.6)*35; ty += -8+Math.abs(Math.sin(a*1.6))*12; rotation = Math.sin(a*1.6)*18; break
+          case 0: {
+            if (role === 'rider') {
+              tx += pendulum.rider.x
+              ty += pendulum.rider.y
+              rotation = pendulum.degrees
+              phase = 'swing-rider'
+            } else if (role) {
+              const helper = swingHelperPose(swingAngle, role, waitingIndex)
+              if (role === 'waiting') waitingIndex++
+              tx += helper.x
+              ty += helper.y
+              phase = role === 'waiting' ? 'swing-waiting' : 'swing-push'
+            }
+            break
+          }
           case 1: tx += Math.cos(a)*48; ty += Math.sin(a)*16-8; rotation = Math.sin(a)*10; break
           case 2: {
             // Freeze the route at its entrance while arriving: no jump onto a moving chute.
@@ -92,8 +129,26 @@ function render(dt: number) {
         f.node.querySelector('.legs')!.setAttribute('d',
           `M-10 22Q${-18+swing} 31 ${-19+swing} 39M10 22Q${18-swing} 31 ${19-swing-kick*2} ${39-kick*9}`)
         if (reduced || f.activity===2 || walking) rotation = 0
+        if (f.activity === 0 && !f.moving && role) {
+          if (role === 'rider') {
+            // Rotation is essential geometry even with reduced motion: hands stay on ropes.
+            rotation = pendulum.degrees
+            arms.setAttribute('d', 'M-20 0Q-27-4-24-13M20 0Q27-4 24-13')
+            f.node.querySelector('.legs')!.setAttribute('d', 'M-10 22L-15 35L-28 35L-30 48M10 22L15 35L28 35L30 48')
+          } else {
+            const helper = swingHelperPose(swingAngle, role)
+            const reach = helper.reach
+            const contactX = p.x + pendulum.seat.x - f.x
+            const contactY = p.y + pendulum.seat.y - f.y
+            const leftX = -39 + (contactX - 10 + 39) * reach
+            const rightX = 39 + (contactX + 10 - 39) * reach
+            arms.setAttribute('d', `M-20 0Q-30-8 ${leftX} ${18+(contactY-18)*reach}M20 0Q30-8 ${rightX} ${18+(contactY-18)*reach}`)
+            f.node.querySelector('.legs')!.setAttribute('d', 'M-10 22Q-18 32-23 39M10 22Q18 32 23 39')
+          }
+        }
       }
     }
+    f.node.querySelector<SVGEllipseElement>('.shadow')!.style.opacity = role === 'rider' && !f.moving && !f.drag ? '0' : '.14'
     f.node.dataset.phase = f.drag ? 'drag' : phase
     f.node.setAttribute('transform', `translate(${f.x.toFixed(2)} ${f.y.toFixed(2)})`)
     f.pose.setAttribute('transform', `rotate(${rotation}) scale(${f.drag?1.15:scale})`)
