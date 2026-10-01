@@ -8,6 +8,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        prints: resolve(__dirname, 'prints/index.html'),
         kuckuck: resolve(__dirname, 'kuckuck/index.html'),
         chunyashka: resolve(__dirname, 'chunyashka/index.html'),
         sobachka: resolve(__dirname, 'sobachka/index.html'),

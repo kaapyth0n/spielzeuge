@@ -30,6 +30,7 @@ Verify all three languages, narration calls, effects, mute, saved preferences an
 | `/kuckuck/` | Kuckuck — door, knock, visitor, spoken name |
 | `/chunyashka/` | Чуняшка — dress-up; hearts stay on the toy |
 | `/sobachka/` | Собачка — care for a puppy, decorate its room and discover three games |
+| `/prints/` | Живые отпечатки — colourful drawn fingerprints become playground friends ([details](docs/prints.md)) |
 | `/slime-check/` | Слайм Чек — Veronika’s slime-care, dress-up and stretching game |
 | `/morozhenka/` | Мороженка — Matryona’s voice-steered ice cream: fly through pencil caves into the cone |
 | `/pesenki/` | Песенки — Matryona’s song game: hear a line, tap its picture, drum the chorus, unlock speed-ups |

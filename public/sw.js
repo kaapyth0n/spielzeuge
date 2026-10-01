@@ -1,4 +1,4 @@
-const CACHE = 'spielzeuge-v19'
+const CACHE = 'spielzeuge-v20'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -6,6 +6,8 @@ self.addEventListener('install', (event) => {
       cache.addAll([
         './',
         './index.html',
+        './prints/',
+        './prints/index.html',
         './kuckuck/',
         './kuckuck/index.html',
         './chunyashka/',
