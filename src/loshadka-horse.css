@@ -1,0 +1,871 @@
+/*
+ * Лошадка — the pony comes alive. Every animated group carries its own pivot as an inline
+ * transform-origin (see loshadka-art.ts), so these rules only say *how* things move.
+ * Idle motion is always on; the action classes are added to the root <svg class="lh-horse">
+ * by the UI for as long as the move lasts.
+ */
+
+.lh-horse {
+  overflow: visible;
+}
+
+.lh-horse .lh-nostril {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* ─────────── idle ─────────── */
+
+.lh-horse .lh-rig {
+  animation: lh-breathe 3.6s ease-in-out infinite;
+}
+
+.lh-horse .lh-lid {
+  animation: lh-blink 4.2s linear infinite;
+}
+
+.lh-horse .lh-ear[data-ear='near'] {
+  animation: lh-ear-twitch 6.4s ease-in-out infinite;
+}
+
+.lh-horse .lh-ear[data-ear='far'] {
+  animation: lh-ear-twitch 7.6s ease-in-out 1.3s infinite;
+}
+
+.lh-horse .lh-tail {
+  animation: lh-swish 5.2s ease-in-out infinite;
+}
+
+.lh-horse .lh-tail-hair {
+  animation: lh-tail-sway 3.4s ease-in-out infinite;
+}
+
+.lh-horse .lh-mane-hair {
+  animation: lh-mane-sway 4.4s ease-in-out infinite;
+}
+
+.lh-horse .lh-forelock {
+  animation: lh-forelock-sway 4.4s ease-in-out 0.4s infinite;
+}
+
+.lh-horse .lh-wing-near {
+  animation: lh-flutter 3.2s ease-in-out infinite;
+}
+
+.lh-horse .lh-wing-far {
+  animation: lh-flutter 3.2s ease-in-out 0.15s infinite;
+}
+
+.lh-horse .lh-ghost {
+  animation: lh-ghost 1.8s ease-in-out infinite;
+}
+
+.lh-horse .lh-ghost-arrow {
+  animation: lh-nudge 1.8s ease-in-out infinite;
+}
+
+@keyframes lh-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  50% {
+    transform: translateY(-0.6px) scale(1.004, 1.012);
+  }
+}
+
+@keyframes lh-blink {
+  0%,
+  91%,
+  100% {
+    transform: scaleY(0);
+  }
+  94.5% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes lh-ear-twitch {
+  0%,
+  78%,
+  100% {
+    transform: rotate(0deg);
+  }
+  82% {
+    transform: rotate(-13deg);
+  }
+  86% {
+    transform: rotate(5deg);
+  }
+  90% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes lh-swish {
+  0%,
+  58%,
+  100% {
+    transform: rotate(0deg);
+  }
+  66% {
+    transform: rotate(7deg);
+  }
+  74% {
+    transform: rotate(-5deg);
+  }
+  82% {
+    transform: rotate(3deg);
+  }
+  90% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes lh-tail-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2deg);
+  }
+}
+
+@keyframes lh-mane-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(1.5deg);
+  }
+}
+
+@keyframes lh-forelock-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2.5deg);
+  }
+}
+
+@keyframes lh-flutter {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-4deg);
+  }
+}
+
+@keyframes lh-ghost {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes lh-nudge {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(var(--dx, 0), var(--dy, 0));
+  }
+}
+
+/* ─────────── mouth states (static, so they also work with reduced motion) ─────────── */
+
+.lh-horse.is-neigh .lh-mouth-open,
+.lh-horse.is-prance .lh-mouth-open {
+  opacity: 1;
+}
+
+.lh-horse.is-neigh .lh-mouth-closed,
+.lh-horse.is-prance .lh-mouth-closed {
+  opacity: 0;
+}
+
+.lh-horse.is-munch .lh-mouth-open,
+.lh-horse.is-graze .lh-mouth-open {
+  animation: lh-chew 0.4s steps(1, end) infinite;
+}
+
+.lh-horse.is-munch .lh-mouth-closed,
+.lh-horse.is-graze .lh-mouth-closed {
+  animation: lh-chew-closed 0.4s steps(1, end) infinite;
+}
+
+@keyframes lh-chew {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes lh-chew-closed {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ─────────── hop (body tap) ─────────── */
+
+.lh-horse.is-hop .lh-rig {
+  animation: lh-hop 0.7s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+.lh-horse.is-hop .lh-shadow {
+  animation: lh-hop-shadow 0.7s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+.lh-horse.is-hop .lh-leg[data-leg='fr'],
+.lh-horse.is-hop .lh-leg[data-leg='fl'] {
+  animation: lh-tuck-front 0.7s ease-in-out both;
+}
+
+.lh-horse.is-hop .lh-leg[data-leg='br'],
+.lh-horse.is-hop .lh-leg[data-leg='bl'] {
+  animation: lh-tuck-back 0.7s ease-in-out both;
+}
+
+@keyframes lh-hop {
+  0% {
+    transform: none;
+  }
+  16% {
+    transform: scale(1.04, 0.93);
+  }
+  46% {
+    transform: translateY(-36px) scale(0.98, 1.02);
+  }
+  72% {
+    transform: translateY(0) scale(1.05, 0.94);
+  }
+  86% {
+    transform: scale(0.99, 1.02);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes lh-hop-shadow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  46% {
+    transform: scale(0.72);
+    opacity: 0.6;
+  }
+}
+
+@keyframes lh-tuck-front {
+  0%,
+  20%,
+  70%,
+  100% {
+    transform: rotate(0deg);
+  }
+  46% {
+    transform: rotate(-16deg);
+  }
+}
+
+@keyframes lh-tuck-back {
+  0%,
+  20%,
+  70%,
+  100% {
+    transform: rotate(0deg);
+  }
+  46% {
+    transform: rotate(14deg);
+  }
+}
+
+/* ─────────── prance (rearing celebration) ─────────── */
+
+.lh-horse.is-prance .lh-rig {
+  animation: lh-rear 1.2s cubic-bezier(0.35, 0.6, 0.4, 1) both;
+}
+
+.lh-horse.is-prance .lh-head {
+  animation: lh-rear-head 1.2s ease-in-out both;
+}
+
+.lh-horse.is-prance .lh-leg[data-leg='fr'] {
+  animation: lh-paw 1.2s ease-in-out both;
+}
+
+.lh-horse.is-prance .lh-leg[data-leg='fl'] {
+  animation: lh-paw 1.2s ease-in-out -0.15s both;
+}
+
+.lh-horse.is-prance .lh-tail {
+  animation: lh-rear-tail 1.2s ease-in-out both;
+}
+
+.lh-horse.is-prance .lh-ear {
+  animation: lh-ears-back 1.2s ease-in-out both;
+}
+
+@keyframes lh-rear {
+  0% {
+    transform: none;
+  }
+  26% {
+    transform: rotate(13deg);
+  }
+  62% {
+    transform: rotate(12deg);
+  }
+  84% {
+    transform: rotate(-1.5deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes lh-rear-head {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30%,
+  60% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes lh-paw {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  22% {
+    transform: rotate(34deg);
+  }
+  36% {
+    transform: rotate(12deg);
+  }
+  50% {
+    transform: rotate(34deg);
+  }
+  64% {
+    transform: rotate(14deg);
+  }
+  84% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes lh-rear-tail {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30%,
+  60% {
+    transform: rotate(12deg);
+  }
+}
+
+@keyframes lh-ears-back {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30%,
+  60% {
+    transform: rotate(12deg);
+  }
+}
+
+/* ─────────── neigh ─────────── */
+
+.lh-horse.is-neigh .lh-head {
+  animation: lh-neigh 0.9s ease-in-out both;
+}
+
+.lh-horse.is-neigh .lh-ear {
+  animation: lh-ears-back 0.9s ease-in-out both;
+}
+
+@keyframes lh-neigh {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(12deg);
+  }
+  35% {
+    transform: rotate(10deg);
+  }
+  45% {
+    transform: rotate(13deg);
+  }
+  55% {
+    transform: rotate(10deg);
+  }
+  65% {
+    transform: rotate(12deg);
+  }
+  85% {
+    transform: rotate(0deg);
+  }
+}
+
+/* ─────────── snort (head tap) ─────────── */
+
+.lh-horse.is-snort .lh-head {
+  animation: lh-snort 0.7s ease-in-out both;
+}
+
+.lh-horse.is-snort .lh-ear {
+  animation: lh-ear-wiggle 0.7s ease-in-out both;
+}
+
+.lh-horse.is-snort .lh-nostril {
+  animation: lh-flare 0.7s ease-in-out both;
+}
+
+.lh-horse.is-snort .lh-lid {
+  animation: lh-blink-once 0.7s ease-in-out both;
+}
+
+@keyframes lh-snort {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  15% {
+    transform: rotate(-4deg);
+  }
+  30% {
+    transform: rotate(4deg);
+  }
+  45% {
+    transform: rotate(-3deg);
+  }
+  60% {
+    transform: rotate(2deg);
+  }
+  75% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes lh-ear-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-14deg);
+  }
+  40% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(-8deg);
+  }
+  80% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes lh-flare {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25%,
+  55% {
+    transform: scale(1.45);
+  }
+}
+
+@keyframes lh-blink-once {
+  0%,
+  100% {
+    transform: scaleY(0);
+  }
+  45% {
+    transform: scaleY(1);
+  }
+}
+
+/* ─────────── clip-clop tap dance (hoof tap) ─────────── */
+
+.lh-horse.is-tapdance .lh-leg {
+  animation: lh-stomp 0.25s ease-in-out both;
+}
+
+.lh-horse.is-tapdance .lh-leg[data-leg='bl'] {
+  animation-delay: 0.25s;
+}
+
+.lh-horse.is-tapdance .lh-leg[data-leg='fl'] {
+  animation-delay: 0.5s;
+}
+
+.lh-horse.is-tapdance .lh-leg[data-leg='br'] {
+  animation-delay: 0.75s;
+}
+
+.lh-horse.is-tapdance .lh-rig {
+  animation: lh-dance-bob 0.25s ease-in-out 4 both;
+}
+
+@keyframes lh-stomp {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  45% {
+    transform: translateY(-14px) rotate(-8deg);
+  }
+}
+
+@keyframes lh-dance-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* ─────────── munch the apple ─────────── */
+
+.lh-horse.is-munch .lh-neck {
+  animation: lh-munch-neck 1.6s ease-in-out both;
+}
+
+.lh-horse.is-munch .lh-head {
+  animation: lh-munch-head 1.6s ease-in-out both;
+}
+
+@keyframes lh-munch-neck {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  22%,
+  80% {
+    transform: rotate(-27deg);
+  }
+}
+
+@keyframes lh-munch-head {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  22% {
+    transform: rotate(-28deg);
+  }
+  34% {
+    transform: rotate(-23deg);
+  }
+  46% {
+    transform: rotate(-28deg);
+  }
+  58% {
+    transform: rotate(-23deg);
+  }
+  70%,
+  80% {
+    transform: rotate(-28deg);
+  }
+}
+
+/* ─────────── stable: walk, trot, graze ─────────── */
+
+.lh-horse.is-walk .lh-rig {
+  animation: lh-walk-bob 0.45s ease-in-out infinite;
+}
+
+.lh-horse.is-walk .lh-leg[data-leg='fr'],
+.lh-horse.is-walk .lh-leg[data-leg='bl'] {
+  animation: lh-stride 0.9s ease-in-out infinite;
+}
+
+.lh-horse.is-walk .lh-leg[data-leg='fl'],
+.lh-horse.is-walk .lh-leg[data-leg='br'] {
+  animation: lh-stride 0.9s ease-in-out -0.45s infinite;
+}
+
+.lh-horse.is-walk .lh-head {
+  animation: lh-nod 0.9s ease-in-out infinite;
+}
+
+.lh-horse.is-trot .lh-rig {
+  animation: lh-trot-bob 0.25s ease-in-out infinite;
+}
+
+.lh-horse.is-trot .lh-leg[data-leg='fr'],
+.lh-horse.is-trot .lh-leg[data-leg='bl'] {
+  animation: lh-stride-trot 0.5s ease-in-out infinite;
+}
+
+.lh-horse.is-trot .lh-leg[data-leg='fl'],
+.lh-horse.is-trot .lh-leg[data-leg='br'] {
+  animation: lh-stride-trot 0.5s ease-in-out -0.25s infinite;
+}
+
+.lh-horse.is-trot .lh-head {
+  animation: lh-nod 0.5s ease-in-out infinite;
+}
+
+.lh-horse.is-graze .lh-neck {
+  animation: lh-graze-neck 4s ease-in-out infinite;
+}
+
+.lh-horse.is-graze .lh-head {
+  animation: lh-graze-head 1s ease-in-out infinite;
+}
+
+@keyframes lh-walk-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes lh-trot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes lh-stride {
+  0%,
+  100% {
+    transform: rotate(14deg);
+  }
+  50% {
+    transform: rotate(-14deg);
+  }
+}
+
+@keyframes lh-stride-trot {
+  0%,
+  100% {
+    transform: rotate(22deg) translateY(-4px);
+  }
+  50% {
+    transform: rotate(-20deg);
+  }
+}
+
+@keyframes lh-nod {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-3deg);
+  }
+}
+
+@keyframes lh-graze-neck {
+  0%,
+  100% {
+    transform: rotate(-27deg);
+  }
+  45% {
+    transform: rotate(-25deg);
+  }
+  52% {
+    transform: rotate(-8deg);
+  }
+  62% {
+    transform: rotate(-27deg);
+  }
+}
+
+@keyframes lh-graze-head {
+  0%,
+  100% {
+    transform: rotate(-28deg);
+  }
+  50% {
+    transform: rotate(-23deg);
+  }
+}
+
+/* ─────────── "that's where it goes": part shakes ─────────── */
+
+.lh-horse.is-shake-mane .lh-mane,
+.lh-horse.is-shake-mane .lh-forelock,
+.lh-horse.is-shake-mane .lh-ghost-mane {
+  animation: lh-wiggle 0.6s ease-in-out both;
+}
+
+.lh-horse.is-shake-tail .lh-tail-hair,
+.lh-horse.is-shake-tail .lh-ghost-tail {
+  animation: lh-wiggle-big 0.6s ease-in-out both;
+}
+
+.lh-horse.is-shake-clip .lh-clip,
+.lh-horse.is-shake-clip .lh-ghost-clip {
+  animation: lh-wiggle-clip 0.6s ease-in-out both;
+}
+
+@keyframes lh-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-4deg);
+  }
+  40% {
+    transform: rotate(3.5deg);
+  }
+  60% {
+    transform: rotate(-2.5deg);
+  }
+  80% {
+    transform: rotate(1.5deg);
+  }
+}
+
+@keyframes lh-wiggle-big {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(8deg);
+  }
+  40% {
+    transform: rotate(-6deg);
+  }
+  60% {
+    transform: rotate(5deg);
+  }
+  80% {
+    transform: rotate(-2deg);
+  }
+}
+
+@keyframes lh-wiggle-clip {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-14deg) scale(1.14);
+  }
+  50% {
+    transform: rotate(12deg) scale(1.14);
+  }
+  75% {
+    transform: rotate(-6deg) scale(1.06);
+  }
+}
+
+/* ─────────── a freshly chosen part pops in ─────────── */
+
+.lh-horse [data-part].is-fresh {
+  animation: lh-pop 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+.lh-horse .lh-body.is-fresh {
+  animation: lh-pop-body 0.5s ease-out both;
+}
+
+@keyframes lh-pop {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes lh-pop-body {
+  0% {
+    transform: scale(0.94, 0.9);
+    filter: brightness(1.35);
+  }
+  55% {
+    transform: scale(1.04, 1.06);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+/* ─────────── wings flap ─────────── */
+
+.lh-horse.is-flap .lh-wing-near,
+.lh-horse.is-flap .lh-wing-far {
+  animation: lh-flap 0.42s ease-in-out 3 both;
+}
+
+.lh-horse.is-flap .lh-wing-far {
+  animation-delay: 0.05s;
+}
+
+@keyframes lh-flap {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-26deg);
+  }
+}
+
+/* ─────────── reduced motion: only the blink stays ─────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .lh-horse,
+  .lh-horse * {
+    animation: none !important;
+  }
+
+  .lh-horse .lh-lid {
+    animation: lh-blink 4.2s linear infinite !important;
+  }
+
+  .lh-horse .lh-ghost {
+    opacity: 0.85;
+  }
+}

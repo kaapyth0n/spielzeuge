@@ -43,6 +43,14 @@ export class PuppyNarration {
     )
   }
 
+  /**
+   * True after the browser refused speech because nobody had tapped yet (iOS before the first
+   * gesture). The next `begin()` clears it.
+   */
+  get refused(): boolean {
+    return this.blocked
+  }
+
   private supported(): boolean {
     return (
       'speechSynthesis' in window &&

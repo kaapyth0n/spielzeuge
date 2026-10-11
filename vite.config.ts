@@ -16,6 +16,7 @@ export default defineConfig({
         morozhenka: resolve(__dirname, 'morozhenka/index.html'),
         pesenki: resolve(__dirname, 'pesenki/index.html'),
         bolnica: resolve(__dirname, 'bolnica/index.html'),
+        loshadka: resolve(__dirname, 'loshadka/index.html'),
       },
     },
   },

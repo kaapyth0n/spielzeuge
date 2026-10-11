@@ -1,0 +1,456 @@
+/*
+ * Лошадка — scene animations (backgrounds, mound, meadow, gift, star).
+ * Everything is scoped to `.lh-sc`, the class on every scene root from loshadka-scenes.ts.
+ * Shapes are drawn at their frame-0 position; the CSS variables set in the markup
+ * (--from/--to/--t/--d …) only move them from there, so reduced motion = the still picture.
+ */
+
+.lh-sc {
+  display: block;
+  overflow: hidden;
+}
+
+.lh-sc-bg,
+.lh-sc-meadow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lh-sc-mound,
+.lh-sc-gift,
+.lh-sc-star {
+  overflow: visible;
+}
+
+.lh-sc-ui {
+  display: block;
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+/* hearts drift up and sway */
+.lh-sc .lh-float {
+  animation: lh-sc-rise var(--t, 40s) linear var(--d, 0s) infinite;
+}
+
+.lh-sc .lh-sc-sway {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lh-sc-sway var(--st, 7s) ease-in-out var(--sd, 0s) infinite alternate;
+}
+
+@keyframes lh-sc-rise {
+  from {
+    transform: translateY(var(--from, 0px));
+  }
+  to {
+    transform: translateY(var(--to, 0px));
+  }
+}
+
+@keyframes lh-sc-sway {
+  from {
+    transform: translateX(calc(var(--x, 10px) * -1)) rotate(-7deg);
+  }
+  to {
+    transform: translateX(var(--x, 10px)) rotate(7deg);
+  }
+}
+
+/* clouds drift right across the sky */
+.lh-sc .lh-sc-drift {
+  animation: lh-sc-drift var(--t, 120s) linear var(--d, 0s) infinite;
+}
+
+@keyframes lh-sc-drift {
+  from {
+    transform: translateX(var(--from, 0px));
+  }
+  to {
+    transform: translateX(var(--to, 0px));
+  }
+}
+
+/* stars twinkle */
+.lh-sc .lh-twinkle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lh-sc-twinkle var(--t, 3s) ease-in-out var(--d, 0s) infinite;
+}
+
+@keyframes lh-sc-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.62);
+  }
+}
+
+/* butterflies: a little loop + flapping wings (wings flap around the body at 0 0) */
+.lh-sc .lh-flutter {
+  animation: lh-sc-flutter 11s ease-in-out var(--d, 0s) infinite;
+}
+
+.lh-sc .lh-sc-flap-l,
+.lh-sc .lh-sc-flap-r {
+  transform-origin: 0 0;
+  animation: lh-sc-flap 0.34s ease-in-out infinite alternate;
+}
+
+.lh-sc .lh-sc-flap-r {
+  animation-delay: -0.02s;
+}
+
+@keyframes lh-sc-flutter {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(34px, -22px);
+  }
+  45% {
+    transform: translate(70px, 6px);
+  }
+  65% {
+    transform: translate(40px, 26px);
+  }
+  85% {
+    transform: translate(-12px, 8px);
+  }
+}
+
+@keyframes lh-sc-flap {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0.28);
+  }
+}
+
+/* gentle bobbing: boats, balloons, birds, the duck */
+.lh-sc .lh-sc-bob {
+  animation: lh-sc-bob var(--t, 4s) ease-in-out var(--d, 0s) infinite alternate;
+}
+
+@keyframes lh-sc-bob {
+  from {
+    transform: translateY(-5px);
+  }
+  to {
+    transform: translateY(5px);
+  }
+}
+
+/* sea */
+.lh-sc .lh-sc-wave {
+  animation: lh-sc-wave 4.2s ease-in-out var(--d, 0s) infinite alternate;
+}
+
+@keyframes lh-sc-wave {
+  from {
+    transform: translateX(-14px);
+    opacity: 0.55;
+  }
+  to {
+    transform: translateX(14px);
+    opacity: 1;
+  }
+}
+
+.lh-sc .lh-sc-wash {
+  animation: lh-sc-wash 5s ease-in-out infinite alternate;
+}
+
+@keyframes lh-sc-wash {
+  from {
+    transform: translateY(-7px);
+  }
+  to {
+    transform: translateY(5px);
+  }
+}
+
+/* castle flags wave from the pole (local 0 0) */
+.lh-sc .lh-sc-flag {
+  transform-origin: 0 0;
+  animation: lh-sc-flag 1.6s ease-in-out var(--d, 0s) infinite alternate;
+}
+
+@keyframes lh-sc-flag {
+  from {
+    transform: skewY(-7deg) scaleX(0.9);
+  }
+  to {
+    transform: skewY(6deg) scaleX(1.04);
+  }
+}
+
+/* night */
+.lh-sc .lh-sc-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lh-sc-glow 5s ease-in-out infinite alternate;
+}
+
+@keyframes lh-sc-glow {
+  from {
+    opacity: 0.75;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.lh-sc .lh-sc-firefly {
+  animation:
+    lh-sc-firefly var(--t, 8s) ease-in-out var(--d, 0s) infinite,
+    lh-sc-blink calc(var(--t, 8s) / 3) ease-in-out var(--d, 0s) infinite;
+}
+
+@keyframes lh-sc-firefly {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  30% {
+    transform: translate(18px, -14px);
+  }
+  60% {
+    transform: translate(-10px, -24px);
+  }
+  80% {
+    transform: translate(-16px, -6px);
+  }
+}
+
+@keyframes lh-sc-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.lh-sc .lh-sc-shoot {
+  opacity: 0;
+  animation: lh-sc-shoot 13s ease-in 4s infinite;
+}
+
+@keyframes lh-sc-shoot {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  2% {
+    opacity: 1;
+  }
+  8% {
+    opacity: 0;
+    transform: translate(var(--sx, -200px), var(--sy, 80px));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--sx, -200px), var(--sy, 80px));
+  }
+}
+
+/* sun rays turn very slowly */
+.lh-sc .lh-sc-spin {
+  animation: lh-sc-spin 90s linear infinite;
+}
+
+@keyframes lh-sc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* grass on the mound, the apple tree */
+.lh-sc .lh-sc-grass {
+  animation: lh-sc-grass 3.4s ease-in-out var(--d, 0s) infinite alternate;
+}
+
+@keyframes lh-sc-grass {
+  from {
+    transform: rotate(-4deg);
+  }
+  to {
+    transform: rotate(4deg);
+  }
+}
+
+.lh-sc .lh-sc-tree {
+  animation: lh-sc-tree 6s ease-in-out infinite alternate;
+}
+
+@keyframes lh-sc-tree {
+  from {
+    transform: rotate(-0.8deg);
+  }
+  to {
+    transform: rotate(0.8deg);
+  }
+}
+
+/*
+ * Optional helpers for the UI.
+ * Apple: add `.is-eaten` (three bites, then gone, 1.5 s) and later `.is-growing` (pops back, 0.7 s).
+ * Gift: `.is-wiggle` on the svg root shakes it; `.is-open` lifts the lid off (0.7 s).
+ */
+.lh-sc .lh-apple {
+  cursor: pointer;
+}
+
+.lh-sc .lh-apple.is-eaten {
+  animation: lh-sc-eaten 1.5s ease-in-out forwards;
+}
+
+.lh-sc .lh-apple.is-growing {
+  animation: lh-sc-grow 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes lh-sc-eaten {
+  0% {
+    transform: scale(1);
+  }
+  18% {
+    transform: scale(0.82) rotate(-6deg);
+  }
+  40% {
+    transform: scale(0.6) rotate(5deg);
+  }
+  62% {
+    transform: scale(0.38) rotate(-4deg);
+  }
+  85% {
+    transform: scale(0.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes lh-sc-grow {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.lh-sc-gift.is-wiggle .lh-gift-body {
+  animation: lh-sc-wiggle 1.4s ease-in-out infinite;
+}
+
+.lh-sc-gift.is-open .lh-gift-lid {
+  animation: lh-sc-lid 0.7s cubic-bezier(0.3, 1.4, 0.6, 1) forwards;
+}
+
+@keyframes lh-sc-wiggle {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  10% {
+    transform: rotate(-7deg) scale(1.04);
+  }
+  20% {
+    transform: rotate(6deg) scale(1.04);
+  }
+  30% {
+    transform: rotate(-5deg);
+  }
+  40% {
+    transform: rotate(3deg);
+  }
+  50% {
+    transform: rotate(-1deg);
+  }
+}
+
+@keyframes lh-sc-lid {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(-6px, -34px) rotate(-16deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-30px, -18px) rotate(-38deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lh-sc .lh-float,
+  .lh-sc .lh-sc-sway,
+  .lh-sc .lh-sc-drift,
+  .lh-sc .lh-twinkle,
+  .lh-sc .lh-flutter,
+  .lh-sc .lh-sc-flap-l,
+  .lh-sc .lh-sc-flap-r,
+  .lh-sc .lh-sc-bob,
+  .lh-sc .lh-sc-wave,
+  .lh-sc .lh-sc-wash,
+  .lh-sc .lh-sc-flag,
+  .lh-sc .lh-sc-glow,
+  .lh-sc .lh-sc-firefly,
+  .lh-sc .lh-sc-spin,
+  .lh-sc .lh-sc-grass,
+  .lh-sc .lh-sc-tree,
+  .lh-sc-gift.is-wiggle .lh-gift-body {
+    animation: none;
+  }
+
+  .lh-sc .lh-sc-shoot {
+    animation: none;
+    opacity: 0;
+  }
+
+  /* no shrinking or bouncing: the apple and the lid simply fade */
+  .lh-sc .lh-apple.is-eaten {
+    animation: lh-sc-fade-out 0.4s linear forwards;
+  }
+
+  .lh-sc .lh-apple.is-growing {
+    animation: lh-sc-fade-in 0.4s linear both;
+  }
+
+  .lh-sc-gift.is-open .lh-gift-lid {
+    animation: lh-sc-fade-out 0.3s linear forwards;
+  }
+}
+
+@keyframes lh-sc-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes lh-sc-fade-in {
+  from {
+    opacity: 0;
+  }
+}

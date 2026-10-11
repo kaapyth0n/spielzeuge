@@ -354,3 +354,11 @@ a {
 .toy-card--pesenki .toy-card-art { background: #e2f2df; border-radius: 50%; box-shadow: inset 0 0 0 2.5px #3b3a40; }
 .toy-card--pesenki .toy-card-art svg { width: 84px; height: 84px; }
 .toy-card--pesenki .hero-mouth-open { display: none; }
+
+.toy-card--loshadka .toy-card-art {
+  background-color: #d23a6c;
+  background-image:
+    radial-gradient(circle at 50% 38%, rgba(255, 190, 215, 0.55), transparent 62%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='%23ffc2da' fill-opacity='.55'%3E%3Cpath transform='translate(11 12) scale(.09) rotate(-12)' d='M0 44C-7 37-50 12-50-15C-50-34-37-46-23-46C-12-46-4-40 0-31C4-40 12-46 23-46C37-46 50-34 50-15C50 12 7 37 0 44Z'/%3E%3Cpath transform='translate(36 34) scale(.06) rotate(14)' d='M0 44C-7 37-50 12-50-15C-50-34-37-46-23-46C-12-46-4-40 0-31C4-40 12-46 23-46C37-46 50-34 50-15C50 12 7 37 0 44Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.toy-card--loshadka .toy-card-art svg { width: 96px; height: 82px; transform: translateY(3px); }

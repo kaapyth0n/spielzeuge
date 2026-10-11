@@ -23,7 +23,8 @@
     "test:slime-family": "node scripts/slime-family-spec.mjs",
     "test:morozhenka": "node scripts/morozhenka-spec.mjs",
     "test:pesenki": "node scripts/pesenki-spec.mjs",
-    "test:bolnica": "node scripts/bolnica-spec.mjs"
+    "test:bolnica": "node scripts/bolnica-spec.mjs",
+    "test:loshadka": "node scripts/loshadka-spec.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.62.1",

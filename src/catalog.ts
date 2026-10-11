@@ -12,6 +12,8 @@ import { pandaHero } from './pesenki-hero-panda.ts'
 import { BOLNICA_COPY } from './bolnica-copy.ts'
 import { catBadge } from './bolnica-cat.ts'
 import { puppy } from './sobachka-art.ts'
+import { LOSHADKA_COPY } from './loshadka-copy.ts'
+import { horseSvg } from './loshadka-art.ts'
 import { PUPPY_COPY } from './sobachka-copy.ts'
 import { bindQuietLang } from './lang-ui.ts'
 import { CATALOG_COPY, type Lang } from './languages.ts'
@@ -33,6 +35,8 @@ function applyCatalog(lang: Lang): void {
   setText('[data-i18n="morozhenka-blurb"]', `${MOROZHENKA_COPY[lang].byline}. ${MOROZHENKA_COPY[lang].tagline}`)
   setText('[data-i18n="pesenki-name"]', PESENKI_COPY[lang].name)
   setText('[data-i18n="pesenki-blurb"]', `${PESENKI_COPY[lang].byline}. ${PESENKI_COPY[lang].tagline}`)
+  setText('[data-i18n="loshadka-name"]', LOSHADKA_COPY[lang].name)
+  setText('[data-i18n="loshadka-blurb"]', `${LOSHADKA_COPY[lang].byline}. ${LOSHADKA_COPY[lang].tagline}`)
   setText('[data-i18n="bolnica-name"]', BOLNICA_COPY[lang].name)
   setText('[data-i18n="bolnica-blurb"]', `${BOLNICA_COPY[lang].byline}. ${BOLNICA_COPY[lang].tagline}`)
   document.title = copy.documentTitle
@@ -64,6 +68,12 @@ const pesenkiArt = document.querySelector('#catalog-pesenki')
 if (pesenkiArt) pesenkiArt.innerHTML = pandaHero
 const kittyArt = document.querySelector('#catalog-bolnica')
 if (kittyArt) kittyArt.innerHTML = catBadge({ fur: 'white', tint: 'grey', wear: ['cap', 'stethoscope'] }, { id: 'catalogkitty' })
+const ponyArt = document.querySelector('#catalog-loshadka')
+if (ponyArt)
+  ponyArt.innerHTML = horseSvg(
+    { color: 'pink', mane: 'rainbow', tail: 'rainbow', clip: 'crown', horn: true, wings: false },
+    { id: 'catalogpony' },
+  ).replace(/viewBox="[^"]*"/, 'viewBox="20 40 455 385"')
 bindQuietLang(applyCatalog)
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {

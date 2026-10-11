@@ -1,0 +1,2206 @@
+/*
+ * Лошадка — a cosy toy box. A raspberry-velvet frame (Matryona's red), cream tiles with a
+ * whisper of each side's colour, a glowing picture in the middle and one golden star to press.
+ * Side tints: manes apricot (left), clips mint (top), tails lilac (right), colours lemon (bottom).
+ */
+
+:root {
+  color-scheme: light;
+  --berry-hi: #c2508a;
+  --berry: #8f2c62;
+  --berry-deep: #5e1843;
+  --ink: #4a1a3c;
+  --ink-soft: #7a4a68;
+  --cream: #fff8ef;
+  --cream-deep: #f6e3d6;
+  --gold: #ffc93c;
+  --gold-hi: #fff0a0;
+  --gold-deep: #f29d0c;
+  --glow: rgba(255, 214, 92, 0.85);
+  --pink: #ff5c95;
+  --tint-mane: #ffe1c9;
+  --tint-clip: #d9f2da;
+  --tint-tail: #e6dcff;
+  --tint-color: #fff0b8;
+  --play: 'Balsamiq Sans', 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif;
+  --read: 'Andika', 'Trebuchet MS', system-ui, sans-serif;
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body.lh-body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+body.lh-body {
+  background-color: var(--berry);
+  background-image:
+    radial-gradient(120% 70% at 50% -12%, rgba(255, 176, 210, 0.42), transparent 62%),
+    radial-gradient(100% 70% at 50% 118%, rgba(52, 6, 40, 0.6), transparent 72%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='132'%3E%3Cg fill='white' fill-opacity='.075'%3E%3Cpath transform='translate(32 36) scale(.17) rotate(-12)' d='M0 44C-7 37-50 12-50-15C-50-34-37-46-23-46C-12-46-4-40 0-31C4-40 12-46 23-46C37-46 50-34 50-15C50 12 7 37 0 44Z'/%3E%3Cpath transform='translate(98 98) scale(.11) rotate(16)' d='M0 44C-7 37-50 12-50-15C-50-34-37-46-23-46C-12-46-4-40 0-31C4-40 12-46 23-46C37-46 50-34 50-15C50 12 7 37 0 44Z'/%3E%3C/g%3E%3C/svg%3E");
+  color: var(--ink);
+  font-family: var(--play);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#loshadka-app {
+  position: fixed;
+  inset: 0;
+}
+
+button,
+select,
+a {
+  font: inherit;
+  color: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  margin: 0;
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  /* white: unlike the gold of a worn item, and clear on the plum frame and the raspberry stage */
+  outline: 4px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* on cream cards and the sky a white ring would vanish */
+.lh-card :focus-visible,
+.lh-empty :focus-visible,
+.lh-stable :focus-visible {
+  outline-color: var(--berry);
+}
+
+.lh-vh {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ─────────────────────────── the frame ─────────────────────────── */
+
+.lh-workshop {
+  /* portrait: narrow side columns, tall top and bottom rows */
+  --side: clamp(62px, 12vw, 108px);
+  --band: clamp(88px, 13dvh, 124px);
+  --gap: clamp(5px, 1vmin, 10px);
+  /* sound and language stacked in the top right corner */
+  --tool: clamp(44px, calc((var(--band) - 4px) / 2), 60px);
+  --corner: min(var(--side), var(--band));
+  /* one tile size for all four rows, so the frame looks even */
+  --cs-side: calc(var(--corner) - 14px);
+  --cs-band: calc(var(--corner) - 14px);
+  position: absolute;
+  inset: 0;
+}
+
+.lh-frame {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: var(--side) minmax(0, 1fr) var(--side);
+  grid-template-rows: var(--band) minmax(0, 1fr) var(--band);
+  grid-template-areas:
+    'tl clip tr'
+    'mane stage tail'
+    'bl color br';
+  gap: var(--gap);
+  padding: max(var(--gap), var(--safe-t)) max(var(--gap), var(--safe-r)) max(var(--gap), var(--safe-b)) max(var(--gap), var(--safe-l));
+}
+
+@media (min-aspect-ratio: 1/1) {
+  .lh-workshop {
+    /* landscape: wide side columns (sound and language side by side), low top and bottom rows */
+    --side: clamp(100px, 10vw, 128px);
+    --band: clamp(70px, 12dvh, 108px);
+    --tool: clamp(44px, calc((var(--side) - 6px) / 2), 60px);
+  }
+}
+
+/* landscape phones: the side columns are just wide enough for sound + language */
+@media (min-aspect-ratio: 1/1) and (max-height: 500px) {
+  .lh-workshop {
+    --side: 96px;
+    --tool: 46px;
+  }
+}
+
+/* narrow portrait phones: the frame stays (side columns ~66 px); top and bottom rows carry
+   their label above the cells, and the corners are tall enough for two round buttons */
+@media (max-aspect-ratio: 1/1) and (max-width: 560px) {
+  .lh-workshop {
+    --side: 66px;
+    --band: clamp(92px, 11.5dvh, 104px);
+    --tool: clamp(44px, calc((var(--band) - 4px) / 2), 48px);
+    --cs-side: calc(var(--side) - 10px);
+    --cs-band: calc(var(--band) - 30px);
+  }
+}
+
+.lh-corner-tl {
+  grid-area: tl;
+}
+.lh-corner-tr {
+  grid-area: tr;
+  /* sound and language stay reachable above the celebration */
+  position: relative;
+  z-index: 30;
+}
+.lh-corner-bl {
+  grid-area: bl;
+}
+.lh-corner-br {
+  grid-area: br;
+}
+.lh-strip-clip {
+  grid-area: clip;
+  --tint: var(--tint-clip);
+}
+.lh-strip-mane {
+  grid-area: mane;
+  --tint: var(--tint-mane);
+}
+.lh-strip-tail {
+  grid-area: tail;
+  --tint: var(--tint-tail);
+}
+.lh-strip-color {
+  grid-area: color;
+  --tint: var(--tint-color);
+}
+.lh-stage {
+  grid-area: stage;
+}
+
+.lh-corner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ─────────────────────────── round tools ─────────────────────────── */
+
+.lh-tool {
+  width: var(--tool);
+  height: var(--tool);
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(110% 100% at 32% 22%, #ffffff, var(--cream) 50%, var(--cream-deep));
+  color: var(--berry);
+  font-size: calc(var(--tool) * 0.5);
+  text-decoration: none;
+  box-shadow:
+    0 3px 0 rgba(70, 8, 48, 0.28),
+    0 8px 16px -8px rgba(40, 0, 30, 0.6),
+    inset 0 -3px 0 rgba(190, 120, 150, 0.2);
+  transition: transform 0.12s ease;
+}
+
+.lh-tool:active {
+  transform: translateY(2px) scale(0.95);
+}
+
+.lh-tool .lh-sc-ui {
+  stroke-width: 2.3;
+}
+
+.lh-home {
+  --tool: clamp(52px, calc(var(--corner) - 10px), 76px);
+}
+
+.lh-settings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+@media (min-aspect-ratio: 1/1) {
+  .lh-settings {
+    flex-direction: row;
+  }
+}
+
+.lh-sound[aria-pressed='false'] {
+  color: var(--ink-soft);
+  background: radial-gradient(110% 100% at 32% 22%, #ffffff, #efe4ea 60%, #dccbd5);
+}
+
+.lh-lang {
+  position: relative;
+  overflow: hidden;
+}
+
+.lh-lang-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--berry);
+  font: 700 calc(var(--tool) * 0.34) / 1 var(--play);
+  letter-spacing: 0.02em;
+  text-align: center;
+  text-align-last: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.lh-lang:focus-within {
+  outline: 4px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.lh-stable .lh-lang:focus-within {
+  outline-color: var(--berry);
+}
+
+/* ─────────────────────────── strips ─────────────────────────── */
+
+.lh-strip {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 22px;
+  background: linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.06));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -3px 8px rgba(50, 0, 36, 0.28);
+  transition: box-shadow 0.3s ease;
+}
+
+.lh-strip.is-glow {
+  animation: lh-strip-glow 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes lh-strip-glow {
+  from {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 0 0 2px rgba(255, 226, 122, 0.5),
+      0 0 12px 2px rgba(255, 214, 92, 0.35);
+    background-color: rgba(255, 230, 140, 0.08);
+  }
+  to {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 0 0 3px rgba(255, 230, 130, 0.95),
+      0 0 26px 8px rgba(255, 214, 92, 0.7);
+    background-color: rgba(255, 230, 140, 0.24);
+  }
+}
+
+.lh-scroller {
+  --cpad: 7px;
+  --fade: 26px;
+  --fs: 0px;
+  --fe: 0px;
+  position: relative;
+  flex: 1 1 0;
+  display: flex;
+  gap: 7px;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--cpad);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  -webkit-mask-image: linear-gradient(var(--dir), transparent 0, #000 var(--fs), #000 calc(100% - var(--fe)), transparent 100%);
+  mask-image: linear-gradient(var(--dir), transparent 0, #000 var(--fs), #000 calc(100% - var(--fe)), transparent 100%);
+}
+
+.lh-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.lh-scroller.can-back {
+  --fs: var(--fade);
+}
+
+.lh-scroller.can-fwd {
+  --fe: var(--fade);
+}
+
+.lh-strip-clip,
+.lh-strip-color {
+  flex-direction: row;
+}
+
+.lh-strip-mane,
+.lh-strip-tail {
+  flex-direction: column;
+}
+
+.lh-strip-clip .lh-scroller,
+.lh-strip-color .lh-scroller {
+  --dir: to right;
+  flex-direction: row;
+  align-items: center;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--cpad);
+}
+
+.lh-strip-mane .lh-scroller,
+.lh-strip-tail .lh-scroller {
+  --dir: to bottom;
+  flex-direction: column;
+  align-items: center;
+  scroll-snap-type: y proximity;
+  scroll-padding-block: var(--cpad);
+}
+
+/* the row's label stays at its start while the cells scroll past */
+.lh-tab {
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: #fff6fa;
+  font: 700 clamp(11px, 1.7vmin, 15px) / 1 var(--play);
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(60, 0, 40, 0.4);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.lh-tab span {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(60, 8, 44, 0.3);
+}
+
+.lh-strip-clip .lh-tab,
+.lh-strip-color .lh-tab {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  padding: 3px 4px 3px 0;
+}
+
+.lh-strip-clip .lh-tab span,
+.lh-strip-color .lh-tab span {
+  padding: 6px 3px;
+  max-height: 100%;
+}
+
+.lh-strip-mane .lh-tab,
+.lh-strip-tail .lh-tab {
+  padding: 5px 4px 0;
+}
+
+/* narrow portrait: the top and bottom labels read across, above the cells */
+@media (max-aspect-ratio: 1/1) and (max-width: 560px) {
+  .lh-strip-clip,
+  .lh-strip-color {
+    flex-direction: column;
+  }
+
+  .lh-strip-clip .lh-tab,
+  .lh-strip-color .lh-tab {
+    writing-mode: horizontal-tb;
+    transform: none;
+    justify-items: start;
+    padding: 4px 8px 0;
+  }
+
+  .lh-strip-clip .lh-tab span,
+  .lh-strip-color .lh-tab span {
+    padding: 2px 8px;
+  }
+
+  .lh-strip-mane .lh-scroller,
+  .lh-strip-tail .lh-scroller {
+    --cpad: 5px;
+    gap: 6px;
+  }
+
+  .lh-strip-mane .lh-tab,
+  .lh-strip-tail .lh-tab {
+    padding: 5px 2px 0;
+  }
+
+  .lh-strip-mane .lh-tab span,
+  .lh-strip-tail .lh-tab span {
+    padding: 2px 5px;
+    letter-spacing: 0;
+  }
+
+  .lh-tab {
+    font-size: 11px;
+  }
+}
+
+/* ─────────────────────────── cells ─────────────────────────── */
+
+.lh-cell {
+  position: relative;
+  flex: none;
+  width: var(--cs);
+  height: var(--cs);
+  padding: calc(var(--cs) * 0.07);
+  border-radius: 24%;
+  background: radial-gradient(120% 110% at 30% 18%, #ffffff 0%, var(--cream) 46%, var(--tint) 100%);
+  box-shadow:
+    0 3px 0 rgba(90, 16, 60, 0.22),
+    0 7px 12px -7px rgba(40, 0, 30, 0.6),
+    inset 0 -3px 0 rgba(170, 110, 135, 0.16);
+  scroll-snap-align: start;
+  transition:
+    transform 0.16s cubic-bezier(0.3, 1.4, 0.5, 1),
+    box-shadow 0.2s ease;
+}
+
+.lh-strip-clip,
+.lh-strip-color {
+  --cs: var(--cs-band);
+}
+
+.lh-strip-mane,
+.lh-strip-tail {
+  --cs: var(--cs-side);
+}
+
+/* inside a scroller the ring sits close, so the row's edge never cuts it */
+.lh-cell:focus-visible {
+  outline-offset: 1px;
+}
+
+/* a glowing row: its cells hop one after another («look here!») */
+.lh-strip.is-glow .lh-cell:not(.is-bounce) {
+  animation: lh-cell-hop 0.62s cubic-bezier(0.3, 1.5, 0.5, 1);
+  animation-delay: calc(min(var(--i, 0), 9) * 70ms + 120ms);
+}
+
+@keyframes lh-cell-hop {
+  0%,
+  100% {
+    transform: translateY(var(--lift, 0));
+  }
+  40% {
+    transform: translateY(-6px) scale(1.06);
+  }
+}
+
+.lh-cell-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lh-cell-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.lh-cell:active {
+  transform: translateY(2px) scale(0.94);
+}
+
+.lh-cell[aria-pressed='true'] {
+  --lift: -2px;
+  background: radial-gradient(120% 110% at 30% 18%, #ffffff 0%, #fffbe8 40%, #ffe7a0 100%);
+  box-shadow:
+    inset 0 0 0 3px var(--gold),
+    inset 0 0 12px rgba(255, 196, 60, 0.5),
+    0 0 10px 1px var(--glow),
+    0 5px 0 rgba(150, 80, 10, 0.25);
+  transform: translateY(-2px);
+}
+
+.lh-cell[aria-pressed='true']:active {
+  transform: translateY(1px) scale(0.95);
+}
+
+.lh-cell.is-bounce {
+  animation: lh-cell-bounce 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@keyframes lh-cell-bounce {
+  0% {
+    transform: scale(0.9);
+  }
+  45% {
+    transform: scale(1.08) translateY(-3px);
+  }
+  100% {
+    transform: scale(1) translateY(var(--lift, 0));
+  }
+}
+
+.lh-cell[aria-pressed='true'].is-bounce {
+  --lift: -2px;
+}
+
+/* the «Новое!» sparkle badge */
+.lh-new {
+  position: absolute;
+  /* inside the cell, so the end of a row never cuts it off */
+  top: 2px;
+  right: 2px;
+  padding: 3px 6px 3px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff7ab8, #ff3d7f);
+  color: #fff;
+  font: 700 clamp(10px, 1.5vmin, 13px) / 1 var(--play);
+  white-space: nowrap;
+  box-shadow:
+    0 2px 0 rgba(120, 10, 60, 0.35),
+    0 0 0 2px #fff;
+  transform: rotate(9deg);
+  animation: lh-new 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.lh-new::after {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: -6px;
+  width: 11px;
+  height: 11px;
+  background: #fff6a8;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  animation: lh-twinkle 1.6s ease-in-out infinite;
+}
+
+@keyframes lh-new {
+  0%,
+  100% {
+    transform: rotate(9deg) scale(1);
+  }
+  50% {
+    transform: rotate(5deg) scale(1.08);
+  }
+}
+
+@keyframes lh-twinkle {
+  0%,
+  100% {
+    transform: scale(0.6) rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+/* wrapped gifts wait at the end of a strip */
+.lh-cell-gift {
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.45),
+    inset 0 -3px 6px rgba(60, 0, 40, 0.15);
+  padding: calc(var(--cs) * 0.1);
+}
+
+.lh-cell-gift.is-next {
+  background: rgba(255, 245, 210, 0.38);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 236, 160, 0.9),
+    0 0 12px rgba(255, 220, 120, 0.4);
+}
+
+/* ─────────────────────────── the stage ─────────────────────────── */
+
+.lh-stage {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 26px;
+  overflow: hidden;
+  isolation: isolate;
+  container-type: size;
+  container-name: stage;
+  background: #e2325f;
+  box-shadow:
+    0 0 0 4px rgba(255, 246, 236, 0.92),
+    0 0 0 calc(4px + var(--gap) * 0.6) rgba(255, 255, 255, 0.12),
+    0 20px 40px -18px rgba(30, 0, 22, 0.7);
+}
+
+.lh-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.25),
+    inset 0 0 40px rgba(70, 0, 40, 0.22);
+  pointer-events: none;
+  z-index: 8;
+}
+
+.lh-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.lh-bg.is-entering {
+  animation: lh-fade-in 0.5s ease both;
+}
+
+@keyframes lh-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.lh-podium {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: min(94cqw, 86cqh * var(--ar, 1.04));
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+@container stage (max-aspect-ratio: 4/5) {
+  /* tall and narrow: the island may run past the edges so the pony gets bigger */
+  .lh-podium {
+    top: 60%;
+    width: min(106cqw, 70cqh * var(--ar, 1.04));
+  }
+}
+
+.lh-stage-pony,
+.lh-mound {
+  position: absolute;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  pointer-events: none;
+  border-radius: 30%;
+}
+
+.lh-stage-pony svg,
+.lh-mound svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* only the painted pony and the apple take taps; the empty sky between lets them through */
+.lh-stage-pony svg * {
+  pointer-events: visiblePainted;
+  cursor: pointer;
+}
+
+.lh-stage-pony .lh-shadow {
+  pointer-events: none;
+}
+
+.lh-mound .lh-apple,
+.lh-mound .lh-apple * {
+  pointer-events: visiblePainted;
+  cursor: pointer;
+}
+
+.lh-mound .lh-apple.is-eaten {
+  /* the bites start when the lowered head arrives */
+  animation-delay: 0.32s;
+}
+
+.lh-stools {
+  /* 48 px on phones, about 74 px on the iPad */
+  --st: clamp(48px, 12.5cqmin, 76px);
+  position: absolute;
+  left: clamp(8px, 2.4cqmin, 18px);
+  top: clamp(8px, 2.4cqmin, 18px);
+  display: flex;
+  gap: clamp(6px, 1.6cqmin, 12px);
+  z-index: 4;
+}
+
+@container stage (max-aspect-ratio: 4/5) {
+  .lh-stools {
+    flex-direction: column;
+  }
+}
+
+.lh-stool {
+  position: relative;
+  width: var(--st);
+  height: var(--st);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 250, 244, 0.94);
+  color: var(--berry);
+  font-size: calc(var(--st) * 0.52);
+  box-shadow:
+    0 3px 0 rgba(70, 8, 48, 0.3),
+    0 8px 14px -8px rgba(40, 0, 30, 0.7);
+  transition: transform 0.12s ease;
+}
+
+.lh-stool:active {
+  transform: translateY(2px) scale(0.94);
+}
+
+.lh-bgbtn {
+  padding: 4px;
+  background: #fff;
+}
+
+.lh-bgbtn svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 50%;
+}
+
+/* a freshly opened background waits on the button */
+.lh-bgbtn .lh-new {
+  top: -7px;
+  right: -12px;
+}
+
+.lh-bgbtn.is-new {
+  box-shadow:
+    0 0 0 3px #ff7ab8,
+    0 3px 0 rgba(70, 8, 48, 0.3),
+    0 0 14px rgba(255, 122, 184, 0.7);
+}
+
+.lh-stool.is-bounce {
+  animation: lh-cell-bounce 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.lh-newbtn.is-armed {
+  background: #fff0a8;
+  color: #c4235f;
+  box-shadow:
+    0 0 0 3px #ffd34d,
+    0 3px 0 rgba(70, 8, 48, 0.3);
+}
+
+.is-shake {
+  animation: lh-shake 0.55s ease-in-out;
+}
+
+@keyframes lh-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-5px) rotate(-6deg);
+  }
+  40% {
+    transform: translateX(5px) rotate(5deg);
+  }
+  60% {
+    transform: translateX(-4px) rotate(-3deg);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+.lh-slots {
+  --slot: clamp(36px, 12cqmin, 80px);
+  position: absolute;
+  right: clamp(8px, 2.4cqmin, 18px);
+  top: clamp(8px, 2.4cqmin, 18px);
+  display: flex;
+  gap: clamp(2px, 0.8cqmin, 8px);
+  /* a soft dark pill, so empty slots show on light backgrounds too */
+  padding: 4px 6px;
+  border-radius: 999px;
+  background: rgba(70, 10, 50, 0.16);
+  z-index: 4;
+  pointer-events: none;
+}
+
+@container stage (max-aspect-ratio: 4/5) {
+  .lh-slots {
+    --slot: clamp(28px, 14cqw, 64px);
+  }
+}
+
+.lh-slot:not(.is-filled) svg {
+  filter: drop-shadow(0 1px 1.5px rgba(60, 0, 40, 0.45));
+}
+
+.lh-slot {
+  width: var(--slot);
+  height: var(--slot);
+  display: block;
+}
+
+.lh-slot svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.lh-slot.is-filled svg {
+  filter: drop-shadow(0 0 8px rgba(255, 226, 120, 0.85));
+}
+
+.lh-slot.is-pop {
+  animation: lh-slot-pop 0.6s cubic-bezier(0.3, 1.7, 0.5, 1);
+}
+
+@keyframes lh-slot-pop {
+  0% {
+    transform: scale(0.4) rotate(-30deg);
+  }
+  60% {
+    transform: scale(1.3) rotate(8deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.lh-fx {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.lh-note {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(6px, 2cqmin, 14px);
+  transform: translateX(-50%);
+  margin: 0;
+  max-width: 90%;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 250, 244, 0.86);
+  color: var(--ink);
+  font: 400 clamp(11px, 1.7vmin, 14px) / 1.2 var(--read);
+  text-align: center;
+  z-index: 7;
+  pointer-events: none;
+}
+
+/* ─────────────────────────── sparkles, hearts, flying stars ─────────────────────────── */
+
+.lh-spark {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  animation: lh-spark 0.8s ease-out both;
+  pointer-events: none;
+}
+
+.lh-spark svg,
+.lh-confetti svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.lh-spark svg {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
+}
+
+@keyframes lh-spark {
+  0% {
+    transform: translate(0, 0) scale(0) rotate(0deg);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(calc(var(--dx) * 0.6), calc(var(--dy) * 0.6)) scale(var(--s)) rotate(45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(0) rotate(110deg);
+    opacity: 0;
+  }
+}
+
+.lh-confetti {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  animation: lh-confetti 2.2s cubic-bezier(0.2, 0.75, 0.3, 1) both;
+  pointer-events: none;
+}
+
+.lh-confetti svg {
+  filter: drop-shadow(0 2px 2px rgba(80, 0, 40, 0.25));
+}
+
+@keyframes lh-confetti {
+  0% {
+    transform: translate(0, 0) scale(0.2) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  45% {
+    transform: translate(var(--dx), var(--dy)) scale(var(--s)) rotate(var(--r));
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), calc(var(--dy) + var(--fall))) scale(var(--s)) rotate(calc(var(--r) * 2));
+    opacity: 0;
+  }
+}
+
+.lh-flystar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  pointer-events: none;
+  filter: drop-shadow(0 0 12px rgba(255, 224, 110, 0.95));
+}
+
+.lh-flystar svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─────────────────────────── barn and Готово ─────────────────────────── */
+
+.lh-barn,
+.lh-done {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border-radius: 24px;
+  transition: transform 0.12s ease;
+}
+
+.lh-barn:active,
+.lh-done:active {
+  transform: translateY(2px) scale(0.95);
+}
+
+.lh-barn-art {
+  width: calc(var(--corner) - 10px);
+  aspect-ratio: 1;
+  display: block;
+  filter: drop-shadow(0 4px 0 rgba(60, 0, 40, 0.25));
+}
+
+.lh-barn-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.lh-badge {
+  position: relative;
+  margin-top: calc(var(--corner) * -0.22);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 8px 2px 3px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  font: 700 clamp(13px, calc(var(--corner) * 0.17), 19px) / 1 var(--play);
+  box-shadow:
+    0 2px 0 rgba(70, 8, 48, 0.3),
+    0 0 0 2px rgba(255, 201, 60, 0.9);
+}
+
+.lh-badge-star {
+  width: 1.35em;
+  height: 1.35em;
+  display: block;
+}
+
+.lh-badge-star svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.lh-badge.is-pop {
+  animation: lh-slot-pop 0.6s cubic-bezier(0.3, 1.7, 0.5, 1);
+}
+
+.lh-done-star {
+  width: calc(var(--corner) - 2px);
+  aspect-ratio: 1;
+  display: block;
+  transition: filter 0.4s ease;
+}
+
+.lh-done-star svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.lh-done-label {
+  position: relative;
+  margin-top: calc(var(--corner) * -0.2);
+  transform: rotate(-4deg);
+  padding: 3px 8px 4px;
+  border-radius: 999px;
+  background: linear-gradient(#ff79ad, #e8337a);
+  color: #fff;
+  font: 700 clamp(12px, calc(var(--corner) * 0.17), 19px) / 1 var(--play);
+  white-space: nowrap;
+  box-shadow:
+    0 2px 0 rgba(110, 0, 50, 0.4),
+    0 0 0 2px #fff;
+  transition: background 0.3s ease;
+}
+
+.lh-done.is-asleep .lh-done-star {
+  /* sleepy, not broken: still golden enough to press */
+  filter: saturate(0.55) brightness(1.02);
+  opacity: 0.88;
+}
+
+.lh-done.is-asleep .lh-done-label {
+  background: linear-gradient(#f39ac0, #d9689a);
+}
+
+.lh-done-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lh-done.is-ready .lh-done-inner {
+  animation: lh-done-hop 2.4s ease-in-out infinite;
+}
+
+.lh-done.is-ready .lh-done-star {
+  animation: lh-done-glow 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes lh-done-glow {
+  from {
+    filter: drop-shadow(0 0 6px rgba(255, 226, 120, 0.8));
+  }
+  to {
+    filter: drop-shadow(0 0 18px rgba(255, 238, 150, 1)) brightness(1.08);
+  }
+}
+
+@keyframes lh-done-hop {
+  0%,
+  62%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  70% {
+    transform: translateY(-9%) rotate(-6deg);
+  }
+  78% {
+    transform: translateY(0) rotate(4deg) scale(1.04, 0.96);
+  }
+  86% {
+    transform: translateY(-3%) rotate(-2deg);
+  }
+}
+
+.lh-done-inner.is-cheer {
+  animation: lh-cheer 0.9s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@keyframes lh-cheer {
+  0% {
+    transform: scale(0.85);
+  }
+  40% {
+    transform: scale(1.18) rotate(-8deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.lh-done-inner.is-nope {
+  animation: lh-shake 0.55s ease-in-out;
+}
+
+/* landscape corners are wide and low: the label and the badge sit on the art */
+@media (min-aspect-ratio: 1/1) {
+  .lh-done-label {
+    position: absolute;
+    left: 50%;
+    bottom: 2%;
+    margin: 0;
+    transform: translateX(-50%) rotate(-4deg);
+  }
+
+  .lh-badge {
+    position: absolute;
+    right: max(0px, calc(50% - var(--corner) / 2 - 10px));
+    bottom: 2px;
+    margin: 0;
+  }
+}
+
+/* ─────────────────────────── overlay cards ─────────────────────────── */
+
+.lh-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  /* cards keep clear of the sound and language corner, which stays on top */
+  padding: calc(max(var(--gap), var(--safe-t)) + var(--band) + 8px) max(12px, var(--safe-r)) max(12px, var(--safe-b)) max(12px, var(--safe-l));
+}
+
+@media (min-aspect-ratio: 1/1) {
+  .lh-layer {
+    padding: max(12px, var(--safe-t)) calc(max(var(--gap), var(--safe-r)) + var(--side) + 8px) max(12px, var(--safe-b)) calc(max(var(--gap), var(--safe-l)) + var(--side) + 8px);
+  }
+}
+
+.lh-layer[data-step='name'],
+.lh-layer[data-step='gift'],
+.lh-layer[data-step='opened'],
+.lh-layer[data-step='card'],
+.lh-layer[data-step='full'] {
+  background: rgba(58, 8, 44, 0.5);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  animation: lh-fade-in 0.3s ease both;
+}
+
+.lh-skip {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+}
+
+/* the big moment, on screen too (it matters most when the sound is off) */
+.lh-hooray {
+  position: fixed;
+  left: 50%;
+  top: 22%;
+  transform: translateX(-50%) rotate(-4deg);
+  color: #fff;
+  font: 700 clamp(32px, 9vmin, 84px) / 1 var(--play);
+  white-space: nowrap;
+  text-shadow:
+    0 4px 0 #c2508a,
+    0 0 26px rgba(255, 214, 92, 0.9);
+  animation: lh-hooray-in 0.55s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  pointer-events: none;
+}
+
+@keyframes lh-hooray-in {
+  from {
+    transform: translateX(-50%) rotate(-14deg) scale(0.3);
+    opacity: 0;
+  }
+}
+
+.lh-card {
+  position: relative;
+  width: min(100%, 620px);
+  max-height: 100%;
+  overflow: auto;
+  padding: clamp(16px, 3.4vmin, 32px);
+  border-radius: 30px;
+  background:
+    radial-gradient(120% 70% at 50% 0%, #ffffff, transparent 70%),
+    var(--cream);
+  color: var(--ink);
+  text-align: center;
+  box-shadow:
+    0 0 0 5px rgba(255, 255, 255, 0.5),
+    0 28px 60px -20px rgba(30, 0, 22, 0.8),
+    inset 0 -5px 0 rgba(200, 140, 165, 0.25);
+  animation: lh-card-in 0.48s cubic-bezier(0.3, 1.45, 0.5, 1) both;
+  scrollbar-width: none;
+}
+
+@keyframes lh-card-in {
+  from {
+    transform: translateY(24px) scale(0.86);
+    opacity: 0;
+  }
+}
+
+.lh-card-title {
+  margin: 0 0 0.55em;
+  font: 700 clamp(22px, 4.4vmin, 40px) / 1.12 var(--play);
+  color: var(--berry);
+}
+
+.lh-card-text {
+  margin: 0.2em 0 0.9em;
+  font: 700 clamp(17px, 3vmin, 26px) / 1.3 var(--play);
+}
+
+.lh-card-hint {
+  margin: 0.4em 0 0;
+  font: 700 clamp(17px, 3vmin, 26px) / 1.25 var(--play);
+  color: var(--ink-soft);
+}
+
+.lh-names {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(8px, 1.6vmin, 14px);
+}
+
+.lh-name {
+  min-height: clamp(56px, 9vmin, 76px);
+  min-width: clamp(120px, 20vmin, 180px);
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: linear-gradient(#ffffff, #fff1f6);
+  color: var(--berry);
+  font: 700 clamp(19px, 3.4vmin, 30px) / 1.1 var(--play);
+  box-shadow:
+    0 4px 0 rgba(140, 40, 90, 0.28),
+    0 10px 18px -10px rgba(60, 0, 40, 0.6),
+    inset 0 0 0 2px rgba(255, 140, 190, 0.4);
+  transition: transform 0.14s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.lh-name:active {
+  transform: translateY(3px) scale(0.96);
+}
+
+.lh-name[aria-pressed='true'] {
+  background: linear-gradient(var(--gold-hi), var(--gold));
+  color: var(--ink);
+  box-shadow:
+    0 4px 0 rgba(170, 100, 10, 0.4),
+    0 0 18px 4px var(--glow),
+    inset 0 0 0 2px #fff6;
+}
+
+.lh-name.is-bounce,
+.lh-pill.is-bounce {
+  animation: lh-cell-bounce 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.lh-card-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.8vmin, 16px);
+  margin-top: clamp(12px, 2.2vmin, 20px);
+}
+
+.lh-dice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: clamp(56px, 8.8vmin, 72px);
+  padding: 6px 18px 6px 10px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--berry);
+  font: 700 clamp(15px, 2.4vmin, 20px) / 1 var(--play);
+  box-shadow:
+    0 3px 0 rgba(140, 40, 90, 0.22),
+    inset 0 0 0 2px rgba(255, 140, 190, 0.45);
+}
+
+.lh-dice:active {
+  transform: translateY(2px) scale(0.97);
+}
+
+/* the ✓ under the names: gently calls for the next step; compact, so it stays beside the dice */
+.lh-card-name .lh-card-next {
+  margin-top: 0;
+  min-width: 68px;
+  padding-inline: 16px;
+  animation: lh-invite 2.4s ease-in-out 0.8s infinite;
+}
+
+.lh-dice .lh-sc-ui {
+  font-size: 1.9em;
+}
+
+.lh-dice.is-roll .lh-sc-ui {
+  animation: lh-roll 0.6s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+@keyframes lh-roll {
+  from {
+    transform: rotate(-360deg) scale(0.6);
+  }
+}
+
+/* the pony being named, in a round medallion on top of the card */
+.lh-card-name {
+  margin-top: clamp(40px, 9vmin, 76px);
+  padding-top: clamp(56px, 11vmin, 92px);
+  overflow: visible;
+}
+
+.lh-portrait {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: clamp(92px, 19vmin, 160px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  background: #e2325f;
+  box-shadow:
+    0 0 0 5px #fff,
+    0 0 0 9px rgba(255, 201, 60, 0.9),
+    0 14px 26px -12px rgba(30, 0, 22, 0.8);
+  animation: lh-portrait-in 0.6s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+.lh-portrait-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.lh-portrait > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes lh-portrait-in {
+  from {
+    transform: translate(-50%, -30%) scale(0.5) rotate(-20deg);
+    opacity: 0;
+  }
+}
+
+/* gift */
+.lh-gift-stage {
+  position: relative;
+  width: clamp(130px, 34vmin, 260px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+.lh-biggift {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background: none;
+  border-radius: 30%;
+}
+
+.lh-biggift-bob {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  animation: lh-gift-bob 1.6s ease-in-out infinite;
+}
+
+.lh-biggift svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.lh-card-gift.is-opened .lh-biggift-bob {
+  animation: none;
+}
+
+.lh-card-gift.is-opened .lh-biggift {
+  cursor: default;
+}
+
+@keyframes lh-gift-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7%);
+  }
+}
+
+.lh-reveal {
+  position: absolute;
+  left: 50%;
+  top: 4%;
+  width: 72%;
+  aspect-ratio: 1;
+  padding: 6%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #fff8d8 55%, rgba(255, 240, 180, 0) 72%);
+  transform: translateX(-50%);
+  animation: lh-reveal 0.7s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  filter: drop-shadow(0 6px 10px rgba(80, 0, 40, 0.3));
+}
+
+.lh-reveal svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.lh-reveal.is-round svg {
+  border-radius: 50%;
+}
+
+@keyframes lh-reveal {
+  from {
+    transform: translateX(-50%) translateY(45%) scale(0.2) rotate(-20deg);
+    opacity: 0;
+  }
+}
+
+.lh-card-next {
+  margin-top: clamp(10px, 2vmin, 18px);
+  min-width: 96px;
+  justify-content: center;
+}
+
+@keyframes lh-invite {
+  0%,
+  64%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  74% {
+    transform: translateY(-5px) scale(1.05);
+  }
+  84% {
+    transform: translateY(0) scale(0.98);
+  }
+  92% {
+    transform: translateY(-2px) scale(1.01);
+  }
+}
+
+.lh-card-next .lh-sc-ui {
+  font-size: 1.6em;
+  stroke-width: 3;
+}
+
+/* polaroid */
+.lh-card-photo {
+  width: min(100%, 560px);
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  overflow: visible;
+}
+
+.lh-polaroid {
+  margin: 0 auto;
+  /* leaves room for the tilt, so the corners stay inside the card */
+  width: min(100% - 16px, 440px, calc((100dvh - var(--band, 0px) - 250px) * 0.95));
+  min-width: 200px;
+  padding: 12px 12px 0;
+  background: #fffdf8;
+  border-radius: 10px;
+  transform: rotate(-2.2deg);
+  box-shadow:
+    0 26px 50px -18px rgba(30, 0, 22, 0.85),
+    0 2px 0 rgba(0, 0, 0, 0.06);
+  animation: lh-polaroid-in 0.6s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+@keyframes lh-polaroid-in {
+  from {
+    transform: rotate(-12deg) translateY(40px) scale(0.8);
+    opacity: 0;
+  }
+}
+
+.lh-photo {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  border-radius: 4px;
+  container-type: size;
+  background: #e2325f;
+}
+
+.lh-photo-bg {
+  position: absolute;
+  inset: 0;
+}
+
+/* click! the polaroid flashes as it is taken */
+.lh-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  animation: lh-flash 0.6s ease-out 0.3s both;
+}
+
+@keyframes lh-flash {
+  0% {
+    opacity: 0;
+  }
+  14% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* «В конюшню» is the suggested next step */
+.lh-card-photo .lh-pill.is-gold {
+  animation: lh-invite 2.6s ease-in-out 1.4s infinite;
+}
+
+.lh-photo .lh-podium {
+  width: min(96cqw, 92cqh * var(--ar, 1.04));
+  top: 53%;
+}
+
+.lh-photo .lh-stage-pony svg *,
+.lh-photo .lh-mound svg * {
+  pointer-events: none;
+}
+
+.lh-polaroid figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 6px 12px;
+}
+
+.lh-photo-name {
+  font: 700 clamp(22px, 4.4vmin, 36px) / 1 var(--play);
+  color: var(--berry);
+}
+
+.lh-photo-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.lh-photo-stars svg {
+  width: clamp(22px, 3.6vmin, 32px);
+  height: clamp(22px, 3.6vmin, 32px);
+  display: block;
+}
+
+.lh-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(8px, 1.4vmin, 12px);
+  margin-top: clamp(14px, 2.6vmin, 24px);
+}
+
+/* portrait: the three photo buttons in a column, the golden one first and as wide as the rest */
+@media (max-aspect-ratio: 1/1) {
+  .lh-card-photo .lh-card-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lh-card-photo .lh-card-actions .lh-pill {
+    width: min(100%, 320px);
+    justify-content: center;
+  }
+}
+
+.lh-card-full {
+  width: min(100%, 520px);
+}
+
+.lh-card-barn {
+  display: block;
+  width: clamp(64px, 14vmin, 110px);
+  margin: 0 auto 6px;
+}
+
+.lh-card-barn svg {
+  display: block;
+  width: 100%;
+}
+
+/* short landscape screens: photo and buttons side by side */
+@media (max-height: 560px) and (min-aspect-ratio: 1/1) {
+  .lh-card-photo {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    width: min(100%, 720px);
+  }
+
+  .lh-card-photo .lh-polaroid {
+    width: min(52vw, calc((100dvh - 40px) * 0.86));
+    margin: 0;
+    flex: none;
+  }
+
+  .lh-card-photo .lh-card-actions {
+    flex-direction: column;
+    align-items: stretch;
+    margin-top: 0;
+    flex: 1;
+  }
+
+  .lh-card-photo .lh-polaroid figcaption {
+    padding: 6px 4px 8px;
+  }
+}
+
+/* ─────────────────────────── pill buttons ─────────────────────────── */
+
+.lh-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* 56 px on phones, 72 px on the iPad */
+  min-height: clamp(56px, 8.8vmin, 72px);
+  padding: 8px 20px 8px 12px;
+  border-radius: 999px;
+  background: linear-gradient(#ffffff, #fff1f6);
+  color: var(--berry);
+  font: 700 clamp(16px, 2.5vmin, 22px) / 1.1 var(--play);
+  text-align: left;
+  box-shadow:
+    0 4px 0 rgba(120, 30, 80, 0.28),
+    0 10px 18px -10px rgba(50, 0, 36, 0.7);
+  transition: transform 0.12s ease;
+}
+
+.lh-pill:active {
+  transform: translateY(3px) scale(0.97);
+}
+
+.lh-pill > svg {
+  flex: none;
+  width: 1.6em;
+  height: 1.6em;
+}
+
+.lh-pill .lh-sc-ui {
+  font-size: 1.5em;
+  width: 1em;
+  height: 1em;
+}
+
+.lh-pill.is-gold {
+  background: linear-gradient(var(--gold-hi), var(--gold));
+  color: var(--ink);
+  box-shadow:
+    0 4px 0 rgba(170, 100, 10, 0.45),
+    0 10px 18px -10px rgba(50, 0, 36, 0.7),
+    inset 0 1px 0 #fff8;
+}
+
+.lh-pill.is-big {
+  min-height: 68px;
+  font-size: clamp(19px, 3vmin, 26px);
+  padding: 10px 26px 10px 16px;
+}
+
+.lh-pill.is-armed {
+  background: linear-gradient(#ff9cc4, #ff5c95);
+  color: #fff;
+  box-shadow:
+    0 4px 0 rgba(140, 0, 60, 0.4),
+    0 0 0 3px #fff,
+    0 0 18px 4px rgba(255, 92, 149, 0.6);
+}
+
+/* ─────────────────────────── stable ─────────────────────────── */
+
+.lh-stable {
+  --bar-tool: clamp(46px, 8.8vmin, 72px);
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #bfe6ff;
+}
+
+.lh-meadow {
+  position: absolute;
+  inset: 0;
+}
+
+.lh-herd {
+  position: absolute;
+  inset: 0;
+}
+
+.lh-pony {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0;
+  background: none;
+  aspect-ratio: 480 / 430;
+  transform-origin: 50% 90.23%;
+  will-change: transform;
+  border-radius: 30%;
+}
+
+.lh-pony-flip {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lh-pony svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.lh-pony.is-selected svg {
+  filter: drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 14px rgba(255, 214, 92, 0.9));
+}
+
+/* one pony chosen: the others step back a little, so its buttons do not hide among them */
+.lh-pony {
+  transition: opacity 0.3s ease;
+}
+
+.lh-herd.has-selected .lh-pony:not(.is-selected) {
+  opacity: 0.72;
+}
+
+.lh-pony.is-gone {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.lh-stable-bar {
+  position: absolute;
+  top: max(10px, var(--safe-t));
+  left: max(10px, var(--safe-l));
+  right: max(10px, var(--safe-r));
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.4vmin, 14px);
+  z-index: 3000;
+  --tool: var(--bar-tool);
+}
+
+.lh-back {
+  width: auto;
+  border-radius: 999px;
+  padding: 0 18px 0 12px;
+  gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  font: 700 clamp(15px, 2.4vmin, 20px) / 1 var(--play);
+  color: var(--berry);
+}
+
+.lh-back .lh-sc-ui {
+  font-size: calc(var(--tool) * 0.5);
+}
+
+.lh-stable-title {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  font: 700 clamp(22px, 4.4vmin, 40px) / 1.1 var(--play);
+  /* berry on a white glow: readable on the pale sky and over clouds */
+  color: var(--berry);
+  text-shadow:
+    0 2px 0 #fff,
+    0 0 14px rgba(255, 255, 255, 0.95);
+  white-space: nowrap;
+}
+
+.lh-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px 4px 5px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  font: 700 clamp(16px, 2.6vmin, 22px) / 1 var(--play);
+  box-shadow:
+    0 3px 0 rgba(40, 60, 100, 0.25),
+    0 0 0 2px rgba(255, 201, 60, 0.9);
+}
+
+.lh-chip svg {
+  width: 1.5em;
+  height: 1.5em;
+  display: block;
+}
+
+.lh-bar-gap {
+  flex: 1;
+}
+
+.lh-stable-bar .lh-settings {
+  flex-direction: row;
+}
+
+.lh-gifttrack {
+  position: absolute;
+  top: calc(max(10px, var(--safe-t)) + var(--bar-tool) + 10px);
+  left: max(10px, var(--safe-l));
+  max-width: calc(100% - 20px);
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 16px 5px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: 700 clamp(14px, 2.2vmin, 19px) / 1.15 var(--play);
+  box-shadow: 0 6px 14px -8px rgba(30, 50, 90, 0.5);
+  z-index: 2900;
+}
+
+.lh-gifttrack-box {
+  flex: none;
+  width: clamp(36px, 5.6vmin, 50px);
+  height: clamp(36px, 5.6vmin, 50px);
+}
+
+.lh-gifttrack-box svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.lh-bubble {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 8px 18px 9px;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--berry);
+  font: 700 clamp(18px, 3.2vmin, 28px) / 1 var(--play);
+  white-space: nowrap;
+  box-shadow: 0 8px 18px -8px rgba(30, 40, 80, 0.55);
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.lh-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  background: #fff;
+  border-radius: 3px;
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+.lh-bubble.is-pop .lh-bubble-name {
+  display: inline-block;
+  animation: lh-cell-bounce 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.lh-actions {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: calc(100% - 16px);
+  width: max-content;
+  gap: 8px;
+  z-index: 2001;
+}
+
+.lh-empty {
+  position: absolute;
+  left: 50%;
+  /* on the grass, under the barn rather than over it */
+  top: 62%;
+  /* centred with translate, so the entrance animation (on transform) does not shift it */
+  translate: -50% -50%;
+  width: min(88vw, 460px);
+  padding: clamp(18px, 3.4vmin, 30px);
+  border-radius: 28px;
+  background: rgba(255, 252, 247, 0.94);
+  text-align: center;
+  box-shadow: 0 20px 40px -18px rgba(30, 50, 90, 0.6);
+  z-index: 2500;
+  animation: lh-card-in 0.5s cubic-bezier(0.3, 1.45, 0.5, 1) both;
+}
+
+.lh-empty p {
+  margin: 0 0 16px;
+  font: 700 clamp(18px, 3.2vmin, 26px) / 1.3 var(--play);
+  color: var(--ink);
+}
+
+.lh-privacy {
+  position: absolute;
+  left: 50%;
+  bottom: max(4px, var(--safe-b));
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(92vw, 560px);
+  margin: 0;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  color: #2f4a2a;
+  font: 400 11px / 1.25 var(--read);
+  text-align: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* calls a released pony back for a few seconds */
+.lh-undo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: max-content;
+  margin-inline: auto;
+  bottom: max(30px, calc(var(--safe-b) + 26px));
+  z-index: 2600;
+  animation: lh-card-in 0.4s cubic-bezier(0.3, 1.45, 0.5, 1) both;
+}
+
+.lh-stable .lh-note {
+  top: calc(max(10px, var(--safe-t)) + var(--bar-tool) + 10px);
+  bottom: auto;
+  left: auto;
+  right: max(10px, var(--safe-r));
+  transform: none;
+  max-width: 40vw;
+  z-index: 2900;
+}
+
+@media (max-width: 640px) {
+  .lh-back span {
+    display: none;
+  }
+
+  .lh-back {
+    width: var(--tool);
+    padding: 0;
+    justify-content: center;
+  }
+
+  .lh-stable .lh-note {
+    top: auto;
+    bottom: 22px;
+    right: 50%;
+    transform: translateX(50%);
+    max-width: 90vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .lh-actions .lh-pill {
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .lh-actions .lh-pill span {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  /* phones: with ponies around, the grown-up line would sit under their hooves */
+  .lh-stable:has(.lh-pony) .lh-privacy {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .lh-stable {
+    --bar-tool: 44px;
+  }
+
+  .lh-stable-bar {
+    gap: 4px;
+  }
+
+  .lh-stable-title {
+    font-size: 19px;
+  }
+
+  .lh-chip {
+    padding: 3px 8px 3px 3px;
+    font-size: 15px;
+  }
+}
+
+/* landscape phones: the empty-stable card sits low, clear of the gift line under the bar */
+@media (max-height: 500px) {
+  .lh-empty {
+    top: auto;
+    bottom: max(20px, var(--safe-b));
+    translate: -50% 0;
+    width: min(70vw, 460px);
+  }
+
+  .lh-empty p {
+    margin-bottom: 10px;
+  }
+
+  .lh-undo {
+    left: auto;
+    right: max(12px, var(--safe-r));
+    margin: 0;
+    bottom: max(24px, var(--safe-b));
+  }
+}
+
+/* browsers without container query units (iOS before 16) */
+@supports not (width: 1cqw) {
+  .lh-podium,
+  .lh-photo .lh-podium {
+    width: min(64vmin, 86%);
+  }
+
+  .lh-stools {
+    --st: 52px;
+  }
+
+  .lh-slots {
+    --slot: 44px;
+  }
+}
+
+/* ─────────────────────────── reduced motion ─────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .lh-cell,
+  .lh-cell.is-bounce,
+  .lh-done.is-ready .lh-done-inner,
+  .lh-done-inner.is-cheer,
+  .lh-done-inner.is-nope,
+  .lh-slot.is-pop,
+  .lh-badge.is-pop,
+  .lh-biggift-bob,
+  .lh-portrait,
+  .lh-polaroid,
+  .lh-card,
+  .lh-empty,
+  .lh-new,
+  .lh-new::after,
+  .is-shake,
+  .lh-name.is-bounce,
+  .lh-pill.is-bounce,
+  .lh-dice.is-roll .lh-sc-ui,
+  .lh-bubble.is-pop .lh-bubble-name,
+  .lh-strip.is-glow .lh-cell:not(.is-bounce),
+  .lh-stool.is-bounce,
+  .lh-card-name .lh-card-next,
+  .lh-card-photo .lh-pill.is-gold,
+  .lh-photo::after,
+  .lh-undo {
+    animation: none;
+    transition: none;
+  }
+
+  .lh-hooray {
+    animation: lh-fade-in 0.3s ease both;
+  }
+
+  .lh-strip.is-glow {
+    animation: none;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 0 0 3px rgba(255, 230, 130, 0.95),
+      0 0 22px 6px rgba(255, 214, 92, 0.6);
+  }
+
+  .lh-done.is-ready .lh-done-star {
+    animation: none;
+    filter: drop-shadow(0 0 14px rgba(255, 238, 150, 1));
+  }
+
+  .lh-reveal {
+    animation: lh-fade-in 0.3s ease both;
+  }
+
+  .lh-slot.is-filled {
+    animation: lh-fade-in 0.4s ease both;
+  }
+}

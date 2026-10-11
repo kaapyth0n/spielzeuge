@@ -12,7 +12,9 @@ Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуня
 
 **Мороженка** is Matryona’s game: a scoop of ice cream spits fire and flies with your voice. Say «А» to go up, «И» right, «О» left and «У» down, avoid the pencil-drawn walls and land in the cone. There are 12 rounds, then endless surprise maps. Buttons work too, and the ice cream can learn a child’s own voice. [Design, voice steering and checks](docs/morozhenka.md).
 
-Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`. Собачка, Слайм Чек, Мороженка, Песенки and Больница кошечки also have visible RU/DE/EN selectors in their top corners.
+**Лошадка** is Matryona’s third game, exactly her drawing: manes on the left, clips on top, tails on the right and the pony’s colour at the bottom, around a big picture of the pony on a raspberry sky full of hearts. A finished pony earns three stars that fly into the corner of the picture, gets a name and opens a gift (a horn, wings, rainbow manes, new backgrounds…), then lives in the stable meadow. [Design, gifts, stable and checks](docs/loshadka.md).
+
+Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`. Собачка, Слайм Чек, Мороженка, Песенки, Больница кошечки and Лошадка also have visible RU/DE/EN selectors in their top corners.
 
 ## Required for every game
 
@@ -34,6 +36,7 @@ Verify all three languages, narration calls, effects, mute, saved preferences an
 | `/slime-check/` | Слайм Чек — Veronika’s slime-care, dress-up and stretching game |
 | `/morozhenka/` | Мороженка — Matryona’s voice-steered ice cream: fly through pencil caves into the cone |
 | `/pesenki/` | Песенки — Matryona’s song game: hear a line, tap its picture, drum the chorus, unlock speed-ups |
+| `/loshadka/` | Лошадка — Matryona’s pony workshop: dress a pony from four sides, earn three stars, open gifts, visit the stable |
 | `/bolnica/` | Больница кошечки — Veronika’s cat hospital: photograph patients, catch monsters, heal by reading aloud |
 
 ### Собачка
@@ -71,6 +74,8 @@ npm run preview
 `npm run test:morozhenka` checks Мороженка in the browser, including steering through Chrome’s fake microphone.
 
 `npm run test:pesenki` plays Песенки in the browser: pictures, waiting, rewinds, chorus drumming, speed-ups, languages, mute and five screen sizes.
+
+`npm run test:loshadka` plays Лошадка in the browser: picks from all four sides, hints, the three stars, naming, gifts, the stable, double taps, languages, mute, storage, the back/forward cache and six screen sizes.
 
 `npm run test:bolnica` plays Больница кошечки in the browser with a fake speech recogniser: reception, monsters, wards, intensive care, wardrobe, players, languages and viewports.
 
