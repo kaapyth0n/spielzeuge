@@ -24,11 +24,14 @@ Actions and character messages should be spoken in the selected language where a
 
 Verify all three languages, narration calls, effects, mute, saved preferences and mobile controls before considering a new game complete.
 
+**Пазлы со зверятами** — real photograph puzzles with 2, 3 and 4 large pieces: pets, farm families and wild families. [Details and checks](docs/puzzles.md); [photo credits](public/puzzles/CREDITS.md).
+
 ## Toys
 
 | Path | Toy |
 | --- | --- |
 | `/` | Catalog |
+| `/puzzles/` | Пазлы со зверятами — real animal photographs, large pieces, spoken names |
 | `/kuckuck/` | Kuckuck — door, knock, visitor, spoken name |
 | `/chunyashka/` | Чуняшка — dress-up; hearts stay on the toy |
 | `/sobachka/` | Собачка — care for a puppy, decorate its room and discover three games |
