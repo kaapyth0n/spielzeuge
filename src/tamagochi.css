@@ -1,0 +1,105 @@
+/* Тамагочи Связь — the frame around the canvas. The game itself is drawn in code. */
+.tg-body {
+  margin: 0;
+  overflow: hidden;
+  background: #e9e3ff;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
+}
+
+#tamagochi-app {
+  position: fixed;
+  inset: 0;
+}
+
+#tg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+.tg-chrome {
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+  display: flex;
+  gap: 8px;
+}
+
+.tg-btn {
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 3px solid #3b2a4a;
+  border-radius: 18px;
+  background: #fff;
+  color: #3b2a4a;
+  box-shadow: 0 4px 0 #3b2a4a;
+  font: 900 17px/1 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.tg-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #3b2a4a;
+}
+
+.tg-btn:focus-visible {
+  outline: 4px solid #ff6fb5;
+  outline-offset: 2px;
+}
+
+.tg-btn svg {
+  width: 26px;
+  height: 26px;
+}
+
+.tg-btn[aria-pressed='false'] {
+  background: #e6dff0;
+  color: #8a7a9c;
+}
+
+.tg-caption {
+  position: absolute;
+  left: 50%;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  max-width: min(78vw, 620px);
+  margin: 0;
+  padding: 8px 18px;
+  border: 3px solid #3b2a4a;
+  border-radius: 22px;
+  background: #fff;
+  color: #3b2a4a;
+  font: 900 clamp(15px, 2.4vmin, 21px) / 1.25 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+}
+
+.tg-caption.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tg-caption {
+    transition: none;
+  }
+}

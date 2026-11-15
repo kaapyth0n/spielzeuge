@@ -15,6 +15,7 @@ import { catBadge } from './bolnica-cat.ts'
 import { puppy } from './sobachka-art.ts'
 import { LOSHADKA_COPY } from './loshadka-copy.ts'
 import { horseSvg } from './loshadka-art.ts'
+import { TAMAGOCHI_COPY } from './tamagochi-copy.ts'
 import { PUPPY_COPY } from './sobachka-copy.ts'
 import { bindQuietLang } from './lang-ui.ts'
 import { CATALOG_COPY, type Lang } from './languages.ts'
@@ -40,6 +41,8 @@ function applyCatalog(lang: Lang): void {
   setText('[data-i18n="pesenki-blurb"]', `${PESENKI_COPY[lang].byline}. ${PESENKI_COPY[lang].tagline}`)
   setText('[data-i18n="loshadka-name"]', LOSHADKA_COPY[lang].name)
   setText('[data-i18n="loshadka-blurb"]', `${LOSHADKA_COPY[lang].byline}. ${LOSHADKA_COPY[lang].tagline}`)
+  setText('[data-i18n="tamagochi-name"]', TAMAGOCHI_COPY[lang].name)
+  setText('[data-i18n="tamagochi-blurb"]', `${TAMAGOCHI_COPY[lang].byline}. ${TAMAGOCHI_COPY[lang].tagline}`)
   setText('[data-i18n="bolnica-name"]', BOLNICA_COPY[lang].name)
   setText('[data-i18n="bolnica-blurb"]', `${BOLNICA_COPY[lang].byline}. ${BOLNICA_COPY[lang].tagline}`)
   document.title = copy.documentTitle

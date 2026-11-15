@@ -18,6 +18,7 @@ export default defineConfig({
         bolnica: resolve(__dirname, 'bolnica/index.html'),
         puzzles: resolve(__dirname, 'puzzles/index.html'),
         loshadka: resolve(__dirname, 'loshadka/index.html'),
+        tamagochi: resolve(__dirname, 'tamagochi/index.html'),
       },
     },
   },

@@ -14,7 +14,9 @@ Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуня
 
 **Лошадка** is Matryona’s third game, exactly her drawing: manes on the left, clips on top, tails on the right and the pony’s colour at the bottom, around a big picture of the pony on a raspberry sky full of hearts. A finished pony earns three stars that fly into the corner of the picture, gets a name and opens a gift (a horn, wings, rainbow manes, new backgrounds…), then lives in the stable meadow. [Design, gifts, stable and checks](docs/loshadka.md).
 
-Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`. Собачка, Слайм Чек, Мороженка, Песенки, Больница кошечки and Лошадка also have visible RU/DE/EN selectors in their top corners.
+**Тамагочи Связь** is Matryona’s fourth game, from her drawing of two tamagotchis joined by a dashed line. Each tamagotchi holds a pet (a chick, a kitten, a monkey, a little banana…). Wishes are answered with her gestures: swipe up to feed or toss the ball, swipe from right to left to sweep two poops away, and for sleep the screen goes black. A pet that wants nothing walks to the right; then the child draws the dashed link from antenna to antenna and the pets visit each other to dance, sing, swing on gymnastic rings, do hairdos, give gifts, bend wire bows and hug. Friendship hearts unlock new eggs. [Design, activities and checks](docs/tamagochi.md).
+
+Language is shared across the catalog and every toy (`localStorage` key `spielzeuge.lang`). Default: Russian. Change it with the quiet corner lamp control (tap to cycle, hold for a sheet) or `?lang=ru|de|en`. Собачка, Слайм Чек, Мороженка, Песенки, Больница кошечки, Лошадка and Тамагочи Связь also have visible RU/DE/EN selectors in their top corners.
 
 ## Required for every game
 
@@ -40,6 +42,7 @@ Verify all three languages, narration calls, effects, mute, saved preferences an
 | `/morozhenka/` | Мороженка — Matryona’s voice-steered ice cream: fly through pencil caves into the cone |
 | `/pesenki/` | Песенки — Matryona’s song game: hear a line, tap its picture, drum the chorus, unlock speed-ups |
 | `/loshadka/` | Лошадка — Matryona’s pony workshop: dress a pony from four sides, earn three stars, open gifts, visit the stable |
+| `/tamagochi/` | Тамагочи Связь — Matryona’s linked tamagotchis: answer wishes with swipes, draw the link between antennas, play six activities together |
 | `/bolnica/` | Больница кошечки — Veronika’s cat hospital: photograph patients, catch monsters, heal by reading aloud |
 
 ### Собачка
@@ -79,6 +82,8 @@ npm run preview
 `npm run test:pesenki` plays Песенки in the browser: pictures, waiting, rewinds, chorus drumming, speed-ups, languages, mute and five screen sizes.
 
 `npm run test:loshadka` plays Лошадка in the browser: picks from all four sides, hints, the three stars, naming, gifts, the stable, double taps, languages, mute, storage, the back/forward cache and six screen sizes.
+
+`npm run test:tamagochi` plays Тамагочи Связь in the browser: eggs, every wish and gesture, the link, the visit with all six activities, the pet picker, languages, mute, storage and five screen sizes.
 
 `npm run test:bolnica` plays Больница кошечки in the browser with a fake speech recogniser: reception, monsters, wards, intensive care, wardrobe, players, languages and viewports.
 
