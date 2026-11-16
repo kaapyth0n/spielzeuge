@@ -5,6 +5,7 @@
 - Narrate meaningful clicked actions and character messages in the selected language, following Собачка. Add suitable quiet sound effects and a visible, persistent mute control for both speech and effects.
 - Cancel obsolete speech after language changes or leaving the page. Delayed events must use the current language. Keep play functional when speech/audio/storage are unavailable.
 - Verify all three languages and mobile layouts alongside gameplay. See README.md for the full project description and docs/ for individual game behavior.
+- The catalog (`index.html`) lists the games from newest to oldest: a new game's card goes first. A game's age is the date its page was first committed.
 
 ## Delivery workflow
 
