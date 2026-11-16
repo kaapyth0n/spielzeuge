@@ -41,7 +41,9 @@ const RU = {
   played: 'Ура, мячик!',
   woke: 'Доброе утро!',
   wrongWay: 'Попробуй в другую сторону!',
-  ready: '{name} больше ничего не хочет и идёт вправо — в гости!',
+  ready: '{name} наелся и наигрался. Теперь он хочет в гости!',
+  readyShe: '{name} наелась и наигралась. Теперь она хочет в гости!',
+  wakeFriend: 'Разбуди друга: постучи по яйцу!',
   linkHint: 'Проведи пальцем от антенны к антенне — получится связь!',
   notReady: '{name} ещё чего-то хочет.',
   waitFriend: 'Позаботься о друге — и можно в гости!',
@@ -88,7 +90,9 @@ const DE: typeof RU = {
   played: 'Juhu, der Ball!',
   woke: 'Guten Morgen!',
   wrongWay: 'Probier die andere Richtung!',
-  ready: '{name} wünscht sich nichts mehr und läuft nach rechts – zu Besuch!',
+  ready: '{name} ist satt und hat genug gespielt. Jetzt geht es zu Besuch!',
+  readyShe: '{name} ist satt und hat genug gespielt. Jetzt geht es zu Besuch!',
+  wakeFriend: 'Weck den Freund: Klopf ans Ei!',
   linkHint: 'Ziehe mit dem Finger von Antenne zu Antenne – dann gibt es eine Verbindung!',
   notReady: '{name} wünscht sich noch etwas.',
   waitFriend: 'Kümmere dich um den Freund – dann geht es zu Besuch!',
@@ -135,7 +139,9 @@ const EN: typeof RU = {
   played: 'Yay, the ball!',
   woke: 'Good morning!',
   wrongWay: 'Try the other way!',
-  ready: '{name} wants nothing more and walks to the right — off to visit!',
+  ready: '{name} is full and has played enough. Time to visit a friend!',
+  readyShe: '{name} is full and has played enough. Time to visit a friend!',
+  wakeFriend: 'Wake the friend: knock on the egg!',
   linkHint: 'Draw with your finger from antenna to antenna to make a link!',
   notReady: '{name} still wants something.',
   waitFriend: 'Look after the friend — then you can visit!',
@@ -166,3 +172,4 @@ export type CopyKey = keyof typeof RU
 export function fill(text: string, vars: { name?: string; n?: number } = {}): string {
   return text.replace('{name}', vars.name ?? '').replace('{n}', String(vars.n ?? ''))
 }
+

@@ -25,17 +25,20 @@ export class PuppyNarration {
 
   private preferences: () => { lang: Lang; enabled: boolean }
   private pronounce: (text: string, lang: Lang) => string
+  private tone: { rate?: number; pitch?: number }
 
   /**
    * `pronounce` may respell words the device voice stresses wrongly; the text
-   * on screen stays as written.
+   * on screen stays as written. `tone` sets the speed and pitch of the voice.
    */
   constructor(
     preferences: () => { lang: Lang; enabled: boolean },
     pronounce: (text: string, lang: Lang) => string = (text) => text,
+    tone: { rate?: number; pitch?: number } = {},
   ) {
     this.preferences = preferences
     this.pronounce = pronounce
+    this.tone = tone
     if (!this.supported()) return
     window.speechSynthesis.getVoices()
     window.speechSynthesis.addEventListener('voiceschanged', () =>
@@ -128,7 +131,8 @@ export class PuppyNarration {
   private enqueue(text: string, lang: Lang): void {
     const utterance = new SpeechSynthesisUtterance(this.pronounce(text, lang))
     utterance.lang = SPEECH_LOCALE[lang]
-    utterance.rate = 0.86
+    utterance.rate = this.tone.rate ?? 0.86
+    if (this.tone.pitch) utterance.pitch = this.tone.pitch
     const voices = window.speechSynthesis
       .getVoices()
       .filter(

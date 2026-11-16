@@ -412,8 +412,12 @@ export class HomeScene implements Scene {
     const seen = host.save.hints.ready ?? 0
     host.save.hints.ready = seen + 1
     const others = this.devs.filter((o) => o !== d && o.data.hatched)
-    if (seen < 4) host.say(host.t('ready', { name: host.petName(d.data.species) }))
-    else if (!others.some((o) => o.phase === 'ready')) host.say(host.t('waitFriend'), true)
+    const name = host.petName(d.data.species)
+    const friendReady = others.some((o) => o.phase === 'ready')
+    if (seen < 4) host.say(host.t(d.data.species === 'monkey' ? 'readyShe' : 'ready', { name }))
+    // Then say what to do next: wake the friend, or look after it.
+    if (this.devs.some((o) => !o.data.hatched)) host.say(host.t('wakeFriend'), seen >= 4)
+    else if (!friendReady) host.say(host.t('waitFriend'), seen >= 4)
   }
 
   private startTravel(): void {
@@ -610,9 +614,13 @@ export class HomeScene implements Scene {
     const cols = wide ? 4 : 2
     const rows = SPECIES.length / cols
     const canRemove = this.picker !== null && this.picker.slot >= 0 && this.devs.length > 2
+    // Below the corner buttons (the cross must not hide under «home») and, where
+    // there is room, above the caption.
+    const topY = this.host.safe.y + 6
+    const room = h - topY - (h > 620 ? 70 : 10)
     const pw = Math.min(w - 20, wide ? 720 : 430)
-    const ph = Math.min(h - 24, wide ? 470 : 720)
-    const panel = { x: (w - pw) / 2, y: (h - ph) / 2, w: pw, h: ph }
+    const ph = Math.min(room, wide ? 470 : 720)
+    const panel = { x: (w - pw) / 2, y: topY + (room - ph) / 2, w: pw, h: ph }
     const top = 58
     const bottom = canRemove ? 66 : 14
     const cw = (pw - 24) / cols

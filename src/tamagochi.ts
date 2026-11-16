@@ -47,11 +47,48 @@ try {
 
 const sfx = new TamaSfx(muted)
 let lang: Lang = loadLang()
-const narration = new PuppyNarration(() => ({ lang, enabled: !muted }))
+const narration = new PuppyNarration(() => ({ lang, enabled: !muted }), undefined, { rate: 0.95, pitch: 1.25 })
 let primed = false
 let captionTimer = 0
 let scene: Scene | null = null
 let dpr = 1
+
+/** The line on screen and in the air, and the ones waiting behind it. */
+const line = { text: '', since: 0, min: 0, max: 0 }
+const queue: string[] = []
+
+function lineBusy(): boolean {
+  if (!line.text) return false
+  const age = performance.now() - line.since
+  if (age < line.min) return true
+  if (age > line.max) return false
+  const synth = 'speechSynthesis' in window ? window.speechSynthesis : null
+  return !muted && !!synth && (synth.speaking || synth.pending)
+}
+
+function pumpSpeech(): void {
+  if (lineBusy()) return
+  line.text = ''
+  const text = queue.shift()
+  if (!text) return
+  const canSpeak = !muted && 'speechSynthesis' in window && !document.hidden
+  line.text = text
+  line.since = performance.now()
+  // The voice needs a moment to start; without a voice the caption has to be readable.
+  line.min = canSpeak ? 350 : Math.min(2400, 900 + text.length * 35)
+  line.max = 1500 + text.length * 110
+  caption.textContent = text
+  caption.classList.add('is-on')
+  window.clearTimeout(captionTimer)
+  captionTimer = window.setTimeout(() => caption.classList.remove('is-on'), 2600 + text.length * 45)
+  narration.announce([text])
+}
+
+function hush(): void {
+  queue.length = 0
+  line.text = ''
+  narration.silence()
+}
 
 const game: Host = {
   w: 0,
@@ -69,14 +106,13 @@ const game: Host = {
   rnd: Math.random,
   say(text, soft = false) {
     if (!text) return
-    const speaking = 'speechSynthesis' in window && window.speechSynthesis.speaking
-    if (soft && speaking && !muted) return
-    caption.textContent = text
-    caption.classList.add('is-on')
-    window.clearTimeout(captionTimer)
-    captionTimer = window.setTimeout(() => caption.classList.remove('is-on'), 2600 + text.length * 45)
-    narration.silence()
-    narration.announce([text])
+    // A line is never cut off. Hints that may be skipped wait for nobody;
+    // everything else queues behind the line being spoken.
+    if (text === line.text || queue.includes(text)) return
+    if (soft && (lineBusy() || queue.length)) return
+    if (queue.length >= 2) queue.pop()
+    queue.push(text)
+    pumpSpeech()
   },
   persist() {
     if (!params.has('fresh')) storeSave(game.save)
@@ -127,6 +163,8 @@ langBtn.addEventListener('click', () => {
   sfx.unlock()
   primed = true
   caption.classList.remove('is-on')
+  queue.length = 0
+  line.text = ''
   narration.languageChanged()
 })
 
@@ -139,7 +177,7 @@ soundBtn.addEventListener('click', () => {
   }
   sfx.unlock()
   sfx.setMuted(muted)
-  if (muted) narration.silence()
+  if (muted) hush()
   else sfx.play('pop')
   applyChrome()
 })
@@ -214,6 +252,7 @@ function frame(now: number): void {
     game.time += dt
     scene?.update(dt)
   }
+  pumpSpeech()
   if (!scene) return
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   ctx.clearRect(0, 0, game.w, game.h)
@@ -246,7 +285,7 @@ window.addEventListener('resize', resize)
 window.addEventListener('orientationchange', resize)
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
-    narration.silence()
+    hush()
     sfx.suspend()
   } else sfx.resume()
 })

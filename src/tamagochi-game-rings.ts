@@ -85,6 +85,22 @@ interface Lane {
   released: boolean
   /** Seconds since the pet let go; the rings go back up. */
   upT: number
+  /** Height of the current jump; the mats are trampolines, every jump goes higher. */
+  jh: number
+  /** Little bounces since the last take-off. */
+  bounces: number
+  /** Somersault in the air. */
+  spin: number
+  spinV: number
+  /** Jelly squash after a landing (a spring). */
+  sq: number
+  sqV: number
+  /** The rings hang on elastic ropes: up-and-down bobbing, in pet sizes. */
+  bob: number
+  bobV: number
+  /** The body wobbles behind the swing. */
+  wob: number
+  wobV: number
 }
 
 /** A chunky arrow pointing along +x, centred on (0,0) after the transform. */
@@ -154,6 +170,16 @@ export const ringsGame: Activity = (ctx) => {
     idle: 0,
     released: false,
     upT: 0,
+    jh: 0,
+    bounces: 0,
+    spin: 0,
+    spinV: 0,
+    sq: 0,
+    sqV: 0,
+    bob: 0,
+    bobV: 0,
+    wob: 0,
+    wobV: 0,
   }))
   const links: { a: number; b: number; at: number }[] = []
   let phase: Phase = 'jump'
@@ -168,13 +194,16 @@ export const ringsGame: Activity = (ctx) => {
   let saidGym = false
   let saidTogether = false
   let togetherAt = -9
+  let bonkAt = -9
 
   const layout = () => {
     const { w, h, safe } = g
     const floorY = h - clamp(h * 0.26, 92, 240)
-    const pad = Math.max(10, w * 0.02)
-    const laneW = (w - pad * 2) / n
-    const size = Math.min(220, laneW * 0.7, (floorY - safe.y) / 2)
+    const full = (w - Math.max(10, w * 0.02) * 2) / n
+    const size = Math.min(220, full * 0.7, (floorY - safe.y) / 2)
+    // Close together, so that swinging neighbours can bump into each other.
+    const laneW = Math.min(full, size * 1.55)
+    const pad = (w - laneW * n) / 2
     return { floorY, pad, laneW, size, jumpH: size * 0.55, ringY: floorY - size * 1.2, lw: Math.max(2, size * 0.03) }
   }
   let L = layout()
@@ -203,14 +232,14 @@ export const ringsGame: Activity = (ctx) => {
     const squash = l.trick === 'stretch' ? stretchSquash(u) : 0
     const turn = l.trick === 'twirl' ? Math.cos(ease.inOut(u) * TAU * 2) : 1
     const flip = Math.abs(turn) < 0.22 ? (turn < 0 ? -0.22 : 0.22) : turn
-    const rot = l.theta + (l.trick === 'flip' ? l.flipDir * TAU * ease.inOut(u) : 0)
+    const rot = l.theta + l.wob + (l.trick === 'flip' ? l.flipDir * TAU * ease.inOut(u) : 0)
     return {
       hd,
       squash,
       flip,
       rot,
       px: laneX(i) + hd.mid + Math.sin(l.theta) * L.size * 0.22,
-      py: L.ringY + Math.max(0, -squash) * L.size * 0.1,
+      py: L.ringY + (Math.max(0, -squash) * 0.1 + l.bob) * L.size,
     }
   }
   /** Middle of the body, for sparkles. */
@@ -233,17 +262,34 @@ export const ringsGame: Activity = (ctx) => {
     saidTogether = true
   }
 
+  const gravity = (): number => (8 * L.jumpH) / AIR_TIME ** 2
+  /** Seconds until a pet at height `lift` moving up with `vy` is back on the mat. */
+  const airTime = (lift: number, vy: number): number => {
+    const grav = gravity()
+    return vy / grav + Math.sqrt((2 * (lift + (vy * vy) / (2 * grav))) / grav)
+  }
   const jump = (l: Lane): void => {
-    if (l.mode === 'stand' || (l.mode === 'land' && l.mt > 0.08)) {
+    // A pet that is still bouncing on its trampoline jumps again at once.
+    if (l.mode === 'stand' || (l.mode === 'land' && l.mt > 0.08) || (l.mode === 'air' && l.bounces > 0 && !l.released)) {
       l.mode = 'crouch'
       l.mt = 0
+      l.lift = 0
+      l.spin = 0
+      l.spinV = 0
     }
   }
   const takeOff = (l: Lane, i: number): void => {
     l.mode = 'air'
     l.mt = 0
     l.lift = 0
-    l.vy = (4 * L.jumpH) / AIR_TIME
+    l.bounces = 0
+    l.spin = 0
+    // Higher every time; the third jump of the warm-up is a somersault.
+    const nth = phase === 'jump' ? Math.min(l.jumps, 2) : 0
+    l.jh = L.jumpH * [1, 1.25, 1.5][nth]
+    l.vy = Math.sqrt(2 * gravity() * l.jh)
+    l.spinV = nth === 2 ? ((i % 2 ? -1 : 1) * TAU) / airTime(0, l.vy) : 0
+    l.sqV -= 5
     g.sfx.play('boing', i)
     if (phase === 'jump' && l.jumps < 3) {
       l.pipAt[l.jumps] = g.time
@@ -257,7 +303,11 @@ export const ringsGame: Activity = (ctx) => {
     l.mode = 'hang'
     l.mt = 0
     l.theta = 0
-    l.omega = (g.rnd() - 0.5) * 1.2
+    l.omega = (g.rnd() < 0.5 ? -1 : 1) * (1.6 + g.rnd() * 1.2)
+    l.bob = 0
+    l.bobV = 2.6
+    l.wob = 0
+    l.wobV = 0
     l.idle = 0
     const hd = hands(l)
     for (const s of [-1, 1])
@@ -288,11 +338,14 @@ export const ringsGame: Activity = (ctx) => {
     l.trick = trick
     l.tt = 0
     l.flipDir = l.omega < -0.3 ? -1 : 1
+    l.bobV += trick === 'stretch' ? 2.4 : trick === 'flip' ? -1.8 : 1.3
     g.sfx.play(trick === 'flip' ? 'whee' : trick === 'stretch' ? 'twang' : 'spin', i)
     tick(l, i, trick)
   }
   const swing = (l: Lane, i: number, dir: number): void => {
-    l.omega = clamp(l.omega + dir * 2.6, -5.2, 5.2)
+    l.omega = clamp(l.omega + dir * 3.3, -6.2, 6.2)
+    l.wobV -= dir * 4
+    l.bobV += 0.7
     l.lastDir = dir
     g.sfx.play('sweep')
     tick(l, i, 'swing')
@@ -326,9 +379,13 @@ export const ringsGame: Activity = (ctx) => {
     }
     l.mode = 'air'
     l.mt = 0
+    // Let go with a hop and a somersault, then bounce on the mat.
     l.lift = L.jumpH
-    l.vy = 0
-    l.lean = clamp(l.theta, -0.5, 0.5)
+    l.vy = (2.4 * L.jumpH) / AIR_TIME
+    l.bounces = 0
+    l.spin = 0
+    l.spinV = ((l.omega < 0 ? -1 : 1) * TAU) / airTime(l.lift, l.vy)
+    l.lean = 0
     l.trick = null
     g.sfx.play('whee')
   }
@@ -338,33 +395,57 @@ export const ringsGame: Activity = (ctx) => {
     l.idle += dt
     if (l.released) l.upT += dt
     l.lean *= Math.max(0, 1 - dt * 6)
+    l.sqV += (-190 * l.sq - 9 * l.sqV) * dt
+    l.sq = clamp(l.sq + l.sqV * dt, -0.5, 0.7)
     if (l.mode === 'crouch' && l.mt > 0.1) takeOff(l, i)
     else if (l.mode === 'air') {
-      const grav = (8 * L.jumpH) / AIR_TIME ** 2
       const rising = l.vy > 0
-      l.vy -= grav * dt
+      l.vy -= gravity() * dt
       l.lift += l.vy * dt
-      if (rising && l.vy <= 0 && ringReady(i)) grab(l, i)
+      l.spin += l.spinV * dt
+      if (rising && l.vy <= 0 && l.bounces === 0 && ringReady(i)) grab(l, i)
       else if (l.lift <= 0) {
+        const hit = -l.vy
         l.lift = 0
-        l.mode = 'land'
-        l.mt = 0
-        g.sfx.play('land')
+        l.spin = 0
+        l.spinV = 0
+        l.sqV += 7
         fx.burst('dot', laneX(i), L.floorY, 5, { color: '#fff', size: L.size * 0.1, speed: L.size * 0.7, max: 0.4 })
+        if (l.bounces < 2 && hit > L.size * 1.1) {
+          // The mat is a trampoline: two smaller bounces, leaning to and fro.
+          l.bounces++
+          l.vy = hit * 0.5
+          l.lean = (l.bounces % 2 ? 1 : -1) * (i % 2 ? -0.28 : 0.28)
+          g.sfx.play('boing', i + l.bounces * 2)
+        } else {
+          l.mode = 'land'
+          l.mt = 0
+          g.sfx.play('land')
+        }
       }
     } else if (l.mode === 'land' && l.mt > 0.24) {
       l.mode = l.released ? 'cheer' : 'stand'
       l.mt = 0
     } else if (l.mode === 'hang') {
-      l.omega += (-23 * Math.sin(l.theta) - 0.55 * l.omega) * dt
+      l.omega += (-23 * Math.sin(l.theta) - 0.22 * l.omega) * dt
       l.theta += l.omega * dt
-      if (Math.abs(l.theta) > 1.25) {
-        l.theta = Math.sign(l.theta) * 1.25
-        l.omega *= 0.4
+      if (Math.abs(l.theta) > 1.45) {
+        // As far as it goes: the ropes fling the pet back.
+        l.theta = Math.sign(l.theta) * 1.45
+        if (Math.abs(l.omega) > 1.5) {
+          g.sfx.play('boing', i + 3)
+          l.bobV -= 1.6
+        }
+        l.omega *= -0.5
       }
+      l.bobV += (-75 * l.bob - 2.2 * l.bobV) * dt
+      l.bob = clamp(l.bob + l.bobV * dt, -0.16, 0.2)
+      l.wobV += (-60 * l.wob - 3.2 * l.wobV) * dt
+      l.wob = clamp(l.wob + l.wobV * dt, -0.6, 0.6)
       if (l.trick) {
         l.tt += dt
         if (l.tt >= DUR[l.trick]) {
+          l.wobV += l.trick === 'stretch' ? 0 : l.flipDir * 5
           l.trick = null
           const next = l.queued
           l.queued = null
@@ -374,11 +455,42 @@ export const ringsGame: Activity = (ctx) => {
     }
   }
 
+  /** Feet of a hanging pet. */
+  const feet = (l: Lane, i: number): { x: number; y: number } => {
+    const hg = hang(l, i)
+    return { x: hg.px - Math.sin(hg.rot) * L.size * 0.8, y: hg.py + Math.cos(hg.rot) * L.size * 0.8 }
+  }
+  /** Neighbours that swing into each other bump and fly apart. */
+  const bonk = (): void => {
+    if (g.time - bonkAt < 0.5) return
+    for (let i = 0; i + 1 < n; i++) {
+      const a = lanes[i]
+      const b = lanes[i + 1]
+      if (a.mode !== 'hang' || b.mode !== 'hang' || a.trick || b.trick || a.omega - b.omega < 0.6) continue
+      const pa = feet(a, i)
+      const pb = feet(b, i + 1)
+      if (Math.hypot(pa.x - pb.x, pa.y - pb.y) > L.size * 0.46) continue
+      bonkAt = g.time
+      const push = 1.4 + (a.omega - b.omega) * 0.45
+      a.omega = -push
+      b.omega = push
+      a.wobV += 5
+      b.wobV -= 5
+      a.bobV -= 1.8
+      b.bobV -= 1.8
+      fx.burst('star', (pa.x + pb.x) / 2, (pa.y + pb.y) / 2, 8, { size: L.size * 0.15, speed: L.size * 1.4 })
+      g.sfx.play('boing', i + 5)
+      together(i, i + 1)
+      return
+    }
+  }
+
   const update = (dt: number): void => {
     L = layout()
     age += dt
     idleAll += dt
     lanes.forEach((l, i) => updateLane(l, i, dt))
+    bonk()
     fx.update(dt)
     while (links.length && g.time - links[0].at > 0.9) links.shift()
     const hanging = lanes.filter((l) => l.mode === 'hang').length
@@ -516,16 +628,28 @@ export const ringsGame: Activity = (ctx) => {
     let squash = Math.sin(g.time * 3 + i) * 0.03
     let arms = reach ? 2.7 + Math.sin(g.time * 5 + i) * 0.15 : 0.25
     let lift = l.lift
+    squash += l.sq
     if (l.mode === 'crouch') squash = 0.6 * ease.out(l.mt / 0.1)
     else if (l.mode === 'air') {
-      squash = -0.4 * clamp(Math.abs(l.vy) / ((4 * L.jumpH) / AIR_TIME))
+      squash = l.sq - 0.4 * clamp(Math.abs(l.vy) / ((4 * L.jumpH) / AIR_TIME))
       arms = reach || l.released ? Math.PI : 2.3
-    } else if (l.mode === 'land') squash = 0.55 * Math.cos((l.mt / 0.24) * Math.PI * 1.5) * (1 - l.mt / 0.24)
+    }
     else if (l.mode === 'cheer') {
       arms = 2.7 + Math.sin(g.time * 12 + i) * 0.3
       lift = Math.abs(Math.sin(l.mt * 7)) * s * 0.14
     }
     const happy = l.mode === 'air' || l.mode === 'cheer'
+    if (l.mode === 'air' && l.spin !== 0) {
+      // A somersault turns around the middle of the body.
+      oval(c, x, L.floorY, s * 0.25, s * 0.052)
+      paint(c, 'rgba(59,42,74,0.16)')
+      c.save()
+      c.translate(x, L.floorY - lift - s * 0.45)
+      c.rotate(l.spin)
+      drawPet(c, species, look, { x: 0, y: s * 0.45, size: s, squash, armL: Math.PI, armR: Math.PI, eyes: 'happy', mouth: 'open', shadow: false }, g.time)
+      c.restore()
+      return
+    }
     drawPet(c, species, look, {
       x,
       y: L.floorY,

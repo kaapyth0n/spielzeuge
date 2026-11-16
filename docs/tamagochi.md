@@ -19,7 +19,7 @@ A child does not design a whole game, so her words and her drawing are the start
 | «Если захотят кушать, под ними появляется еда. Надо вверх пальцем» | Food lies in front of the pet; a swipe up feeds one bite, twice. |
 | «Если захотели играть, под ними мячик, чтобы его вверх» | A ball lies in front of the pet; a swipe up tosses it and the pet jumps for it, twice. |
 | «Если хотят спать, экран становится чёрным» | The screen goes black with a moon and stars for five seconds. Taps on the dark screen make stars chime. |
-| «Если они ничего не хотят, они вправо идут» | A pet with five lights walks to the right edge of its screen and waves: it is ready to visit. Its antenna glows. |
+| «Если они ничего не хотят, они вправо идут» | A pet with five lights walks to the right edge of its screen and waves: it is ready to visit. Its antenna glows. The voice says why («наелся и наигрался, теперь хочет в гости») and what to do next: wake the friend that is still an egg, or look after the friend. |
 | «Они общаются… вместе играют и делают подарки… танец… поют… прыгают… делают себе причёски» | After the link the pets meet inside one screen and choose what to do together: Танец, Песня, Кольца, Причёски, Подарки, Бантики. |
 | «Если они прыгают, появляются кольца. Они за них хватаются и делают гимнастику» | Кольца: after three jumps each, gymnastic rings come down; the pets grab them and swing, flip, stretch and twirl. |
 | «Персонажи должны обниматься» | In the visit room, move one pet onto another: they hug. The first hug of a visit is worth a friendship heart. |
@@ -40,7 +40,7 @@ Dad asked for a new look, not the style of the earlier toys: the game is drawn i
 - **The journey.** The pets turn into sparks, run up their antennas, along the dashes and down into the host's screen (the tamagotchi the first line was drawn to), which grows to fill the display.
 - **The visit.** The pets stand together in the host's room. Six big buttons start the activities; a star marks the ones never played. Move a pet onto another for a hug. Two activities fit into one visit (two small lights next to the home button count them), then the pets get hungry and go home by themselves. The home button leaves earlier.
 - **Friendship hearts.** Every finished activity and the first hug of a visit give one heart. The pill in the top left counts them and shows the way to the next egg: 3 hearts for the mini-tamagotchi, 7 for the bunny, 12 for the little penguin, 18 for the puppy. A tap on the pill says how many are missing.
-- **Who lives where.** The small egg button at the bottom of a tamagotchi opens «Кто вылупится?»: every unlocked pet that does not live in another tamagotchi can move in (as a new egg, with two lights). Locked pets are mystery eggs with the number of hearts they need. Each pet keeps its hairdo and accessories when it moves out and back in. With more than two tamagotchis the card can also put the tamagotchi away.
+- **Who lives where.** The small egg button at the bottom of a tamagotchi opens «Кто вылупится?»: every unlocked pet that does not live in another tamagotchi can move in (as a new egg, with two lights). Locked pets are mystery eggs with the number of hearts they need. Each pet keeps its hairdo and accessories when it moves out and back in. With more than two tamagotchis the card can also put the tamagotchi away. The card sits below the corner buttons, so its cross is never under the home button.
 - **Things.** Gifts and wire crafts are a shared collection. Wearables (crown, glasses, scarf, bows…) are put on in Причёски; toys and decorations (rug, lamp, picture, garland, clock, plant, ball, teddy…) appear in the tamagotchis' rooms at home.
 
 ## The activities
@@ -51,7 +51,7 @@ Each activity is a separate file with its own words in three languages, `src/tam
 | --- | --- |
 | **Танец** | Repeat after your friend: one pet shows a row of moves (swipe up, down, left, right, tap to spin), the child repeats them and the other pets dance. Four rounds, then a free dance where every swipe moves everyone. |
 | **Песня** | A well-known tune (public-domain melodies only) is shared between the pets. Notes slide down dashed wires; tap a pet when its note arrives and it sings it in its own voice. A note waits until it is sung. At the end the pets give a concert. |
-| **Кольца** | Swipe up to jump, three times each; rings come down; jump and grab. On the rings: swipe sideways to swing, up to flip, down to stretch, tap to twirl. Each pet has a card of four tricks. |
+| **Кольца** | Swipe up to jump, three times each: the mats are trampolines, every jump goes higher, the third is a somersault, and every landing bounces. Rings come down; jump and grab. On the rings: swipe sideways to swing, up to flip, down to stretch, tap to twirl. The ropes are elastic, so the pets bob and wobble, are flung back at the top of a swing, and neighbours that swing into each other bump and fly apart. Each pet has a card of four tricks. They let go with a somersault. |
 | **Причёски** | A salon: choose who sits in front of the mirror, then a hairdo (ten), a hair colour (nine, one is a rainbow) and accessories from the collection. The other pet is the hairdresser. |
 | **Подарки** | The giver chooses one of three boxes, it flies to the friend along a dashed line, three taps open it. There are 24 gifts; a new one every time until the collection is complete. |
 | **Бантики** | Choose a wire colour and a shape (bow and heart at first; star, flower, butterfly, crown and glasses come with practice), trace the dotted line to bend the wire, and choose who wears it. |
@@ -59,8 +59,8 @@ Each activity is a separate file with its own words in three languages, `src/tam
 ## Languages, speech and sound
 
 - Russian, German and English, with the shared `spielzeuge.lang` preference and `?lang=`. The RU/DE/EN button in the top right cycles the language and says its name; the next spoken line is already in the new language.
-- Every wish, hint and result is spoken with the device voice and shown as a caption at the bottom. «Soft» lines (repeated hints) are skipped while another line is being spoken.
-- All sounds are synthesised: toy bleeps, a voice for each pet that can sing notes, and four quiet looping tunes for the activities. The speaker button mutes speech and sound and remembers the choice (`spielzeuge.tamagochi.sound`).
+- Every wish, hint and result is spoken with the device voice and shown as a caption at the bottom. A line is never cut off: the next one waits until the voice has finished (at most two wait; a newer one replaces the second). «Soft» lines (repeated hints) are skipped while another line is being spoken or waiting. The voice is the device's own, set a little higher and livelier than its default.
+- All sounds are synthesised: toy bleeps, a voice for each pet that can sing notes (the kitten sings «мяу»), and four quiet looping tunes for the activities. The speaker button mutes speech and sound and remembers the choice (`spielzeuge.tamagochi.sound`).
 - Leaving the page or hiding the tab stops speech and music; coming back through the browser's history starts a fresh sitting from the saved progress.
 
 ## Saved progress

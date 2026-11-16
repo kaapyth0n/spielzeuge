@@ -158,6 +158,56 @@ export class TamaSfx implements Sfx {
     osc.stop(start + t.dur + 0.05)
   }
 
+  /** A sung «мяу»: the note, shaped by two moving mouth resonances (i → a → u). */
+  private meow(f: number, dur: number, at: number): void {
+    const ctx = this.ctx
+    if (!ctx || !this.out || this.muted || ctx.state !== 'running') return
+    const start = ctx.currentTime + at
+    const d = Math.max(dur, 0.36)
+    let p = f
+    while (p < 420) p *= 2
+    const osc = ctx.createOscillator()
+    osc.type = 'sawtooth'
+    osc.frequency.setValueAtTime(p * 0.86, start)
+    osc.frequency.linearRampToValueAtTime(p, start + 0.09)
+    osc.frequency.setValueAtTime(p, start + d * 0.62)
+    osc.frequency.linearRampToValueAtTime(p * 0.9, start + d)
+    const lfo = ctx.createOscillator()
+    const depth = ctx.createGain()
+    lfo.frequency.value = 5.5
+    depth.gain.value = p * 0.01
+    lfo.connect(depth).connect(osc.frequency)
+    const body = ctx.createOscillator()
+    body.frequency.setValueAtTime(p * 0.86, start)
+    body.frequency.linearRampToValueAtTime(p, start + 0.09)
+    const out = ctx.createGain()
+    out.gain.setValueAtTime(0.0001, start)
+    out.gain.linearRampToValueAtTime(0.15, start + 0.07)
+    out.gain.setValueAtTime(0.15, start + d * 0.55)
+    out.gain.exponentialRampToValueAtTime(0.0001, start + d)
+    out.connect(this.out)
+    const mouth = (from: number, mid: number, to: number, q: number, vol: number): void => {
+      const bp = ctx.createBiquadFilter()
+      bp.type = 'bandpass'
+      bp.Q.value = q
+      bp.frequency.setValueAtTime(from, start)
+      bp.frequency.linearRampToValueAtTime(mid, start + d * 0.35)
+      bp.frequency.linearRampToValueAtTime(to, start + d)
+      const g = ctx.createGain()
+      g.gain.value = vol
+      osc.connect(bp).connect(g).connect(out)
+    }
+    mouth(450, 1050, 520, 3.5, 0.9)
+    mouth(2700, 1800, 950, 5, 0.5)
+    const soft = ctx.createGain()
+    soft.gain.value = 0.35
+    body.connect(soft).connect(out)
+    for (const o of [osc, lfo, body]) {
+      o.start(start)
+      o.stop(start + d + 0.05)
+    }
+  }
+
   private hiss(dur: number, freq: number, vol = 0.1, at = 0, sweepTo?: number, dest?: AudioNode): void {
     const ctx = this.ctx
     if (!ctx || !this.out || !this.noise || this.muted || ctx.state !== 'running') return
@@ -263,7 +313,7 @@ export class TamaSfx implements Sfx {
       case 'chick':
         return this.tone({ f: f * 2.4, f2: f * 2, dur: Math.min(dur, 0.3), vol: 0.13, at })
       case 'kitten':
-        return this.tone({ f: f * 0.82, f2: f, dur, type: 'sawtooth', vol: 0.13, at, lowpass: 2200, attack: 0.04, vibrato: 0.012 })
+        return this.meow(f, dur, at)
       case 'monkey':
         return this.tone({ f: f * 0.7, f2: f, dur: Math.min(dur, 0.32), type: 'square', vol: 0.1, at, lowpass: 1500 })
       case 'banana':
