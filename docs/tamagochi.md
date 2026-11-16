@@ -61,6 +61,7 @@ Each activity is a separate file with its own words in three languages, `src/tam
 - Russian, German and English, with the shared `spielzeuge.lang` preference and `?lang=`. The RU/DE/EN button in the top right cycles the language and says its name; the next spoken line is already in the new language.
 - Every wish, hint and result is spoken with the device voice and shown as a caption at the bottom. A line is never cut off: the next one waits until the voice has finished (at most two wait; a newer one replaces the second). «Soft» lines (repeated hints) are skipped while another line is being spoken or waiting. The voice is the device's own, set a little higher and livelier than its default.
 - All sounds are synthesised: toy bleeps, a voice for each pet that can sing notes (the kitten sings «мяу»), and four quiet looping tunes for the activities. The speaker button mutes speech and sound and remembers the choice (`spielzeuge.tamagochi.sound`).
+- Sound starts with the first finished touch: iPad and iPhone allow audio only from the end of a touch, so the frame asks on touch start and on touch end, and asks again after an interruption (a call, the lock screen). The audio session is set to «playback», so the game is heard even with the mute switch on. `/tamagochi/?audio` shows the state of the sound engine in the corner, for checking a device.
 - Leaving the page or hiding the tab stops speech and music; coming back through the browser's history starts a fresh sitting from the saved progress.
 
 ## Saved progress

@@ -75,17 +75,25 @@ export class TamaSfx implements Sfx {
   private loopStep = 0
   private loopGain: GainNode | null = null
   private resumeName: string | null = null
+  private wokeAt = -1e9
 
   constructor(muted: boolean) {
     this.muted = muted
   }
 
-  /** Call from a gesture: browsers only start audio after one. */
+  /**
+   * Call from a gesture: browsers only start audio after one. On iPad and iPhone
+   * only the end of a touch counts (not the start), so the frame calls this on
+   * both; a context that was refused once is simply asked again.
+   */
   unlock(): void {
     try {
       if (!this.ctx) {
         const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
         if (!AC) return
+        // Play even when the iPad's mute switch is on: this is a game with music.
+        const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession
+        if (session) session.type = 'playback'
         this.ctx = new AC()
         this.out = this.ctx.createGain()
         this.out.gain.value = this.muted ? 0 : 1
@@ -95,10 +103,32 @@ export class TamaSfx implements Sfx {
         const data = this.noise.getChannelData(0)
         for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1
       }
-      if (this.ctx.state === 'suspended') void this.ctx.resume()
+      // 'suspended' before the first touch, 'interrupted' after a call or a lock screen.
+      if (this.ctx.state !== 'running') {
+        this.wokeAt = performance.now()
+        void this.ctx.resume().catch(() => undefined)
+        // A silent sound started inside the gesture wakes older iOS versions.
+        const blip = this.ctx.createBufferSource()
+        blip.buffer = this.ctx.createBuffer(1, 1, 22050)
+        blip.connect(this.ctx.destination)
+        blip.start(0)
+      }
     } catch {
       this.ctx = null
     }
+  }
+
+  /**
+   * No sound possible right now. A context that is just waking up from this very
+   * touch counts as awake, so the sound of the first tap is not lost.
+   */
+  private asleep(): boolean {
+    return !this.ctx || (this.ctx.state !== 'running' && performance.now() - this.wokeAt > 600)
+  }
+
+  /** For tests and the `?audio` readout: is sound really running? */
+  get state(): string {
+    return this.ctx?.state ?? 'none'
   }
 
   setMuted(muted: boolean): void {
@@ -126,7 +156,7 @@ export class TamaSfx implements Sfx {
 
   private tone(t: Tone, dest?: AudioNode): void {
     const ctx = this.ctx
-    if (!ctx || !this.out || this.muted || ctx.state !== 'running') return
+    if (!ctx || !this.out || this.muted || this.asleep()) return
     const start = ctx.currentTime + (t.at ?? 0)
     const osc = ctx.createOscillator()
     const gain = ctx.createGain()
@@ -161,7 +191,7 @@ export class TamaSfx implements Sfx {
   /** A sung «мяу»: the note, shaped by two moving mouth resonances (i → a → u). */
   private meow(f: number, dur: number, at: number): void {
     const ctx = this.ctx
-    if (!ctx || !this.out || this.muted || ctx.state !== 'running') return
+    if (!ctx || !this.out || this.muted || this.asleep()) return
     const start = ctx.currentTime + at
     const d = Math.max(dur, 0.36)
     let p = f
@@ -210,7 +240,7 @@ export class TamaSfx implements Sfx {
 
   private hiss(dur: number, freq: number, vol = 0.1, at = 0, sweepTo?: number, dest?: AudioNode): void {
     const ctx = this.ctx
-    if (!ctx || !this.out || !this.noise || this.muted || ctx.state !== 'running') return
+    if (!ctx || !this.out || !this.noise || this.muted || this.asleep()) return
     const start = ctx.currentTime + at
     const src = ctx.createBufferSource()
     src.buffer = this.noise
@@ -354,6 +384,11 @@ export class TamaSfx implements Sfx {
     this.loopStep = 0
     const schedule = (): void => {
       if (ctx.state !== 'running') return
+      // Sound was allowed late (or came back): start from here, not with a burst of missed notes.
+      if (this.loopStart + this.loopStep * stepDur < ctx.currentTime - 0.3) {
+        this.loopStart = ctx.currentTime + 0.08
+        this.loopStep = 0
+      }
       while (this.loopStart + this.loopStep * stepDur < ctx.currentTime + 0.25) {
         const i = this.loopStep
         const at = this.loopStart + i * stepDur - ctx.currentTime

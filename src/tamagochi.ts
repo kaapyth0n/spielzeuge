@@ -227,6 +227,8 @@ canvas.addEventListener('pointermove', (e) => {
   }
 })
 const release = (e: PointerEvent, cancelled: boolean): void => {
+  // iOS starts sound and speech only from the end of a touch.
+  if (!cancelled) prime()
   const p = pointers.get(e.pointerId)
   if (!p) return
   pointers.delete(e.pointerId)
@@ -238,6 +240,8 @@ const release = (e: PointerEvent, cancelled: boolean): void => {
 canvas.addEventListener('pointerup', (e) => release(e, false))
 canvas.addEventListener('pointercancel', (e) => release(e, true))
 canvas.addEventListener('contextmenu', (e) => e.preventDefault())
+// Belt and braces for iOS: any finished touch anywhere on the page allows sound.
+for (const type of ['touchend', 'pointerup', 'click'] as const) window.addEventListener(type, () => sfx.unlock(), { capture: true, passive: true })
 
 let raf = 0
 let last = 0
@@ -309,6 +313,13 @@ declare global {
   }
 }
 window.__tamagochi = { game, scene: () => scene, narration, sfx }
+// `?audio` shows whether sound is running: for checking a device without a console.
+if (params.has('audio')) {
+  const tag = document.createElement('p')
+  tag.style.cssText = 'position:fixed;left:8px;bottom:8px;margin:0;padding:4px 8px;background:#fff;font:700 14px sans-serif;z-index:9;pointer-events:none'
+  root.append(tag)
+  window.setInterval(() => (tag.textContent = `audio: ${sfx.state}`), 250)
+}
 
 void document.fonts?.load('900 20px "Nunito"').catch(() => undefined)
 start()
