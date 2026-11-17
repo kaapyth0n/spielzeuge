@@ -547,6 +547,183 @@ section('catalog card in three languages', async () => {
   }
 })
 
+const postAction = (page, action) => page.locator(`#post-panel [data-action="${action}"]`)
+const postScreen = (page, screen) => page.waitForSelector(`#post-panel[data-page="${screen}"]:visible`)
+
+async function playIsland(page, island, keyboard = false) {
+  const press = async (action) => {
+    const target = postAction(page, action)
+    if (keyboard) { await target.focus(); await page.keyboard.press('Enter') }
+    else await target.click()
+  }
+  await press('launch:' + island)
+  await postScreen(page, 'puzzle')
+  if (island === 'meadow') {
+    for (let round = 0; round < 2; round++) {
+      const flowers = await page.locator('.flower-key').allTextContents()
+      const score = await page.locator('.flower-score > span').evaluateAll((els) => els.map((el) => el.getAttribute('aria-label')))
+      assert.equal(score.length, round + 3)
+      await press('flower:' + ((flowers.indexOf(score[0]) + 1) % 3))
+      assert.equal(await page.locator('.flower-score .played').count(), 0)
+      for (const flower of score) await press('flower:' + flowers.indexOf(flower))
+    }
+  } else if (island === 'beacon') {
+    for (let i = 0; i < 3 && !await postAction(page, 'deliver').count(); i++) {
+      await press('hint')
+      const action = await page.locator('.mirror.hinted').getAttribute('data-action')
+      await press(action)
+    }
+    assert.equal(await page.locator('.beam-chart.lit').count(), 1)
+  } else {
+    const stars = page.locator('.chart-star')
+    await press('star:2')
+    assert.equal(await page.locator('.chart-star.joined').count(), 0)
+    if (keyboard) {
+      for (let i = 0; i < await stars.count(); i++) await press('star:' + i)
+    } else {
+      // A continuous finger stroke through every target, using real touch input events.
+      await stars.first().scrollIntoViewIfNeeded()
+      const points = await stars.evaluateAll((els) => els.map((el) => {
+        const r = el.getBoundingClientRect()
+        return { x: r.x + r.width / 2, y: r.y + r.height / 2 }
+      }))
+      const touch = await page.context().newCDPSession(page)
+      await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [points[0]] })
+      for (const point of points.slice(1)) await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [point] })
+      await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+      await touch.detach()
+    }
+  }
+  await press('deliver')
+  await postScreen(page, 'reward')
+}
+
+section('Sky Post deliveries, album, orchestra and an interrupted egg', async () => {
+  const { page, errors, context } = await open('', { viewport: { width: 390, height: 844 } })
+  const egg = centre((await devs(page))[0].r)
+  await page.mouse.click(egg.x, egg.y)
+  await page.mouse.click(egg.x, egg.y)
+  await page.keyboard.press('Tab')
+  await page.locator('#post-map').focus()
+  await page.keyboard.press('Enter')
+  await postScreen(page, 'map')
+  await page.screenshot({ path: SHOTS + '/sky-post-map.png' })
+  for (const [i, island] of ['meadow', 'beacon', 'stars'].entries()) {
+    await playIsland(page, island, island !== 'stars')
+    assert.equal((await save(page)).hearts, i + 1)
+    assert.deepEqual((await save(page)).postcards[island].crew, [{ species: 'chick', hatched: false }, { species: 'kitten', hatched: false }])
+    if (i < 2) await postAction(page, 'map').click()
+  }
+  assert.match(await page.locator('.post-letter').textContent(), /Мини-тамагочи/)
+  await postAction(page, 'orchestra').click()
+  for (const n of [0, 3, 1, 2, 0, 1, 3, 2, 3]) await postAction(page, 'record:' + n).click()
+  assert.deepEqual((await save(page)).orchestra, [3, 1, 2, 0, 1, 3, 2, 3])
+  await postAction(page, 'undo').click()
+  await postAction(page, 'perform').click()
+  await page.waitForFunction(() => document.querySelectorAll('.band-score .singing').length === 0)
+  await page.keyboard.press('Escape')
+  await postScreen(page, 'album')
+  await postAction(page, 'read:stars').click()
+  await postAction(page, 'pin').click()
+  assert.equal((await save(page)).windowView, 'stars')
+  await page.keyboard.press('Escape')
+  await page.keyboard.press('Escape')
+  await page.mouse.click(egg.x, egg.y)
+  assert.ok((await save(page)).devices[0].hatched, 'one last knock hatches the egg after three flights')
+  await page.reload()
+  await page.click('#post-album')
+  assert.equal(await postAction(page, 'orchestra').count(), 1)
+  assert.deepEqual((await save(page)).orchestra, [3, 1, 2, 0, 1, 3, 2])
+  assert.equal((await save(page)).windowView, 'stars')
+  await postAction(page, 'map').click()
+  await playIsland(page, 'stars', true)
+  assert.equal((await save(page)).hearts, 3)
+  assert.equal((await save(page)).postcards.stars.crew[0].hatched, false, 'first passengers stay on the card')
+  await postAction(page, 'read:stars').click()
+  await postAction(page, 'pin').click()
+  assert.equal((await save(page)).windowView, null)
+  assert.deepEqual(errors, [])
+  await context.close()
+})
+
+section('Sky Post freezes care, including an unfinished feeding and sleep', async () => {
+  for (const want of ['food', 'sleep']) {
+    const storage = READY(['chick', 'kitten'])
+    storage.devices[0].dots = 2
+    storage.hints.wishes = want === 'food' ? 0 : 9
+    const { page, errors, context } = await open('', { storage })
+    await page.evaluate(() => { window.__tamagochi.game.rnd = () => 0.99 })
+    await until(page, async () => (await devs(page))[0].phase === (want === 'food' ? 'want' : 'sleep'), want)
+    if (want === 'food') {
+      const c = centre((await devs(page))[0].r)
+      await swipe(page, c.x, c.y + 30, 0, -90)
+      await until(page, async () => (await devs(page))[0].left === 1, 'one bite left')
+    }
+    await page.click('#post-map')
+    const snapshot = () => page.evaluate(() => {
+      const { phase, t, dots, left } = { ...window.__tamagochi.scene().devs[0], dots: window.__tamagochi.game.save.devices[0].dots }
+      return { phase, t, dots, left }
+    })
+    const before = await snapshot()
+    await page.waitForTimeout(2150)
+    assert.deepEqual(await snapshot(), before)
+    await page.keyboard.press('Escape')
+    if (want === 'food') {
+      const c = centre((await devs(page))[0].r)
+      await swipe(page, c.x, c.y + 30, 0, -90)
+    }
+    await until(page, async () => (await devs(page))[0].dots === 3, 'care resumed')
+    assert.deepEqual(errors, [])
+    await context.close()
+  }
+})
+
+section('Sky Post localized flight, mute, mobile layouts and unavailable browser APIs', async () => {
+  const { POST } = await import('../src/tamagochi-post-copy.ts')
+  for (const [lang, viewport] of [['ru', { width: 320, height: 568 }], ['de', { width: 844, height: 390 }], ['en', IPAD]]) {
+    const { page, errors, context } = await open('', { viewport, lang })
+    await page.click('#post-map')
+    assert.equal(await page.locator('.post-intro h1').textContent(), POST[lang].title)
+    assert.ok(await page.locator('.island-landscape img').evaluateAll((imgs) => imgs.every((img) => img.complete && img.naturalWidth)))
+    await postAction(page, 'launch:beacon').click()
+    // The delayed landing must display and narrate in the newly selected language.
+    await page.click('#tg-lang')
+    const next = await page.getAttribute('html', 'lang')
+    await postScreen(page, 'puzzle')
+    await heard(page, POST[next].turn)
+    assert.equal(await page.locator('.mission-body h1').textContent(), POST[next].task.beacon)
+    assert.equal(await page.locator('[data-action="mirror:0"]').getAttribute('aria-label'), POST[next].mirror + ' 1')
+    assert.ok(await page.evaluate(() => {
+      const el = document.querySelector('#post-panel')
+      return el.scrollWidth <= el.clientWidth + 1
+    }))
+    await page.click('#tg-sound')
+    await page.waitForTimeout(100)
+    const count = (await spoken(page)).length
+    await postAction(page, 'hint').click()
+    await page.waitForTimeout(450)
+    assert.equal((await spoken(page)).length, count)
+    assert.match(await page.locator('.puzzle-feedback').textContent(), new RegExp(POST[next].turnThis))
+    await page.screenshot({ path: SHOTS + '/sky-post-' + viewport.width + '.png' })
+    assert.deepEqual(errors, [])
+    await context.close()
+  }
+  const context = await browser.newContext({ viewport: { width: 360, height: 640 } })
+  const page = await context.newPage()
+  const errors = []
+  page.on('pageerror', e => errors.push(String(e)))
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('Storage unavailable', 'SecurityError') } })
+    for (const key of ['SpeechSynthesisUtterance', 'AudioContext', 'webkitAudioContext']) Object.defineProperty(window, key, { value: undefined })
+  })
+  await page.goto(GAME)
+  await page.click('#post-map')
+  await playIsland(page, 'meadow')
+  assert.equal((await save(page)).hearts, 1)
+  assert.deepEqual(errors, [])
+  await context.close()
+})
+
 let failed = 0
 for (const { title, fn } of sections) {
   if (process.env.TAMAGOCHI_ONLY && !title.includes(process.env.TAMAGOCHI_ONLY)) continue

@@ -1,9 +1,10 @@
-import type { Game, Scene, SpeciesId } from './tamagochi-kit.ts'
+import type { Game, Rect, Scene, SpeciesId } from './tamagochi-kit.ts'
 import type { CopyKey } from './tamagochi-copy.ts'
 import type { Save } from './tamagochi-state.ts'
 
 /** What the main scenes get on top of `Game`: progress, words and scene changes. */
 export interface Host extends Game {
+  nursery: Rect
   save: Save
   persist(): void
   go(scene: Scene): void

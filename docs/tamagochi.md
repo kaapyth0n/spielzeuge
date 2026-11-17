@@ -28,7 +28,7 @@ A child does not design a whole game, so her words and her drawing are the start
 | «Выбирать, с кем дружить» | The child decides which antennas to link. |
 | Dad asked about breeding new pets: «Нет» | No breeding. New pets come from eggs that friendship hearts unlock. |
 
-Dad asked for a new look, not the style of the earlier toys: the game is drawn in code on one canvas, in a glossy toy style with a thick plum outline. He also asked for it to be fun to play, so the wishes are quick (three wishes take about twenty seconds) and most of the time is spent in the activities.
+Dad asked for a new look, not the style of the earlier toys: the original pets and their activities are drawn in code on one canvas, in a glossy toy style with a thick plum outline. He also asked for it to be fun to play, so the wishes are quick (three wishes take about twenty seconds) and most of the time is spent in the activities.
 
 ## Playing
 
@@ -39,7 +39,7 @@ Dad asked for a new look, not the style of the earlier toys: the game is drawn i
 - **The link.** When a pet has five lights it walks to the right and its antenna glows. With two glowing antennas a ghost line and a finger show what to do. Drag from a glowing antenna (or the shell above the screen) to another tamagotchi: pencil dashes follow the finger, with a rising note for every dash. Letting go on a pet that still has a wish shakes that tamagotchi and names the pet. With three or four tamagotchis there are 2.4 seconds to add more links before the pets set off.
 - **The journey.** The pets turn into sparks, run up their antennas, along the dashes and down into the host's screen (the tamagotchi the first line was drawn to), which grows to fill the display.
 - **The visit.** The pets stand together in the host's room. Six big buttons start the activities; a star marks the ones never played. Move a pet onto another for a hug. Two activities fit into one visit (two small lights next to the home button count them), then the pets get hungry and go home by themselves. The home button leaves earlier.
-- **Friendship hearts.** Every finished activity and the first hug of a visit give one heart. The pill in the top left counts them and shows the way to the next egg: 3 hearts for the mini-tamagotchi, 7 for the bunny, 12 for the little penguin, 18 for the puppy. A tap on the pill says how many are missing.
+- **Friendship hearts.** Every finished activity, the first hug of a visit and the first postal delivery to each island give one heart. The heart pill counts them and shows the way to the next egg: 3 hearts for the mini-tamagotchi, 7 for the bunny, 12 for the little penguin, 18 for the puppy. A tap on the pill says how many are missing.
 - **Who lives where.** The small egg button at the bottom of a tamagotchi opens «Кто вылупится?»: every unlocked pet that does not live in another tamagotchi can move in (as a new egg, with two lights). Locked pets are mystery eggs with the number of hearts they need. Each pet keeps its hairdo and accessories when it moves out and back in. With more than two tamagotchis the card can also put the tamagotchi away. The card sits below the corner buttons, so its cross is never under the home button.
 - **Things.** Gifts and wire crafts are a shared collection. Wearables (crown, glasses, scarf, bows…) are put on in Причёски; toys and decorations (rug, lamp, picture, garland, clock, plant, ball, teddy…) appear in the tamagotchis' rooms at home.
 
@@ -56,6 +56,29 @@ Each activity is a separate file with its own words in three languages, `src/tam
 | **Подарки** | The giver chooses one of three boxes, it flies to the friend along a dashed line, three taps open it. There are 24 gifts; a new one every time until the collection is complete. |
 | **Бантики** | Choose a wire colour and a shape (bow and heart at first; star, flower, butterfly, crown and glasses come with practice), trace the dotted line to bend the wire, and choose who wears it. |
 
+## Sky Post
+
+Open the flight map on the home screen and choose any island. The current residents travel together, including unhatched eggs in their basket. During the flight the nursery clock stops. Returning to it resumes the same egg cracks, unfinished wishes and sleep timer.
+
+| Island | What to do |
+| --- | --- |
+| Singing Meadow | Listen to the three flowers or look at the illustrated score. Play back a three-note tune and then a four-note tune. You can listen again at any time. |
+| Windward Light | Turn three mirrors to steer a real beam from the sun to the lantern. A basket hint highlights the next mirror to turn. |
+| Starlight Bay | Tap the numbered stars in order or trace the constellation with one continuous finger stroke. The drawing stays in place if you miss a star. |
+
+Deliver the letter after finishing the puzzle. Each island sends its own thank-you postcard and grants one friendship heart on the first delivery. The album remembers which residents and eggs were aboard. Pin a postcard to display the landscape inside each tamagochi. You can revisit all three islands and try another puzzle.
+
+With all three postcards, the album opens the Balloon Orchestra. Four balloons play four pitches in the travelling residents’ voices. Eggs ring like bells. The album saves the last eight notes. Play back your tune or undo its last note. The post office, puzzles, album and orchestra support touch and keyboard controls. Escape returns one screen.
+
+<details>
+<summary>Island illustration and source</summary>
+
+The built-in ImageGen tool generated the island panorama for this game. The three postcards are crops of the same panorama. The original direction was a vintage illustrated airmail poster with a poppy meadow and windmill on the left, a red and ivory lighthouse in the middle, and a copper-domed observatory under a starry sky on the right. The illustration contains no text. The game adds the stamp, pet drawings, translated lettering and interactive puzzles separately.
+
+[Panorama](../public/tamagochi/sky-post.webp) · [Meadow](../public/tamagochi/meadow.webp) · [Beacon](../public/tamagochi/beacon.webp) · [Stars](../public/tamagochi/stars.webp)
+
+</details>
+
 ## Languages, speech and sound
 
 - Russian, German and English, with the shared `spielzeuge.lang` preference and `?lang=`. The RU/DE/EN button in the top right cycles the language and says its name; the next spoken line is already in the new language.
@@ -66,7 +89,7 @@ Each activity is a separate file with its own words in three languages, `src/tam
 
 ## Saved progress
 
-`localStorage` key `spielzeuge.tamagochi.v1`: the tamagotchis (pet, hatched, lights), each pet's look, the hearts, the collection, how often each activity was played and how often each hint was shown. Anything broken in storage is repaired or replaced by a fresh game (`parseSave`). Without storage the game still plays and forgets on reload.
+`localStorage` key `spielzeuge.tamagochi.v1`: the tamagotchis (pet, hatched, lights), each pet's look, the hearts, the collection, activity and hint counts, first-delivery postcards and their passengers, the postcard in the window and the orchestra tune. Anything broken in storage is repaired or replaced by a fresh game (`parseSave`). Without storage the game still plays and forgets on reload.
 
 ## Code
 
@@ -75,6 +98,7 @@ Each activity is a separate file with its own words in three languages, `src/tam
 | `src/tamagochi.ts` | The frame: canvas, game loop, fingers (tap, swipe, drag, several at once), language, sound and the corner buttons |
 | `src/tamagochi-home.ts` | The tamagotchis: wishes, lights, eggs, the link, the journey, the pet picker |
 | `src/tamagochi-meet.ts` | The visit: the room, hugs, the activity buttons, stars and hearts, going home |
+| `src/tamagochi-post*.ts` | Flight map, islands, puzzle rules, postcards, orchestra, translations and artwork helpers |
 | `src/tamagochi-game-*.ts` | The six activities |
 | `src/tamagochi-pets.ts` | The eight pets, hairdos, accessories and wire shapes, all drawn from code and posable |
 | `src/tamagochi-items.ts` | Food, poop, the ball, gifts and room decorations |
@@ -88,7 +112,7 @@ Development shortcuts: `/tamagochi/?fresh=1` ignores and does not write saved pr
 ## Checks
 
 - `npm test` runs `src/tamagochi-state.test.ts`: the fresh game, the heart ladder, the wish rules, repair of stored progress, the words in three languages, gifts and wire shapes.
-- `npm run test:tamagochi` plays the game in Chrome against a running server (`TAMAGOCHI_BASE_URL`, default `http://localhost:5173`): hatching, every wish with its gesture, the wrong gesture, the link and a refused link, the journey, the hug, all six activities to their stars, going home, the pet picker with a third tamagotchi, languages, mute, saved progress and five screen sizes. Screenshots go to `tmp/tamagochi/spec/`.
+- `npm run test:tamagochi` plays the game in Chrome against a running server (`TAMAGOCHI_BASE_URL`, default `http://localhost:5173`): hatching, every wish with its gesture, the wrong gesture, the link and a refused link, the journey, the hug, all six activities to their stars, going home, the pet picker with a third tamagotchi, languages, mute, saved progress and five screen sizes. Sky Post checks play every island, test returning to interrupted care, replay and pin postcards, compose a tune, and complete a delivery without browser storage, speech or audio. Screenshots go to `tmp/tamagochi/spec/`.
 
 ## Not in the game yet
 

@@ -38,6 +38,13 @@ export interface Device {
   dots: number
 }
 
+export const ISLANDS = ['meadow', 'beacon', 'stars'] as const
+export type Island = (typeof ISLANDS)[number]
+export type Passenger = Pick<Device, 'species' | 'hatched'>
+export interface Postcard {
+  crew: Passenger[]
+}
+
 export interface Save {
   v: 1
   devices: Device[]
@@ -45,6 +52,9 @@ export interface Save {
   hearts: number
   owned: string[]
   played: Partial<Record<ActivityId, number>>
+  postcards: Partial<Record<Island, Postcard>>
+  orchestra: number[]
+  windowView: Island | null
   /** How often each hint was already shown. */
   hints: Record<string, number>
 }
@@ -61,6 +71,9 @@ export function freshSave(): Save {
     hearts: 0,
     owned: [],
     played: {},
+    postcards: {},
+    windowView: null,
+    orchestra: [],
     hints: {},
   }
 }
@@ -107,6 +120,22 @@ export function parseSave(raw: unknown): Save {
       const look = (r.looks as Record<string, unknown>)[s]
       if (look) save.looks[s] = parseLook(s, look)
     }
+  if (r.postcards && typeof r.postcards === 'object') {
+    for (const island of ISLANDS) {
+      const card = (r.postcards as Record<string, Partial<Postcard> | null>)[island]
+      if (!Array.isArray(card?.crew)) continue
+      const crew: Passenger[] = []
+      for (const p of card.crew) {
+        if (p && isSpecies(p.species) && !crew.some((c) => c.species === p.species))
+          crew.push({ species: p.species, hatched: p.hatched === true })
+        if (crew.length === MAX_DEVICES) break
+      }
+      if (crew.length) save.postcards[island] = { crew }
+    }
+  }
+  if (Array.isArray(r.orchestra)) save.orchestra = r.orchestra.filter((n): n is number => Number.isInteger(n) && n >= 0 && n < 4).slice(-8)
+  const view = ISLANDS.find((id) => id === r.windowView)
+  if (view && save.postcards[view]) save.windowView = view
   for (const key of ['played', 'hints'] as const) {
     const src = r[key]
     if (src && typeof src === 'object')
@@ -171,3 +200,10 @@ export function pickWant(prev: Want | null, slept: boolean, done: number, rnd: (
 
 /** How many gestures a wish takes. */
 export const WANT_COUNT: Record<Want, number> = { food: 2, poop: 1, play: 2, sleep: 1 }
+
+/** Keep the passengers from the first delivery. Only a first delivery earns a heart. */
+export function deliverPostcard(save: Save, island: Island, crew: Passenger[]) {
+  if (save.postcards[island]) return { first: false, egg: null }
+  save.postcards[island] = { crew: crew.map(({ species, hatched }) => ({ species, hatched })) }
+  return { first: true, egg: addHeart(save) }
+}

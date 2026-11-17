@@ -5,7 +5,15 @@
 import '@fontsource/nunito/cyrillic-900.css'
 import '@fontsource/nunito/latin-900.css'
 import '@fontsource/nunito/latin-ext-900.css'
+import '@fontsource/pt-serif/cyrillic-700.css'
+import '@fontsource/pt-serif/latin-700.css'
+import '@fontsource/nunito/cyrillic-700.css'
+import '@fontsource/nunito/latin-700.css'
 import './tamagochi.css'
+import './tamagochi-post.css'
+import { SkyPost } from './tamagochi-post.ts'
+import { POST } from './tamagochi-post-copy.ts'
+import { POST_ICONS as I } from './tamagochi-post-art.ts'
 import { LANG_LABEL, loadLang, nextLang, saveLang, type Lang } from './languages.ts'
 import { PuppyNarration } from './sobachka-narration.ts'
 import { PET_NAME, TAMAGOCHI_COPY, fill, type CopyKey } from './tamagochi-copy.ts'
@@ -14,14 +22,25 @@ import { SPECIES, type Dir, type Pointer, type Scene, type SpeciesId } from './t
 import { HomeScene } from './tamagochi-home.ts'
 import { MeetScene } from './tamagochi-meet.ts'
 import { TamaSfx } from './tamagochi-sfx.ts'
-import { ACTIVITIES, DOTS, SOUND_KEY, freshSave, loadSave, storeSave, type ActivityId } from './tamagochi-state.ts'
+import { ACTIVITIES, DOTS, SOUND_KEY, freshSave, loadSave, nextUnlock, storeSave, type ActivityId } from './tamagochi-state.ts'
 
 const SWIPE_PX = 30
 const TOP_BAR = 64
 
 const root = document.querySelector<HTMLElement>('#tamagochi-app')!
 root.innerHTML = `
+  <div class="tg-home-layout">
+    <section class="tg-dispatch"><div class="dispatch-visual" aria-hidden="true"></div>
+      <div class="dispatch-paper"><h1 id="dispatch-title"></h1><p id="dispatch-hint"></p>
+      <div class="dispatch-actions"><button id="post-map" class="post-button">${I.map}<span></span>${I.arrow}</button>
+      <button id="post-album" class="post-soft">${I.book}<span></span></button></div></div></section>
+    <div class="tg-nursery-head"><h2 id="nursery-title"></h2><div class="nursery-rule"></div>
+      <button id="nursery-hearts" class="heart-pill"></button></div>
+    <div class="tg-nursery-stage" aria-hidden="true"></div>
+  </div>
   <canvas id="tg-canvas" role="img"></canvas>
+  <div class="post-panel" id="post-panel" hidden></div>
+  <div class="tg-brand"><span class="brand-icon">${I.balloon}</span><div><strong id="brand-name"></strong><small id="brand-author"></small></div></div>
   <div class="tg-chrome">
     <button type="button" class="tg-btn" id="tg-sound" aria-pressed="true"></button>
     <button type="button" class="tg-btn" id="tg-lang"></button>
@@ -87,6 +106,8 @@ function pumpSpeech(): void {
 function hush(): void {
   queue.length = 0
   line.text = ''
+  window.clearTimeout(captionTimer)
+  caption.classList.remove('is-on')
   narration.silence()
 }
 
@@ -94,6 +115,7 @@ const game: Host = {
   w: 0,
   h: 0,
   safe: { x: 0, y: TOP_BAR, w: 0, h: 0 },
+  nursery: { x: 0, y: TOP_BAR, w: 0, h: 0 },
   time: 0,
   get lang() {
     return lang
@@ -116,11 +138,14 @@ const game: Host = {
   },
   persist() {
     if (!params.has('fresh')) storeSave(game.save)
+    refreshCounters()
   },
   go(next) {
     scene?.leave?.()
     pointers.clear()
     scene = next
+    root.dataset.mode = next instanceof HomeScene ? 'home' : 'meet'
+    refreshCounters()
     scene.enter?.()
   },
   t(key: CopyKey, vars) {
@@ -131,8 +156,57 @@ const game: Host = {
   },
 }
 
+const nursery = root.querySelector<HTMLElement>('.tg-nursery-stage')!
+const postPanel = root.querySelector<HTMLElement>('#post-panel')!
+const mapButton = root.querySelector<HTMLButtonElement>('#post-map')!
+const albumButton = root.querySelector<HTMLButtonElement>('#post-album')!
+const heartsButton = root.querySelector<HTMLButtonElement>('#nursery-hearts')!
+let returnButton = mapButton
+const post = new SkyPost(game, postPanel, hush, () => {
+  root.dataset.mode = 'home'
+  canvas.removeAttribute('aria-hidden')
+  refreshCounters()
+  returnButton.focus({ preventScroll: true })
+  game.say(POST[lang].home)
+})
+
+function refreshCounters() {
+  root.classList.toggle('many-devices', game.save.devices.length > 2)
+  const count = Object.keys(game.save.postcards).length
+  albumButton.querySelector('span')!.textContent = POST[lang].album + ' · ' + count + '/3'
+  const next = nextUnlock(game.save)
+  const title = game.t('hearts', { n: game.save.hearts }) + (next ? ' ' + game.t('heartsNext', { n: next.need - game.save.hearts }) : '')
+  heartsButton.setAttribute('aria-label', title)
+  heartsButton.title = title
+  heartsButton.innerHTML = `<b aria-hidden="true">♥</b> ${game.save.hearts}${next ? '<i><em style="width:' + (100 * (game.save.hearts - next.from) / (next.need - next.from)) + '%"></em></i><span aria-hidden="true">🥚</span>' : ''}`
+}
+
+function openPost(page: 'map' | 'album') {
+  if (!(scene instanceof HomeScene) || !scene.canDepart || pointers.size) return
+  prime()
+  returnButton = page === 'map' ? mapButton : albumButton
+  root.dataset.mode = 'post'
+  canvas.setAttribute('aria-hidden', 'true')
+  post.open(page)
+}
+mapButton.onclick = () => openPost('map')
+albumButton.onclick = () => openPost('album')
+heartsButton.onclick = () => { prime(); if (scene instanceof HomeScene) scene.describeHearts() }
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && post.active) { e.preventDefault(); post.back() }
+})
+postPanel.addEventListener('click', prime, { capture: true })
+
 function applyChrome(): void {
   const c = TAMAGOCHI_COPY[lang]
+  const p = POST[lang]
+  root.querySelector('#brand-name')!.textContent = c.name
+  root.querySelector('#brand-author')!.textContent = c.byline
+  root.querySelector('#dispatch-title')!.textContent = p.title
+  root.querySelector('#dispatch-hint')!.textContent = p.homeHint
+  root.querySelector('#nursery-title')!.textContent = p.home
+  mapButton.querySelector('span')!.textContent = p.map
+  refreshCounters()
   document.documentElement.lang = lang
   document.title = c.documentTitle
   document.querySelector('meta[name="description"]')?.setAttribute('content', c.description)
@@ -166,6 +240,7 @@ langBtn.addEventListener('click', () => {
   queue.length = 0
   line.text = ''
   narration.languageChanged()
+  post.languageChanged()
 })
 
 soundBtn.addEventListener('click', () => {
@@ -189,6 +264,8 @@ function resize(): void {
   canvas.width = Math.round(game.w * dpr)
   canvas.height = Math.round(game.h * dpr)
   game.safe = { x: 0, y: TOP_BAR, w: game.w, h: game.h - TOP_BAR }
+  const bounds = nursery.getBoundingClientRect()
+  game.nursery = { x: bounds.x, y: bounds.y, w: bounds.width, h: bounds.height }
   scene?.resize?.()
 }
 
@@ -250,6 +327,17 @@ function frame(now: number): void {
   const dt = Math.min(0.05, Math.max(0, (now - last) / 1000))
   last = now
   if (!scene) return
+  if (post.active) {
+    if (!document.hidden) post.tick(dt)
+    pumpSpeech()
+    return
+  }
+  if (scene instanceof HomeScene) {
+    const overlay = !!scene.picker || !!scene.travel
+    if (root.classList.contains('tg-overlay') !== overlay) root.classList.toggle('tg-overlay', overlay)
+    const disabled = !scene.canDepart
+    if (mapButton.disabled !== disabled) mapButton.disabled = albumButton.disabled = disabled
+  } else if (root.classList.contains('tg-overlay')) root.classList.remove('tg-overlay')
   // Tests may run the clock faster; each step stays a normal frame long.
   const steps = Math.max(1, Math.min(8, Math.round(window.__tamagochi?.speed ?? 1)))
   for (let i = 0; i < steps; i++) {
@@ -285,6 +373,7 @@ function start(): void {
   raf = requestAnimationFrame(frame)
 }
 
+new ResizeObserver(resize).observe(nursery)
 window.addEventListener('resize', resize)
 window.addEventListener('orientationchange', resize)
 document.addEventListener('visibilitychange', () => {
@@ -295,14 +384,17 @@ document.addEventListener('visibilitychange', () => {
 })
 window.addEventListener('pagehide', () => {
   cancelAnimationFrame(raf)
-  narration.silence()
+  hush()
   sfx.suspend()
   game.persist()
 })
 window.addEventListener('pageshow', (e) => {
   // Coming back through the browser's history starts a fresh sitting.
   if (e.persisted) {
-    game.save = loadSave()
+    postPanel.hidden = true
+    hush()
+    canvas.removeAttribute('aria-hidden')
+    game.save = params.has('fresh') ? freshSave() : loadSave()
     start()
   }
 })

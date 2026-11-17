@@ -1,0 +1,1346 @@
+/* Printed airmail stationery and a live toy shelf. The canvas stays in viewport coordinates. */
+#tamagochi-app {
+  --ink: #193e40;
+  --muted: #48625d;
+  --paper: #fffaed;
+  --gutter: clamp(14px, 4.1vw, 82px);
+  --bar: max(68px, calc(env(safe-area-inset-top) + 54px));
+  color: var(--ink);
+  background-color: #f5edda;
+  background-image:
+    radial-gradient(#ab9b753a 0.85px, transparent 0.95px), radial-gradient(ellipse at 48% 77%, #e9efdc 0%, transparent 65%);
+  background-size:
+    14px 14px,
+    100% 100%;
+  font-family: Nunito, sans-serif;
+}
+#tamagochi-app *,
+#tamagochi-app *::before,
+#tamagochi-app *::after {
+  box-sizing: border-box;
+}
+#tamagochi-app [hidden] {
+  display: none !important;
+}
+#tamagochi-app button {
+  cursor: pointer;
+  color: inherit;
+  font-family: inherit;
+}
+#tamagochi-app button:focus-visible,
+#tamagochi-app a:focus-visible {
+  outline: 3px solid #ec7336;
+  outline-offset: 3px;
+}
+#tamagochi-app svg {
+  display: block;
+}
+.tg-brand {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--bar);
+  padding: env(safe-area-inset-top) var(--gutter) 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff9ec;
+  border-bottom: 1px solid #cdbfa2;
+  pointer-events: none;
+}
+.tg-brand strong,
+.tg-brand small {
+  display: block;
+}
+.tg-brand strong {
+  font:
+    700 clamp(17px, 2vw, 25px)/1.09 'PT Serif',
+    Georgia,
+    serif;
+  letter-spacing: -0.035em;
+}
+.tg-brand small {
+  color: #5d6b5d;
+  font-weight: 700;
+  font-size: 11px;
+  margin-top: 2px;
+}
+.brand-icon {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border: 1px solid #b8b191;
+  border-radius: 13px;
+  background: #f3ecd4;
+  transform: rotate(-5deg);
+}
+.brand-icon svg {
+  width: 29px;
+  height: 29px;
+}
+.tg-chrome {
+  z-index: 3;
+  top: max(9px, calc(env(safe-area-inset-top) + 7px));
+  right: max(var(--gutter), env(safe-area-inset-right));
+  gap: 7px;
+}
+.tg-btn {
+  width: 45px;
+  height: 45px;
+  background: #fffdf3;
+  color: var(--ink);
+  border: 1.5px solid #a7ad94;
+  border-radius: 13px;
+  box-shadow: 0 2px 0 #bdbea4;
+  font-size: 16px;
+}
+.tg-btn[aria-pressed='false'] {
+  background: #eee8da;
+  color: #706c62;
+}
+.tg-btn svg {
+  width: 23px;
+  height: 23px;
+}
+[data-mode='meet'] .tg-brand {
+  display: none;
+}
+[data-mode='meet'] .tg-chrome {
+  right: max(8px, env(safe-area-inset-right));
+}
+.tg-home-layout {
+  z-index: 1;
+  position: absolute;
+  inset: var(--bar) var(--gutter) max(70px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-rows: clamp(155px, 29vh, 300px) auto minmax(0, 1fr);
+  padding-top: clamp(12px, 2.6vh, 32px);
+  visibility: hidden;
+  pointer-events: none;
+}
+[data-mode='home']:not(.tg-overlay) .tg-home-layout {
+  visibility: visible;
+}
+.tg-dispatch {
+  display: flex;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 17px;
+  background: var(--paper);
+  border: 1px solid #b1aa90;
+  box-shadow:
+    0 4px 0 #cfc5aa,
+    0 9px 18px #55482a12;
+}
+.tg-dispatch::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 8px;
+  background: repeating-linear-gradient(143deg, #548188 0 9px, #faf0d4 9px 18px, #cf7460 18px 27px, #faf0d4 27px 36px);
+}
+.dispatch-visual {
+  position: absolute;
+  inset: 0 0 0 42%;
+  background: #75a9a5 url('/tamagochi/sky-post.webp') 50% 43% / cover;
+}
+.dispatch-paper {
+  width: 50%;
+  padding: clamp(12px, 2.3vh, 28px) clamp(20px, 3vw, 52px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  background: var(--paper);
+  clip-path: polygon(
+    0 0,
+    98% 0,
+    97.6% 7%,
+    98.5% 14%,
+    97.8% 21%,
+    98.6% 30%,
+    98% 38%,
+    99% 46%,
+    98.3% 57%,
+    99% 65%,
+    98.5% 72%,
+    99.4% 82%,
+    99% 93%,
+    100% 100%,
+    0 100%
+  );
+}
+.dispatch-paper h1,
+.tg-nursery-head h2,
+.post-panel h1,
+.island-caption strong {
+  font-family: 'PT Serif', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  margin: 0;
+}
+.dispatch-paper h1 {
+  font-size: clamp(32px, 4.1vw, 72px);
+  line-height: 1.06;
+}
+.dispatch-paper p {
+  font-weight: 700;
+  color: var(--muted);
+  font-size: clamp(14px, 1.22vw, 18px);
+  line-height: 1.35;
+  margin: 9px 0 16px;
+  max-width: 39ch;
+}
+.dispatch-actions,
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px 16px;
+  flex-wrap: wrap;
+}
+.dispatch-actions button,
+.tg-nursery-head button {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
+.post-button,
+.post-soft,
+.post-back,
+.post-tabs button {
+  border: 0;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.2;
+  border-radius: 100px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+  gap: 7px;
+  padding: 8px 15px;
+}
+#tamagochi-app .post-button {
+  background: #214f4a;
+  color: #fff9e7;
+  box-shadow: 0 2px 0 #143b36;
+}
+.post-button:hover {
+  filter: brightness(1.12);
+}
+.post-button:active,
+.post-soft:active {
+  transform: translateY(1px);
+}
+.post-soft {
+  background: transparent;
+  border: 1px solid #c3c5ac;
+}
+.post-button svg,
+.post-soft svg,
+.post-back svg,
+.post-tabs svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+.post-button:disabled,
+.post-soft:disabled {
+  opacity: 0.62;
+}
+.tg-nursery-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: clamp(13px, 2.3vh, 30px) 0 4px;
+}
+.tg-nursery-head h2 {
+  font-size: clamp(21px, 2.3vw, 35px);
+  line-height: 1.15;
+}
+.nursery-rule {
+  flex: 1;
+  border-top: 1px dashed #a8ac8e;
+}
+.heart-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 4px 11px;
+  min-height: 44px;
+  background: #fff9e8;
+  border: 1px solid #b9ba9c;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 900;
+}
+.heart-pill b {
+  color: #c85c5d;
+  font-size: 20px;
+}
+.heart-pill span {
+  font-size: 15px;
+}
+.heart-pill i {
+  display: inline-block;
+  width: 38px;
+  height: 6px;
+  background: #e5d9c6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.heart-pill em {
+  display: block;
+  height: 100%;
+  background: #d5786e;
+  border-radius: inherit;
+}
+.tg-nursery-stage {
+  min-height: 0;
+  pointer-events: none;
+}
+.tg-caption {
+  z-index: 2;
+  max-width: min(75vw, 690px);
+  width: max-content;
+  min-width: 0;
+  border: 1.5px solid #b0ae92;
+  color: var(--ink);
+  background: var(--paper);
+  box-shadow: 0 2px 0 #c3bda5;
+}
+[data-mode='post'] #tg-canvas {
+  visibility: hidden;
+}
+[data-mode='post'] .tg-caption {
+  clip-path: inset(50%);
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+.post-panel {
+  position: absolute;
+  inset: var(--bar) 0 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background:
+    radial-gradient(#aa966a40 0.8px, transparent 0.9px) 0 0 / 12px 12px,
+    #f5efdf;
+}
+.post-wrap {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 17px var(--gutter) max(30px, env(safe-area-inset-bottom));
+}
+.post-back {
+  background: #fffaec;
+  border: 1px solid #c9c2a9;
+  font-size: 14px;
+  min-height: 44px;
+}
+.post-back svg {
+  width: 14px;
+}
+.post-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 18px 0 4px;
+}
+.post-panel h1 {
+  font-size: clamp(32px, 4.2vw, 60px);
+  line-height: 1.08;
+}
+.post-panel h1:focus {
+  outline: none;
+}
+.post-tabs {
+  display: inline-flex;
+  border: 1px solid #bbb79c;
+  padding: 3px;
+  border-radius: 30px;
+  background: var(--paper);
+}
+.post-tabs button {
+  background: transparent;
+  font-size: 14px;
+  min-height: 42px;
+  padding: 8px 12px;
+}
+#tamagochi-app .post-tabs button[aria-pressed='true'] {
+  background: #244e49;
+  color: #fff9e5;
+}
+.post-subtitle {
+  font-size: clamp(16px, 1.5vw, 21px);
+  color: var(--muted);
+  font-weight: 700;
+  margin: 8px 0 19px;
+}
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 28px);
+}
+.island-card {
+  padding: 8px;
+  border: 1px solid #bdb299;
+  border-radius: 9px;
+  background: #fffaec;
+  text-align: left;
+  box-shadow: 0 4px 0 #d1c7aa;
+  transition: transform 0.18s;
+}
+.island-card:hover {
+  transform: translateY(-3px);
+}
+.island-landscape {
+  position: relative;
+  display: block;
+  height: clamp(150px, 32vh, 330px);
+  overflow: hidden;
+  border-radius: 4px;
+}
+.island-landscape img,
+.mission-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.post-stamp {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 46px;
+  border: 3px dotted #fff9e6;
+  box-shadow: 0 0 0 2px #fffae5;
+  outline: 1px solid #384a4366;
+  font:
+    bold 25px/1 Georgia,
+    serif;
+  color: #fff5d2;
+  transform: rotate(7deg);
+}
+.post-stamp.meadow {
+  background: #af5547;
+}
+.post-stamp.beacon {
+  background: #317a79;
+}
+.post-stamp.stars {
+  background: #515181;
+}
+.arrived-mark {
+  position: absolute;
+  left: 9px;
+  bottom: 9px;
+  background: #fff6d8;
+  border-radius: 50%;
+  padding: 4px;
+}
+.arrived-mark svg {
+  width: 21px;
+}
+.island-caption {
+  display: block;
+  padding: 12px 8px 8px;
+}
+.island-caption strong {
+  display: block;
+  font-size: clamp(21px, 2.5vw, 34px);
+}
+.island-caption > span {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.island-caption svg {
+  width: 20px;
+  flex-shrink: 0;
+}
+.not-collected img {
+  filter: saturate(0.4);
+}
+.post-crew {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+  margin-top: 22px;
+}
+.post-crew canvas {
+  max-width: 53%;
+  object-fit: contain;
+  height: 46px;
+  border-bottom: 3px solid #bd9361;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(transparent 76%, #e8c48b 76%);
+}
+.post-crew span {
+  font-size: 14px;
+  font-weight: 900;
+}
+.post-crew small {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.post-eggs {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 14px;
+  margin: 8px 0;
+}
+.post-mission {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.25fr);
+  min-height: min(515px, 67vh);
+  margin-top: 14px;
+  border-radius: 17px;
+  overflow: hidden;
+  background: var(--paper);
+  border: 1px solid #b7b298;
+  box-shadow: 0 4px 0 #cfc6ac;
+}
+.mission-picture {
+  position: relative;
+  min-height: 160px;
+}
+.mission-picture img {
+  position: absolute;
+  inset: 0;
+}
+.mission-picture > span:last-child {
+  position: absolute;
+  bottom: 18px;
+  left: 12px;
+  right: 12px;
+  width: fit-content;
+  padding: 5px 10px;
+  background: #fff9e8ed;
+  font-size: 14px;
+  font-weight: 900;
+  border-radius: 4px;
+}
+.mission-body {
+  padding: clamp(18px, 3.3vw, 50px);
+}
+.mission-body h1 {
+  font-size: clamp(26px, 3.3vw, 52px);
+}
+.puzzle-instruction {
+  margin: 9px 0 14px;
+  font-size: clamp(15px, 1.35vw, 19px);
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--muted);
+}
+.puzzle-feedback {
+  min-height: 34px;
+  margin: 12px 0 0;
+  text-align: center;
+  font-weight: 900;
+}
+.post-letter {
+  max-width: 32ch;
+  font:
+    700 clamp(19px, 2vw, 29px)/1.45 'PT Serif',
+    Georgia,
+    serif;
+  color: #52665b;
+}
+.letter-page .post-crew {
+  margin: 22px 0;
+}
+.post-flight {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  text-align: center;
+  min-height: min(520px, 72vh);
+  padding: 22px;
+  margin-top: 12px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f4e7bd;
+}
+.post-flight::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(#fff6d7dd, #fff6d7da),
+    url('/tamagochi/sky-post.webp') center/cover;
+}
+.flying-balloon {
+  width: 80px;
+  color: var(--ink);
+  animation: soar 1.8s ease-in-out infinite alternate;
+}
+@keyframes soar {
+  from {
+    transform: translate(-9px, 5px) rotate(-5deg);
+  }
+  to {
+    transform: translate(10px, -9px) rotate(5deg);
+  }
+}
+.post-flight h1 {
+  margin-top: 10px;
+}
+.post-flight p {
+  margin: 5px;
+  font-size: 22px;
+  font-weight: 900;
+}
+.post-flight .post-crew {
+  margin: 10px 0 18px;
+}
+.score-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+}
+.score-head button {
+  min-height: 44px;
+}
+.flower-score {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0 16px;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px dashed #c1b693;
+  border-bottom: 1px dashed #c1b693;
+  padding: 8px 0;
+}
+.flower-score span {
+  position: relative;
+  width: clamp(36px, 4.2vw, 60px);
+  padding: 3px;
+  border-radius: 9px;
+  border: 2px solid transparent;
+}
+.flower-score .current {
+  border-color: #37756a;
+}
+.flower-score .played {
+  background: #dfe9ce;
+}
+.flower-score .played svg:last-child {
+  width: 16px;
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  background: #f4f4d7;
+  border-radius: 50%;
+}
+.flower-keys {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.flower-key {
+  display: grid;
+  justify-items: center;
+  align-items: end;
+  gap: 3px;
+  min-height: 92px;
+  padding: 7px 3px;
+  border-radius: 15px;
+  border: 1px solid #c2ae85;
+  background: #f8e5c8;
+  font-size: clamp(12px, 1.25vw, 16px);
+  font-weight: 900;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.flower-key svg {
+  width: min(100%, 75px);
+}
+.flower-1 {
+  background: #f4ebc4;
+}
+.flower-2 {
+  background: #e8e2ef;
+}
+.flower-key.glowing {
+  outline: 3px solid #de9a38;
+  background: #fff1b3;
+}
+.flower-key:active {
+  transform: scale(0.96);
+}
+.beam-chart,
+.star-chart {
+  position: relative;
+  margin: 10px auto;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.beam-chart {
+  width: min(100%, 300px);
+  aspect-ratio: 1;
+  background-color: #1f4b4c;
+  background-image: linear-gradient(#c5ece51a 1px, transparent 1px), linear-gradient(90deg, #c5ece51a 1px, transparent 1px);
+  background-size: 18.75% 18.75%;
+  background-position: 12.5% 12.5%;
+  border: 4px solid #b8b594;
+}
+.beam-lines,
+.star-chart > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.beam-lines polyline {
+  fill: none;
+  stroke: #ffdc75;
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.beam-lines .beam-glow {
+  stroke: #f2ac47;
+  stroke-width: 3;
+  opacity: 0.4;
+}
+.beam-marker,
+.mirror,
+.chart-star {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.beam-marker {
+  width: 7%;
+  height: 7%;
+  display: grid;
+  place-content: center;
+  color: #ffe48a;
+  font-size: clamp(16px, 2vw, 24px);
+}
+.beam-marker.lantern {
+  color: #fff6d1;
+  font-size: 22px;
+}
+.beam-chart.lit .lantern {
+  color: #ffdd4f;
+  text-shadow: 0 0 10px #ffda36;
+}
+.mirror {
+  width: max(44px, 17%);
+  height: max(44px, 17%);
+  border: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
+}
+.mirror i {
+  width: 70%;
+  height: 9px;
+  border: 2px solid #c6e7db;
+  border-bottom: 3px solid #6dabb2;
+  background: #fff7cf;
+  border-radius: 4px;
+  transform: rotate(45deg);
+}
+.mirror[aria-pressed='true'] i {
+  transform: rotate(-45deg);
+}
+.star-chart {
+  width: 100%;
+  height: clamp(190px, 28vh, 330px);
+  touch-action: none;
+  background:
+    radial-gradient(ellipse at 75% 65%, #68658b, transparent 65%),
+    radial-gradient(#e9d7ab 1px, transparent 1.4px) 11px 7px/31px 33px,
+    radial-gradient(#e5d3d599 1px, transparent 1.3px) 0 0/47px 39px,
+    #243954;
+}
+.star-chart polyline {
+  fill: none;
+  stroke: #f4cf76;
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+}
+.chart-star {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  touch-action: none;
+}
+.chart-star i {
+  font:
+    normal 31px/1 Georgia,
+    serif;
+  color: #f9efd5;
+}
+.chart-star b {
+  position: absolute;
+  bottom: 2px;
+  right: 1px;
+  font:
+    900 12px/1 Nunito,
+    sans-serif;
+  color: white;
+  background: #33445b;
+  padding: 2px;
+  border-radius: 5px;
+}
+.chart-star.next {
+  outline: 2px dashed #ffe098;
+  outline-offset: -4px;
+}
+.chart-star.joined i {
+  color: #ffd277;
+  text-shadow: 0 0 9px #ffd277;
+}
+@media (max-width: 850px) {
+  .dispatch-actions {
+    gap: 5px;
+  }
+  .dispatch-actions button {
+    font-size: 13px;
+    padding-inline: 9px;
+  }
+  .dispatch-paper {
+    width: 55%;
+  }
+  .dispatch-visual {
+    left: 48%;
+  }
+  .tg-home-layout {
+    grid-template-rows: clamp(158px, 25vh, 235px) auto minmax(0, 1fr);
+  }
+}
+@media (max-width: 620px) and (min-height: 501px) {
+  #tamagochi-app {
+    --gutter: 12px;
+    --bar: max(59px, calc(env(safe-area-inset-top) + 53px));
+  }
+  .tg-brand {
+    gap: 6px;
+  }
+  .tg-brand strong {
+    font-size: 16px;
+  }
+  .brand-icon {
+    width: 30px;
+    height: 34px;
+  }
+  .brand-icon svg {
+    width: 24px;
+    height: 27px;
+  }
+  .tg-brand small {
+    font-size: 10px;
+  }
+  .tg-chrome {
+    gap: 4px;
+    right: 8px;
+    top: max(6px, env(safe-area-inset-top));
+  }
+  .tg-btn {
+    width: 42px;
+    height: 44px;
+  }
+  .tg-home-layout {
+    grid-template-rows: clamp(104px, 17vh, 155px) auto minmax(0, 1fr);
+    padding-top: 9px;
+    bottom: 54px;
+  }
+  .tg-dispatch {
+    border-radius: 12px;
+  }
+  .tg-dispatch::before {
+    width: 5px;
+  }
+  .dispatch-paper {
+    width: 64%;
+    padding: 8px 10px 8px 14px;
+  }
+  .dispatch-visual {
+    left: 57%;
+    background-position: 52% 44%;
+  }
+  .dispatch-paper h1 {
+    font-size: clamp(23px, 6.3vw, 35px);
+  }
+  .dispatch-paper p {
+    font-size: 12px;
+    line-height: 1.15;
+    margin: 4px 0;
+  }
+  .dispatch-actions {
+    flex-wrap: nowrap;
+    gap: 3px;
+  }
+  .dispatch-actions .post-button {
+    font-size: 12px;
+    min-height: 44px;
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  .dispatch-actions .post-button svg:last-child {
+    display: none;
+  }
+  .dispatch-actions .post-soft {
+    width: 44px;
+    height: 44px;
+    padding: 8px;
+  }
+  .dispatch-actions .post-soft span {
+    position: absolute;
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .tg-nursery-head {
+    gap: 8px;
+    padding: 8px 0 0;
+  }
+  .tg-nursery-head h2 {
+    font-size: 20px;
+  }
+  .heart-pill {
+    gap: 4px;
+    padding: 2px 8px;
+  }
+  .heart-pill i {
+    width: 26px;
+  }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  #tamagochi-app {
+    --bar: max(53px, env(safe-area-inset-top));
+    --gutter: 14px;
+  }
+  .tg-chrome {
+    top: 3px;
+  }
+  .tg-home-layout {
+    grid-template-columns: clamp(140px, 24vw, 245px) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 0 12px;
+    padding-top: 8px;
+    bottom: 38px;
+  }
+  .tg-dispatch {
+    grid-row: 1 / 3;
+    flex-direction: column;
+  }
+  .dispatch-visual {
+    position: relative;
+    inset: auto;
+    flex: 1;
+    min-height: 20px;
+    background-position: center;
+  }
+  .dispatch-paper {
+    width: 100%;
+    padding: 8px 10px 8px 15px;
+    clip-path: none;
+  }
+  .dispatch-paper h1 {
+    font-size: clamp(18px, 3.3vw, 28px);
+  }
+  .dispatch-paper p {
+    font-size: 12px;
+    margin: 4px 0;
+  }
+  .dispatch-actions {
+    gap: 3px;
+  }
+  .dispatch-actions .post-button {
+    font-size: 12px;
+    padding: 6px;
+    gap: 3px;
+  }
+  .dispatch-actions .post-button svg:last-child {
+    display: none;
+  }
+  .dispatch-actions .post-soft {
+    width: 44px;
+    padding: 8px;
+  }
+  .dispatch-actions .post-soft span {
+    position: absolute;
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .tg-nursery-head {
+    grid-column: 2;
+    padding: 0;
+    gap: 6px;
+  }
+  .tg-nursery-head h2 {
+    font-size: 18px;
+  }
+  .tg-nursery-stage {
+    grid-column: 2;
+  }
+  .tg-caption {
+    bottom: 4px;
+  }
+}
+@media (max-width: 690px) {
+  .post-wrap {
+    padding: 10px 12px 24px;
+  }
+  .post-intro {
+    flex-wrap: wrap;
+    margin: 12px 0 4px;
+    gap: 9px;
+  }
+  .post-tabs button {
+    font-size: 13px;
+  }
+  .post-grid {
+    gap: 10px;
+    grid-template-columns: 1fr;
+  }
+  .island-card {
+    display: grid;
+    padding: 5px;
+    grid-template-columns: 32% 1fr;
+    align-items: center;
+  }
+  .island-landscape {
+    height: 87px;
+  }
+  .island-caption {
+    padding: 7px 11px;
+  }
+  .post-stamp {
+    top: 7px;
+    right: 7px;
+    width: 25px;
+    height: 30px;
+    font-size: 17px;
+  }
+  .post-subtitle {
+    margin: 9px 0 12px;
+  }
+  .post-crew {
+    margin: 13px 0 0;
+  }
+  .post-mission {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    margin-top: 8px;
+  }
+  .mission-picture {
+    min-height: clamp(75px, 13vh, 140px);
+  }
+  .mission-picture img {
+    object-position: center 37%;
+  }
+  .mission-picture > span:last-child {
+    bottom: 8px;
+    left: 8px;
+  }
+  .mission-body {
+    padding: 13px;
+  }
+  .mission-body h1 {
+    font-size: 26px;
+  }
+  .beam-chart {
+    max-width: 265px;
+  }
+  .post-letter {
+    font-size: 20px;
+  }
+  .puzzle-instruction {
+    margin: 6px 0 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .island-card {
+    transition: none;
+  }
+  .flying-balloon {
+    animation: none;
+  }
+}
+.beam-marker svg {
+  width: 24px;
+  height: 24px;
+}
+.mirror small {
+  position: absolute;
+  bottom: 0;
+  right: 1px;
+  padding: 0 3px;
+  background: #27494b;
+  color: #fffae6;
+  border-radius: 4px;
+  font-weight: 900;
+}
+.mirror.hinted {
+  border: 2px dashed #f9d46c;
+  border-radius: 50%;
+}
+.basket-hint {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  padding-top: 9px;
+  border-top: 1px dashed #c4c2a4;
+}
+.basket-hint .post-crew {
+  margin: 0;
+  gap: 6px;
+}
+.basket-hint .post-crew span {
+  display: none;
+}
+.basket-hint .post-crew canvas {
+  max-width: 100%;
+}
+.basket-hint button {
+  font-size: 13px;
+}
+.album-orchestra {
+  margin-top: 18px;
+}
+.post-band {
+  max-width: 850px;
+  margin: 12px auto;
+  padding: clamp(16px, 3vw, 36px);
+  background: #fff9e9;
+  border: 1px solid #beb799;
+  border-radius: 18px;
+  box-shadow: 0 4px 0 #cec4aa;
+}
+.post-band p {
+  color: var(--muted);
+  font-weight: 700;
+  max-width: 55ch;
+}
+.balloon-stage {
+  display: flex;
+  min-height: 160px;
+  gap: 5%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  padding: 15px 6px;
+  background:
+    linear-gradient(#e6f2e77a, #fff2daab),
+    url('/tamagochi/sky-post.webp') center/cover;
+}
+.band-key {
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  width: 17%;
+  max-width: 105px;
+  text-align: center;
+}
+.band-key svg {
+  width: 100%;
+  filter: drop-shadow(0 3px 1px #3332);
+}
+.band-key strong {
+  display: inline-block;
+  padding: 1px 9px;
+  background: var(--paper);
+  border: 1px solid #b2aa87;
+  border-radius: 20px;
+  font-size: 15px;
+}
+.band-1 svg path:first-child {
+  fill: #6daba3;
+}
+.band-2 svg path:first-child {
+  fill: #c98aa7;
+}
+.band-3 svg path:first-child {
+  fill: #aaa0c9;
+}
+.band-key:active,
+.band-key.singing {
+  transform: translateY(-6px) rotate(-4deg);
+}
+.band-score {
+  display: flex;
+  gap: 5px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+.band-score span {
+  display: grid;
+  place-items: center;
+  width: clamp(25px, 6vw, 44px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #e8d0ae;
+  font-weight: 900;
+}
+.band-score .band-1 {
+  background: #b9ded1;
+}
+.band-score .band-2 {
+  background: #edd0da;
+}
+.band-score .band-3 {
+  background: #d4cce4;
+}
+.band-score .band-rest {
+  background: transparent;
+  border: 1px dashed #b5b196;
+}
+.band-score .singing {
+  outline: 2px solid #295b50;
+}
+@media (max-width: 620px) and (min-height: 501px), (max-height: 500px) and (orientation: landscape) {
+  #tamagochi-app .dispatch-actions .post-button svg:last-child {
+    display: none;
+  }
+}
+@media (max-width: 380px) and (min-height: 501px) {
+  .dispatch-paper {
+    width: 74%;
+  }
+  .dispatch-visual {
+    left: 69%;
+  }
+  .dispatch-paper h1 {
+    font-size: 22px;
+  }
+}
+@media (max-width: 620px) and (min-height: 501px) and (max-height: 690px) {
+  .tg-home-layout {
+    grid-template-rows: 88px auto minmax(0, 1fr);
+    padding-top: 6px;
+    bottom: 47px;
+  }
+  .dispatch-paper p {
+    display: none;
+  }
+  .dispatch-paper h1 {
+    margin-bottom: 3px;
+  }
+  .tg-nursery-head {
+    padding-top: 3px;
+  }
+  .many-devices .tg-home-layout {
+    grid-template-rows: 57px auto minmax(0, 1fr);
+    bottom: 35px;
+  }
+  .many-devices .dispatch-paper {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    padding: 4px 10px 4px 12px;
+    background: linear-gradient(95deg, #fff9e9 58%, #fff9e9d9);
+  }
+  .many-devices .dispatch-paper h1 {
+    font-size: clamp(16px, 4.7vw, 21px);
+    margin: 0;
+  }
+  .many-devices .dispatch-actions {
+    margin-left: auto;
+  }
+  .many-devices .dispatch-actions .post-button {
+    font-size: 11px;
+  }
+  .many-devices .dispatch-visual {
+    left: 50%;
+  }
+  .many-devices .tg-nursery-head h2 {
+    font-size: 17px;
+  }
+}
+.band-key {
+  position: relative;
+}
+.band-burst {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  white-space: nowrap;
+  color: #fff9da;
+  text-shadow: 0 1px 3px #33534a;
+  animation: notes-up 1s ease-out both;
+}
+@keyframes notes-up {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(0.8);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -35px) scale(1.45);
+  }
+}
+.postmark {
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  color: #794437;
+  background: #fff6dded;
+  border: 4px double currentColor;
+  padding: 2px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 5px;
+  transform: rotate(-12deg);
+  animation: stamp-in 0.32s ease-out both;
+}
+@keyframes stamp-in {
+  from {
+    transform: rotate(-18deg) scale(1.5);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(-12deg) scale(1);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .band-burst {
+    display: none;
+  }
+  .postmark {
+    animation: none;
+  }
+}

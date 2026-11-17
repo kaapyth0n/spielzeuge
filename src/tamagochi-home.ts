@@ -200,14 +200,12 @@ export class HomeScene implements Scene {
   private wipe = 0
   picker: Picker | null = null
   private linkHint = 0
-  private hudPulse = 0
-  private bubbles: { x: number; y: number; r: number; v: number }[] = []
+  private windowArt = new Map<string, HTMLImageElement>()
   private pressed: string | null = null
 
   constructor(host: Host) {
     this.host = host
     this.devs = host.save.devices.map((d, i) => new Dev(i, d))
-    for (let i = 0; i < 16; i++) this.bubbles.push({ x: Math.random(), y: Math.random(), r: 0.03 + Math.random() * 0.07, v: 0.004 + Math.random() * 0.01 })
   }
 
   enter(): void {
@@ -221,9 +219,8 @@ export class HomeScene implements Scene {
   }
 
   private layout(): void {
-    const { safe } = this.host
+    const area = this.host.nursery
     const n = this.devs.length
-    const area = { x: safe.x + 8, y: safe.y + 2, w: safe.w - 16, h: safe.h - 56 }
     let best = { cols: n, s: 0 }
     for (let cols = 1; cols <= n; cols++) {
       const rows = Math.ceil(n / cols)
@@ -251,8 +248,15 @@ export class HomeScene implements Scene {
     const { w, h } = this.host
     return { x: w - 76, y: h - 80, w: 62, h: 62 }
   }
-  private hudRect(): Rect {
-    return { x: 10, y: 10, w: 164, h: 44 }
+  get canDepart(): boolean {
+    return !this.picker && !this.drag && !this.links.length && !this.travel && !this.wipe && this.meetIn === null
+  }
+
+  describeHearts(): void {
+    const host = this.host
+    const next = nextUnlock(host.save)
+    host.sfx.play('heart')
+    host.say(host.t('hearts', { n: host.save.hearts }) + (next ? ' ' + host.t('heartsNext', { n: next.need - host.save.hearts }) : ''))
   }
 
   // ---------------------------------------------------------------- update
@@ -260,11 +264,6 @@ export class HomeScene implements Scene {
   update(dt: number): void {
     const host = this.host
     this.fx.update(dt)
-    this.hudPulse = Math.max(0, this.hudPulse - dt)
-    for (const b of this.bubbles) {
-      b.y -= b.v * dt * 6
-      if (b.y < -0.1) b.y = 1.1
-    }
     if (this.picker) this.picker.t += dt
     for (const d of this.devs) this.updateDev(d, dt)
     for (const l of this.links) l.t += dt
@@ -563,13 +562,6 @@ export class HomeScene implements Scene {
     const host = this.host
     if (this.travel) return
     if (this.picker) return this.pickerTap(p)
-    if (hit(this.hudRect(), p, 6)) {
-      const next = nextUnlock(host.save)
-      this.hudPulse = 1
-      host.sfx.play('heart')
-      host.say(host.t('hearts', { n: host.save.hearts }) + (next ? ' ' + host.t('heartsNext', { n: next.need - host.save.hearts }) : ''))
-      return
-    }
     if (this.devs.length < MAX_DEVICES && hit(this.addRect(), p, 6)) {
       host.sfx.play('tap')
       this.picker = { slot: -1, t: 0 }
@@ -696,18 +688,6 @@ export class HomeScene implements Scene {
   draw(ctx: Ctx): void {
     const host = this.host
     const { w, h, time } = host
-    const g = ctx.createLinearGradient(0, 0, 0, h)
-    g.addColorStop(0, '#c9ecff')
-    g.addColorStop(0.55, '#e9e3ff')
-    g.addColorStop(1, '#ffdcec')
-    ctx.fillStyle = g
-    ctx.fillRect(0, 0, w, h)
-    ctx.fillStyle = 'rgba(255,255,255,0.4)'
-    for (const b of this.bubbles) {
-      oval(ctx, b.x * w + Math.sin(time * 0.4 + b.r * 90) * 14, b.y * h, b.r * Math.min(w, h), b.r * Math.min(w, h))
-      ctx.fill()
-    }
-
     for (const d of this.devs) this.drawDevice(ctx, d)
 
     // Finished links, the hint and the line under the finger.
@@ -728,7 +708,6 @@ export class HomeScene implements Scene {
     if (this.travel) this.drawTravel(ctx)
 
     this.fx.draw(ctx)
-    this.drawHud(ctx)
     if (this.devs.length < MAX_DEVICES && !this.travel) {
       const r = this.addRect()
       button(ctx, r, {
@@ -819,33 +798,6 @@ export class HomeScene implements Scene {
         paint(ctx, '#fff')
       }
     }
-  }
-
-  private drawHud(ctx: Ctx): void {
-    const host = this.host
-    const r = this.hudRect()
-    const next = nextUnlock(host.save)
-    ctx.save()
-    rr(ctx, r.x, r.y + 3, r.w, r.h, 22)
-    paint(ctx, INK)
-    rr(ctx, r.x, r.y, r.w, r.h, 22)
-    paint(ctx, '#fff', 3)
-    const pulse = 1 + ease.hop(this.hudPulse) * 0.3
-    heart(ctx, r.x + 24, r.y + 22, 26 * pulse)
-    label(ctx, String(host.save.hearts), r.x + 58, r.y + 23, 22, INK, { outline: null })
-    if (next) {
-      const bx = r.x + 82
-      const bw = r.w - 82 - 34
-      const k = clamp((host.save.hearts - next.from) / Math.max(1, next.need - next.from))
-      rr(ctx, bx, r.y + 16, bw, 12, 6)
-      paint(ctx, '#f1e9f7', 2)
-      if (k > 0) {
-        rr(ctx, bx, r.y + 16, Math.max(12, bw * k), 12, 6)
-        paint(ctx, '#ff8fb0', 2)
-      }
-      drawEgg(ctx, next.species, r.x + r.w - 18, r.y + 35, 26)
-    } else heart(ctx, r.x + r.w - 24, r.y + 22, 20, '#ffd23d')
-    ctx.restore()
   }
 
   private drawPicker(ctx: Ctx): void {
@@ -942,7 +894,12 @@ export class HomeScene implements Scene {
       ctx.closePath()
     }
     shellPath()
-    paint(ctx, sh.shell, 4)
+    const enamel = ctx.createLinearGradient(30, 105, 240, 345)
+    enamel.addColorStop(0, sh.light)
+    enamel.addColorStop(0.38, sh.shell)
+    enamel.addColorStop(0.77, sh.shell)
+    enamel.addColorStop(1, sh.dark)
+    paint(ctx, enamel, 3.5)
     ctx.save()
     shellPath()
     ctx.clip()
@@ -953,6 +910,9 @@ export class HomeScene implements Scene {
     oval(ctx, 100, 108, 12, 7, -0.2)
     paint(ctx, 'rgba(255,255,255,0.42)')
     ctx.restore()
+
+    // The model name is stamped directly into the enamel.
+    label(ctx, host.petName(d.data.species), 130, 119, 13, INK, { outline: null, maxWidth: 105 })
 
     // Screen.
     rr(ctx, SCR.x - 9, SCR.y - 9, SCR.w + 18, SCR.h + 18, SCR.r + 8)
@@ -1011,6 +971,24 @@ export class HomeScene implements Scene {
       }
     ctx.globalAlpha = 1
     ctx.fillRect(0, FY, SCR.w, SCR.h - FY)
+    const island = host.save.windowView
+    if (island) {
+      let picture = this.windowArt.get(island)
+      if (!picture) {
+        picture = new Image()
+        picture.src = '/tamagochi/' + island + '.webp'
+        this.windowArt.set(island, picture)
+      }
+      if (picture.complete && picture.naturalWidth) {
+        ctx.save()
+        rr(ctx, 78, 7, 79, 67, 14)
+        paint(ctx, '#fff5dc', 2)
+        rr(ctx, 82, 11, 71, 59, 10)
+        ctx.clip()
+        ctx.drawImage(picture, 0, 50, 480, 400, 82, 11, 71, 59)
+        ctx.restore()
+      }
+    }
     drawRoomProps(ctx, host.save.owned, SCR.w, SCR.h, FY, d.slot)
 
     const ground = FY + 12

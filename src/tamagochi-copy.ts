@@ -21,7 +21,7 @@ export const ACTIVITY_NAME: Record<Lang, Record<ActivityId, string>> = {
 const RU = {
   name: 'Тамагочи Связь',
   byline: 'Игра Матрёны',
-  tagline: 'Заботься о малышах и соединяй их антеннами — они вместе танцуют, поют и дарят подарки!',
+  tagline: 'Выведи малышей из яиц, соедини антенны и полети с Небесной почтой за островными открытками.',
   documentTitle: 'Тамагочи Связь · Spielzeuge',
   description: 'Тамагочи Связь — игра Матрёны. Корми, убирай, играй и укладывай спать, а потом проведи связь от антенны к антенне.',
   canvas: 'Тамагочи Связь: игровое поле',
@@ -70,7 +70,7 @@ const RU = {
 const DE: typeof RU = {
   name: 'Tamagochi-Funk',
   byline: 'Matrjonas Spiel',
-  tagline: 'Kümmere dich um die Kleinen und verbinde ihre Antennen – dann tanzen, singen und schenken sie zusammen!',
+  tagline: 'Lass die Kleinen schlüpfen, verbinde ihre Antennen und sammle mit der Himmelspost Inselpostkarten.',
   documentTitle: 'Tamagochi-Funk · Spielzeuge',
   description: 'Tamagochi-Funk – Matrjonas Spiel. Füttern, putzen, spielen, schlafen legen – und dann eine Verbindung von Antenne zu Antenne ziehen.',
   canvas: 'Tamagochi-Funk: Spielfeld',
@@ -119,7 +119,7 @@ const DE: typeof RU = {
 const EN: typeof RU = {
   name: 'Tamagochi Link',
   byline: 'Matryona’s game',
-  tagline: 'Look after the little ones and link their antennas — then they dance, sing and give gifts together!',
+  tagline: 'Hatch your little ones, link their antennas and fly with Sky Post to collect island postcards.',
   documentTitle: 'Tamagochi Link · Spielzeuge',
   description: 'Tamagochi Link — Matryona’s game. Feed, clean, play and tuck in, then draw a link from antenna to antenna.',
   canvas: 'Tamagochi Link: play field',

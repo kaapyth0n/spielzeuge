@@ -364,5 +364,5 @@ a {
 .toy-card--loshadka .toy-card-art svg { width: 96px; height: 82px; transform: translateY(3px); }
 
 .toy-card--tamagochi .toy-card-art {
-  background: linear-gradient(#c9ecff, #ffdcec);
+  background: linear-gradient(#fff4d429, #f6e7ce92), url("/tamagochi/meadow.webp") center 45% / cover;
 }
