@@ -25,7 +25,7 @@ export class PuppyNarration {
 
   private preferences: () => { lang: Lang; enabled: boolean }
   private pronounce: (text: string, lang: Lang) => string
-  private tone: { rate?: number; pitch?: number }
+  private tone: { rate?: number; pitch?: number; preferVoice?: RegExp }
 
   /**
    * `pronounce` may respell words the device voice stresses wrongly; the text
@@ -34,7 +34,7 @@ export class PuppyNarration {
   constructor(
     preferences: () => { lang: Lang; enabled: boolean },
     pronounce: (text: string, lang: Lang) => string = (text) => text,
-    tone: { rate?: number; pitch?: number } = {},
+    tone: { rate?: number; pitch?: number; preferVoice?: RegExp } = {},
   ) {
     this.preferences = preferences
     this.pronounce = pronounce
@@ -56,7 +56,7 @@ export class PuppyNarration {
 
   private supported(): boolean {
     return (
-      'speechSynthesis' in window &&
+      !!window.speechSynthesis &&
       typeof SpeechSynthesisUtterance !== 'undefined'
     )
   }
@@ -139,7 +139,9 @@ export class PuppyNarration {
         (voice) =>
           voice.lang.replace('_', '-').toLowerCase().split('-')[0] === lang,
       )
+    const preferred = this.tone.preferVoice
     utterance.voice =
+      (preferred && voices.find((voice) => preferred.test(voice.name))) ??
       voices.find((voice) => voice.localService) ?? voices[0] ?? null
     this.held.add(utterance)
     const generation = this.generation

@@ -2,6 +2,8 @@
 
 A small catalog of calm toys for children. Web first, later on iPad.
 
+**Девочка** is Matryona’s illustrated shopping game. Pay the bunny cashier in exact change, carry lunch home and serve the four foods using the gestures she invented. Apple catching and musical jars earn coins. Eight lunch menus fill a sticker album, and the stickers can decorate the kitchen. [Game details and checks](docs/devochka.md).
+
 Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуняшка**, a dress-up doll. Always clothed. Hearts after Ready stay in the game; nothing is posted. The third toy is **Собачка**, a puppy-care game inspired by a child’s drawing.
 
 Слайм Чек is Veronika’s slime-care game. [Game details and checks](docs/slime-check.md).
@@ -33,6 +35,7 @@ Verify all three languages, narration calls, effects, mute, saved preferences an
 | Path | Toy |
 | --- | --- |
 | `/` | Catalog |
+| `/devochka/` | Девочка — Matryona’s grocery shop, bunny till and lunch table |
 | `/puzzles/` | Пазлы со зверятами — real animal photographs, large pieces, spoken names |
 | `/kuckuck/` | Kuckuck — door, knock, visitor, spoken name |
 | `/chunyashka/` | Чуняшка — dress-up; hearts stay on the toy |
@@ -78,6 +81,8 @@ npm run preview
 ```
 
 `npm run test:morozhenka` checks Мороженка in the browser, including steering through Chrome’s fake microphone.
+
+`npm run test:devochka` plays the shopping and serving cycle in all three languages, checks the gestures, coin games, notebook, sound and small screens, and repeats a meal without audio or storage.
 
 `npm run test:pesenki` plays Песенки in the browser: pictures, waiting, rewinds, chorus drumming, speed-ups, languages, mute and five screen sizes.
 

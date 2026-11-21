@@ -3,6 +3,7 @@ import '@fontsource/pt-serif/latin-400.css'
 import '@fontsource/pt-serif/latin-ext-400.css'
 import '@fontsource/pt-serif/latin-700.css'
 import './catalog.css'
+import { title as lunchTitle, blurb as lunchBlurb } from './devochka-copy.ts'
 import { copy as PUZZLES_COPY } from './puzzles-data'
 import { PRINTS_COPY } from './prints-copy'
 import { slimeText } from './slime-copy.ts'
@@ -27,6 +28,8 @@ function setText(selector: string, value: string): void {
 
 function applyCatalog(lang: Lang): void {
   const copy = CATALOG_COPY[lang]
+  setText('[data-i18n="devochka-name"]', lunchTitle[lang])
+  setText('[data-i18n="devochka-blurb"]', lunchBlurb[lang])
   setText('[data-i18n="puzzles-name"]', PUZZLES_COPY[lang].title)
   setText('[data-i18n="puzzles-blurb"]', PUZZLES_COPY[lang].blurb)
   setText('[data-i18n="prints-name"]', PRINTS_COPY[lang].title)

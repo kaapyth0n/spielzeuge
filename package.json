@@ -10,6 +10,7 @@
     "preview": "vite preview --host",
     "capture": "node scripts/capture.mjs",
     "test": "vitest run",
+    "test:devochka": "node scripts/devochka-spec.mjs",
     "test:prints": "node scripts/prints-spec.mjs",
     "test:home": "node scripts/home-spec.mjs",
     "test:sobachka-speech": "node scripts/sobachka-speech-spec.mjs",

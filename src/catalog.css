@@ -338,6 +338,8 @@ a {
 }
 
 .toy-card--sobachka .toy-card-art { background: #e6dac2; }
+.toy-card--devochka .toy-card-art { background: #f4dd9c url('/devochka/shop.webp') 15% 55% / 290%; }
+.toy-card--devochka img { object-fit: contain; align-self: end; }
 .toy-card--sobachka .puppy-svg { width: 102px; height: 102px; }
 .toy-card--sobachka .puppy-closed-eyes { display: none; }
 
