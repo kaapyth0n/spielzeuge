@@ -97,8 +97,8 @@ try {
     const name = { ru: 'Девочка', de: 'Das Mädchen', en: 'The Little Girl' }[lang]
     assert((await card.innerText()).includes(name))
     await card.click()
-    assert.equal(await p.locator('html').getAttribute('lang'), lang)
     await has(p, '.shop-scene')
+    assert.equal(await p.locator('html').getAttribute('lang'), lang)
     await bounds(p)
     await screenshot(p, `shop-${lang}-${width}`)
     for (const f of ['dumpling', 'roll', 'chips', 'water']) {
