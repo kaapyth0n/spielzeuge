@@ -602,10 +602,13 @@ p {
   font-weight: 800;
   font-size: 16px;
 }
-.checklist .food-img {
+.checklist .food-img,
+.paid-portions .bowl-art {
   width: 35px;
   height: 34px;
 }
+.paid-order .seat-list { margin: 0 0 1em; }
+span.shelf-item { pointer-events: none; }
 .check-box {
   width: 18px;
   height: 18px;
@@ -815,25 +818,10 @@ p {
 .home-scene {
   background-image: url('/devochka/home.webp');
 }
-.home-scene::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  pointer-events: none;
-  mix-blend-mode: color;
-}
-.colour-1::before {
-  background: #74b6a0ad;
-}
-.colour-2::before {
-  background: #ba9dc4b5;
-}
-.avatar-chip,
 .music-box {
   position: absolute;
   top: 3%;
-  left: 2.4%;
+  right: 2.4%;
   border: 1.7px solid #56637a;
   border-radius: 48%;
   background: #fcf2cf;
@@ -842,13 +830,7 @@ p {
   overflow: hidden;
   box-shadow: 1px 2px 0 #6d614249;
 }
-.avatar-chip .character {
-  margin-top: 3%;
-  height: 115%;
-}
 .music-box {
-  left: auto;
-  right: 2.4%;
   width: max(40px, 6%);
   display: grid;
   place-items: center;
@@ -914,13 +896,6 @@ p {
   65% {
     transform: rotate(3deg);
   }
-}
-.home-pet {
-  position: absolute;
-  width: 17%;
-  height: 25%;
-  right: 7%;
-  bottom: 21%;
 }
 .table-tray {
   position: absolute;
@@ -1771,12 +1746,6 @@ p {
   font: 400 clamp(12px, 2.15cqw, 19px) / 1.2 var(--hand);
   pointer-events: none;
 }
-.moonlit {
-  background-image: linear-gradient(120deg, #344b79a6, #5f62951c 62%, #eeb55f0d), url('/devochka/home.webp');
-}
-.moonlit .window-visitor {
-  filter: drop-shadow(0 0 7px #fff8a7);
-}
 .ready-to-eat .mouth-target {
   display: grid;
 }
@@ -1802,7 +1771,6 @@ p {
 .table-character svg.character,
 .stall-character svg.character,
 .window-visitor .sketch,
-.home-pet .sketch,
 .prize-big .sketch,
 .owned .sketch,
 .jam-jar .sketch {

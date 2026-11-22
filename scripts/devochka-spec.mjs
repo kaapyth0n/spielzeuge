@@ -1,4 +1,4 @@
-// Browser play-through for the shop, gestures, saved notebook and two coin games.
+// Browser play-through for the shop, gestures, saved notebook and coin games.
 import assert from 'node:assert/strict'
 import { mkdirSync } from 'node:fs'
 import { chromium } from 'playwright-core'
@@ -122,7 +122,7 @@ try {
     assert.equal(await p.locator('.stamp.owned').count(), 1)
     await go(p, 'games')
     await bounds(p)
-    assert.equal(await p.locator('.job-card').count(), 2)
+    assert.equal(await p.locator('.job-card').count(), 4)
     await p.waitForTimeout(90)
     const utterances = await p.evaluate(() => window.spoken)
     assert(utterances.length && utterances.every(([tag]) => tag.startsWith(lang)))
@@ -187,31 +187,39 @@ try {
   await act(p, 'mouth')
   await click(p, 'table', 'water')
   await act(p, 'pour')
+  await p.waitForFunction(() => JSON.parse(localStorage.getItem('spielzeuge.devochka.v1')).table.length === 0)
+  await p.reload()
+  await click(p, 'table', 'cat')
+  await click(p, 'seat', 'girl')
+  assert.equal((await book(p)).day, 1)
+  await click(p, 'seat', 'cat')
   await p.waitForFunction(() => JSON.parse(localStorage.getItem('spielzeuge.devochka.v1')).day === 2)
   await go(p, 'album')
   await click(p, 'stamp', 1)
   await act(p, 'hang')
   await act(p, 'studio')
+  await p.locator('[data-paint=curtains][data-value="2"]').click()
+  await click(p, 'studio-tab', 'guests')
   await click(p, 'guest', 'friend')
   await p.locator('[data-style=eyes][data-value="2"]').click()
-  await p.locator('[data-style=colour][data-value="2"]').click()
-  await click(p, 'pet', 'dog')
+  await click(p, 'pet', 'cat')
   await act(p, 'studioDone')
   await screenshot(p, 'house')
   assert.equal((await book(p)).wall, 1)
-  assert.equal((await book(p)).pet, 'dog')
+  assert.equal((await book(p)).pet, 'cat')
+  assert.equal((await book(p)).paint.curtains, 2)
   await go(p, 'shop')
   await click(p, 'add', 'roll')
   await act(p, 'earn')
   assert.equal((await book(p)).cart[0], 'roll')
   await click(p, 'job', 'orchard')
   const before = (await book(p)).coins
-  for (let i = 0; i < 10 && (await p.locator('.falling').count()); i++) {
-    const target = await p
-      .locator('.falling')
-      .evaluate((el) => [Number(el.style.getPropertyValue('--lane')), el.dataset.kind])
-    await click(p, 'lane', target[1] === 'leaf' ? (target[0] + 1) % 3 : target[0])
-    await p.waitForTimeout(2075)
+  for (let i = 0; i < 6; i++) {
+    const wave = await p.locator('.play-scene').getAttribute('data-wave')
+    const target = await p.locator('.falling[data-wanted=true]').evaluate(el => Number(el.style.getPropertyValue('--lane')))
+    await click(p, 'lane', target)
+    await p.waitForFunction(old => document.querySelector('.job-win') ||
+      document.querySelector('.play-scene')?.dataset.wave !== old, wave)
   }
   await has(p, '.job-win')
   assert.equal((await book(p)).coins, before + 5)

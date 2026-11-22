@@ -17,23 +17,41 @@ The first visit starts at the shop with twelve coins. Tap the girl or the speech
 
 The till shows the price beside the rabbit. Place coins worth one, two or five onto the saucer. The last coin can be taken back. A coin that would take the total over the price stays in the purse. When the sum is exact, pull the blue lever or press the lever button. The payment and transfer to the table are saved together. A new checkout waits until the previous meal is finished.
 
-At home the same gestures also work in steps. Choose a food, then tap the girl. The scissors button cuts a bag, and a button can hold the glass for the child. The window visitor tells a different little story for each lunch. The blue music box plays an original tune.
+At every table the gestures also work in steps. Select the food and its diner. The scissors button cuts a bag, and the water button can hold the glass for the child. The child can float a paper boat, send a leaf after the kite and tap three stars to trace a constellation. The kitchen music box plays an original tune.
 
 ## The eight lunches
 
-Lunch by the window, a picnic with the cat, the daisy garden, the kite, moonlight supper, a visit from Bunny, a paper boat regatta and the courtyard party have illustrated shopping lists. Serving a list earns its sticker. Later menus ask for multiple portions. A free-choice meal leaves the current order available. After the eighth sticker the menus cycle again.
+The shopping list determines where everyone goes after payment. Extras are welcome. A free-choice lunch leaves the current sticker order available. After the eighth sticker the menus cycle again.
 
-Tap any sticker in the album to find out about it. A collected sticker can be hung in the kitchen. The round portrait in the kitchen opens the decorating controls. Choose Matryona’s original girl or make a friend with three eye styles and three mouths, choose a room colour and invite a cat or a dog.
+| Order | Where the food goes |
+| --- | --- |
+| Lunch by the window | The kitchen table in the morning sun. |
+| Picnic with the cat | Matryona’s original girl and the ginger cat sit on his striped blanket in a meadow. The cat has a fish bowl. |
+| In the daisy garden | A cloth among the daisies. |
+| Chasing the wind | A hill under a flying kite. |
+| Moonlight supper | A clearing lit by the moon and a lantern. |
+| Company at the door | Bunny comes to the furnished kitchen and gets his own carrots. |
+| Paper boat regatta | A grassy bank beside a stream with paper boats. |
+| Courtyard party | The girl and her friend share the outdoor party table beneath coloured bunting. |
+
+Children choose who to serve by tapping or dragging. The last human portion can be shared when a second person is still waiting. The friend can bring a second pet along. Each animal has a dish of its own. A meal is complete when the food is gone and everyone has eaten. Leaving and returning restores even a single remaining pet bowl. Selecting a different dinner guest during lunch applies to the next purchase.
+
+The first, second and third meal stickers unlock the ginger cat, the friend and the puppy respectively. Pick a diner in the guest book. The friend has three eye styles and three mouths. The gear opens the house studio. Choose a curtain, table, teapot or tablecloth colour independently. Each has its original drawing and three additional colours. A kitchen sticker can be changed from the album. Older notebooks keep characters they already customised or invited.
 
 ## Earning coins
 
-The apple orchard pays five coins for catching three apples. Tap a lane, slide the basket or use the arrow keys. Leaves drift down between apples. A missed apple gives the player another chance.
+| Game | How to earn coins |
+| --- | --- |
+| Apple orchard · 5 | Read the picture order, track the red or golden apple and move the basket into its landing lane. Wind changes its path and the pace grows across six catches. Repeated misses slow the fruit and highlight the lane. Tap, drag or use the arrow keys. |
+| Musical jars · 7 | Listen to three tunes of two, three and four notes and play them back. Every jar has its own fruit, colour and pitch. The melody can be replayed. |
+| Bunny’s pancake kitchen · 6 | Pour batter, watch the pancake change colour, flip when golden, then add the topping each of three guests ordered. A pancake can be remade. |
+| Paper boat regatta · 8 | Rotate the stream tiles, connect the dock to the flag and launch a paper boat. Sail three courses. If the stream breaks, the boat shows the piece to turn. |
 
-Musical jars pays seven coins for repeating three tunes of two, three and four notes. Each jar has its own fruit, colour and pitch and lights up as its note plays. The sequence can be replayed. An incorrect note repeats the current tune. The basket waits in the shop during both games.
+The shopping basket waits in the shop and the current meal remains on the table during the games.
 
 ## Drawing and sound
 
-The original character in [girl.webp](../public/devochka/girl.webp) uses the pencil and blue marks from the supplied photograph. Its silhouette was traced around the drawing, and its paper colour was balanced for display. The circle portrait and the larger figure use this same artwork.
+The original character in [girl.webp](../public/devochka/girl.webp) uses the pencil and blue marks from the supplied photograph. Its silhouette was traced around the drawing, and its paper colour was balanced for display. The girl who sits on the picnic blanket uses these same original pencil marks.
 
 The built-in ImageGen tool produced these scene and sticker assets. The production prompts specified the following compositions.
 
@@ -45,10 +63,12 @@ The built-in ImageGen tool produced these scene and sticker assets. The producti
 | [Till](../public/devochka/till.webp) | A vintage mint toy register with blue and coral keys, a paper receipt, a rabbit face on the left of a blank butter-yellow display and a blue ball on the crank. The game draws the actual price. |
 | [Orchard](../public/devochka/orchard.webp) | An apple canopy framing open cornflower sky, low green hills, a distant fence and daisies. Leave the middle open for falling fruit and the foreground open for the moving basket. |
 
+The six outdoor backgrounds also came from ImageGen. Their compositions leave the diners and foreground food to the game. The meadow has a broad striped blanket beneath a birch, the garden is filled with daisies, the hill has a kite caught by the wind, the clearing has a lantern, the stream has folded boats, and the courtyard has a long table and bunting. The ginger cat with a turquoise kerchief, the floppy-eared puppy with a green scarf, and the rabbit in a bow tie are separate transparent crayon illustrations. Their bowls and the seated legs were drawn in SVG. Four transparent paint atlases follow the pencil outlines of the kitchen furnishings.
+
 Speech uses the selected device language and prefers an available childlike voice. The Web Audio instruments play the jar notes, coin clinks, scissors, crunches, water, pet sounds and a short music-box waltz. The visible sound control stops speech and music together.
 
 ## Checks
 
-`npm test` exercises exact payment, duplicate quantities, serving order, the eight stickers and save recovery. `npm run build` type-checks and bundles the game. With a local Vite server running, `npm run test:devochka` plays all three catalog-to-lunch flows, plus coin games, gestures, customization, audio and storage fallbacks. The script accepts `BASE_URL` and `CHROMIUM_PATH`. Browser screenshots are written to `tmp/devochka/spec/`.
+`npm test` exercises exact payment, duplicate quantities, serving order, the eight stickers and save recovery. `npm run build` type-checks and bundles the game. With a local Vite server running, `npm run test:devochka` plays all three catalog-to-lunch flows, all eight stories and four coin games, real pointer and touch gestures, room paint masks, guest unlocks, audio and storage fallbacks. The script accepts `BASE_URL` and `CHROMIUM_PATH`. Browser screenshots are written to `tmp/devochka/spec/`.
 
 Progress uses `spielzeuge.devochka.v1`. The sound setting uses `spielzeuge.devochka.muted`. Language uses the catalog preference `spielzeuge.lang`. The notebook saves coins, purchases, partially served meals, stickers and room choices on the device.

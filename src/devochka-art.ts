@@ -1,3 +1,4 @@
+import type { Diner } from './devochka-guests.ts'
 import type { Food } from './devochka-copy.ts'
 import type { Notebook } from './devochka-state.ts'
 
@@ -5,6 +6,7 @@ import type { Notebook } from './devochka-state.ts'
 export const pencilFilter = `<svg class="grain-def" width="0" height="0" aria-hidden="true"><defs><filter id="pencil-grain" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".46 .29" numOctaves="2" result="grain"/><feDisplacementMap in="SourceGraphic" in2="grain" scale="1.25" result="pencil"/><feColorMatrix in="grain" type="matrix" values="0 0 0 0 1  0 0 0 0 .94  0 0 0 0 .80  2.6 0 0 0 -1.20"/><feComposite in2="pencil" operator="in"/><feMerge><feMergeNode in="pencil"/><feMergeNode/></feMerge></filter></defs></svg>`
 
 const lines = {
+  gear: '<path d="m9.5 2-.6 2.7-2.1 1.2-2.6-.8-2 3.4 2 1.9v3.1l-2 1.9 2 3.4 2.6-.8 2.1 1.2.6 2.8h4l.6-2.8 2.2-1.2 2.6.8 2-3.4-2-1.9v-3.1l2-1.9-2-3.4-2.6.8-2.2-1.2-.6-2.7z"/><circle cx="11.6" cy="12" r="3.4"/>',
   back: '<path d="m14 5-7 7 7 7M7 12h14"/>',
   shop: '<path d="m3 9 2-6h14l2 6M3 9c0 4 5 4 6 0 1 4 5 4 6 0 1 4 6 4 6 0M5 12v9h14v-9M9 21v-6h5v6"/>',
   home: '<path d="m2 11 10-8 10 8M5 10v11h14V10M10 21v-7h4v7"/>',
@@ -43,6 +45,7 @@ export function foodImage(id: Food, cls = ''): string {
   return `<img class="food-img ${cls}" src="/devochka/${id}.webp" alt="" draggable="false">`
 }
 const drawings: Record<string, string> = {
+  star: '<path fill="#fbc858" d="m48 7 14 24 26 5-19 22 3 29-23-13-25 11 4-27L9 37l28-4Z"/><path d="m48 16 6 20 21 4m-54 4 13 14-4 16" stroke="#fff0a3" fill="none"/><path d="m44 45 1 2m14-2 1 2m-15 8q6 6 12-1" stroke="#715442" fill="none"/>',
   sun: '<circle cx="49" cy="49" r="23" fill="#f7c357"/><path d="m49 9 1 11m26 0-8 10m21 17-12 1m-5 25-8-8M50 88V77m-28-2 9-9M9 49h12m1-28 9 10" fill="none" stroke="#c98334" stroke-width="5"/><path d="m39 46 1 1m17-1 1 1m-14 10q7 6 14-2" fill="none"/>',
   window:
     '<path fill="#f5bf65" d="m14 12 70-1 3 77-75 1z"/><path fill="#8ec6d5" d="m21 19 54-1 3 60-58 2z"/><path fill="#f9d262" d="M42 21a12 12 0 1 1-19 12q1-10 9-12z"/><path fill="#91af74" d="m21 65 17-14 11 9 12-16 15 17 1 16-56 2z"/><path fill="#f2bc65" d="m46 19 5-1 2 60h-7zm-26 27 57-1v5l-56 1zm-11 36 80-1 1 9-82 2z"/><path fill="#e8897f" d="m18 17 19 1q-3 17-17 23zm61 0-17 1q3 15 16 22z"/>',
@@ -78,8 +81,12 @@ export function jar(index: number): string {
   const tint = ['#eab1a9', '#f0d79b', '#b3bad3'][index]
   return `<svg viewBox="0 0 100 110" class="sketch jar-art" aria-hidden="true" stroke="#424961" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path fill="#f3ecda" d="M25 22h51v11q9 6 9 15l-1 41q0 9-11 10l-46-1q-11-1-11-11l1-40q1-10 10-14Z"/><path fill="${tint}" d="M21 54q13-5 28 0 17 4 31-1v34q0 7-8 7l-43-1q-8 0-8-8Z"/>${contents}<path fill="#edc17a" d="m23 14 54-1 2 12-57 2z"/><path fill="none" d="m26 19 47-2m-44 16 42-2"/><path fill="none" stroke="#fffdf4" stroke-width="4" d="M26 42q-4 2-3 9m0 4v4"/></svg>`
 }
-export function character(s: Notebook, original = !s.friend): string {
-  if (original) return '<img class="character drawing" src="/devochka/girl.webp" alt="" draggable="false">'
+export function character(s: Notebook, diner: Diner = s.diner): string {
+  if (diner === 'cat' || diner === 'dog') {
+    const file = diner === 'cat' ? 'ginger-cat' : 'puppy'
+    return `<img class="character animal-diner" src="/devochka/${file}.webp" alt="" draggable="false">`
+  }
+  if (diner === 'girl') return '<img class="character drawing" src="/devochka/girl.webp" alt="" draggable="false">'
   const eyes = [
     '<g fill="#313c60"><ellipse cx="42" cy="64" rx="4" ry="5"/><ellipse cx="68" cy="64" rx="4" ry="5"/></g>',
     '<path d="M36 65q6-9 12-1m15 0q5-8 12-1" fill="none"/>',

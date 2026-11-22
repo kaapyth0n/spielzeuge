@@ -1,12 +1,12 @@
 import type { Lang } from './languages.ts'
 
-const words = (ru: string, de: string, en: string): Record<Lang, string> => ({ ru, de, en })
+export const words = (ru: string, de: string, en: string): Record<Lang, string> => ({ ru, de, en })
 
 export const title = words('Девочка', 'Das Mädchen', 'The Little Girl')
 export const blurb = words(
-  'Игра Матрёны. Собери обед в лавке зайчика и подай его девочке с рисунка.',
-  'Matrjonas Spiel. Kaufe im Hasenladen ein und decke den Tisch für das Mädchen aus ihrer Zeichnung.',
-  'Matryona’s game. Shop at the bunny’s store and serve lunch to the girl from her drawing.'
+  'Игра Матрёны. Загляни в лавку зайчика, собери пикник и угости рыжего кота на полосатом пледе.',
+  'Matrjonas Spiel. Pack im Hasenladen ein Picknick ein und teile es auf der gestreiften Decke mit dem Kater.',
+  'Matryona’s game. Pack a picnic at Bunny’s shop and share it with the ginger cat on his stripy blanket.'
 )
 
 export const FOOD = {
@@ -76,7 +76,7 @@ export const MEALS = [
     name: words('Пикник с котом', 'Picknick mit Kater', 'Picnic with the cat'),
     wish: words(
       'Кот нашёл полосатый плед. Возьмём роллы, чипсы и воду!',
-      'Der Kater hat die Picknickdecke gefunden. Packen wir Sushi, Chips und Wasser ein!',
+      'Der Kater hat die gestreifte Picknickdecke gefunden. Packen wir Sushi, Chips und Wasser ein!',
       'The cat found our stripy blanket. Let’s pack rolls, chips and water!'
     ),
     prize: words('Полосатый гость', 'Gestreifter Gast', 'Stripy visitor'),
@@ -209,6 +209,8 @@ export const T = {
     'That coin is too big. Try a smaller one.'
   ),
   editCart: words('Вернуться к полкам', 'Zurück zum Regal', 'Back to the shelves'),
+  orderPaid: words('Оплачено', 'Schon bezahlt', 'Already paid'),
+  leftToServe: words('Осталось подать', 'Das wartet noch', 'Still to serve'),
   earn: words('Заработать монеты', 'Münzen verdienen', 'Earn coins'),
   short: words(
     'Не хватает монет. Корзинка подождёт, пока ты играешь.',
@@ -216,22 +218,22 @@ export const T = {
     'You need more coins. Your basket will wait while you play.'
   ),
   tableWaiting: words(
-    'Дома уже накрыт стол!',
-    'Zu Hause ist der Tisch schon gedeckt!',
-    'Lunch is already on the table!'
+    'Твой обед уже ждёт!',
+    'Dein Essen wartet schon!',
+    'Your meal is ready to serve!'
   ),
   goHome: words('К столу', 'Zum Tisch', 'To the table'),
   table: words('На столе', 'Auf dem Tisch', 'On the table'),
-  chooseFood: words('Выбери еду на столе', 'Wähle etwas vom Tisch', 'Choose something on the table'),
+  chooseFood: words('Выбери, чем угостить', 'Wähle etwas zum Servieren', 'Choose something to serve'),
   packed: words(
-    'Покупки дома! Выбери, что подать первым.',
+    'Покупки готовы. Что подадим первым?',
     'Der Einkauf ist da! Was möchtest du zuerst servieren?',
-    'The shopping is home! What would you like to serve first?'
+    'Everything is unpacked! What would you like to serve first?'
   ),
   tapServe: words(
-    'Можно нажать на еду, а потом на девочку.',
-    'Du kannst auch erst das Essen und dann das Mädchen antippen.',
-    'You can also tap the food and then the girl.'
+    'Можно нажать на угощение, а потом на того, кому оно предназначено.',
+    'Du kannst auch erst das Essen antippen und dann die Figur, die es bekommen soll.',
+    'You can also tap the food, then tap the diner you want to serve.'
   ),
   serve: words('Поднести ко рту', 'Zum Mund führen', 'Bring to her mouth'),
   cut: words('Разрезать пакет', 'Tüte aufschneiden', 'Snip the bag'),
@@ -291,9 +293,9 @@ export const T = {
   ),
   albumTitle: words('Альбом наклеек', 'Stickeralbum', 'Sticker album'),
   albumHint: words(
-    'Собери обед по списку и подай его дома. Каждую наклейку можно повесить в домике.',
-    'Kaufe nach Liste ein und serviere das Menü zu Hause. Jeden Sticker kannst du im Haus aufhängen.',
-    'Shop from the list and serve the meal at home. You can hang each sticker in the house.'
+    'Собери обед по списку и угости всех, кто пришёл. Полученную наклейку можно повесить в домике.',
+    'Kaufe nach Liste ein und gib allen etwas zu essen. Deinen Sticker kannst du im Haus aufhängen.',
+    'Shop from the list and make sure everyone gets a taste. You can hang the sticker in the house.'
   ),
   locked: words('Ещё не открыта', 'Noch nicht gesammelt', 'Still to collect'),
   hang: words('Повесить в домике', 'Im Haus aufhängen', 'Hang it at home'),
@@ -308,13 +310,7 @@ export const T = {
   again: words('Ещё раз', 'Noch einmal', 'Play again'),
   playDone: words('Монеты в кошельке!', 'Die Münzen sind im Beutel!', 'Coins in your purse!'),
   orchard: words('Яблочный сад', 'Apfelgarten', 'Apple orchard'),
-  orchardIntro: words(
-    'Передвигай корзинку и поймай три яблока. Пусть листочки пролетают мимо.',
-    'Verschiebe den Korb und fange drei Äpfel. Lass die Blätter vorbeifliegen.',
-    'Move the basket to catch three apples. Let the leaves drift past.'
-  ),
   caught: words('Яблоко в корзинке!', 'Ein Apfel im Korb!', 'An apple in the basket!'),
-  missed: words('Следующее уже на ветке!', 'Der nächste hängt schon am Ast!', 'Another one is on the branch!'),
   lane: words('Передвинуть корзинку', 'Korb verschieben', 'Move the basket'),
   apples: words('Яблоки', 'Äpfel', 'Apples'),
   jars: words('Звонкие баночки', 'Klingende Gläser', 'Musical jars'),
@@ -361,80 +357,4 @@ export const LANES = [
   words('Слева', 'Links', 'Left'),
   words('Посередине', 'Mitte', 'Middle'),
   words('Справа', 'Rechts', 'Right'),
-]
-
-// Each menu has a small discovery in the kitchen window.
-export const WINDOW_STORIES = [
-  {
-    art: 'sun',
-    label: words('Солнечный зайчик', 'Sonnenfleck', 'Sunbeam'),
-    line: words(
-      'Солнечный зайчик прыгнул с окна прямо на стол!',
-      'Der Sonnenfleck hüpft vom Fenster auf den Tisch!',
-      'The little sunbeam hopped off the window and onto the table!'
-    ),
-  },
-  {
-    art: 'cat',
-    label: words('Кот за окном', 'Kater am Fenster', 'Cat at the window'),
-    line: words(
-      'Мур! Я занял нам самое мягкое место на пледе.',
-      'Schnurr! Ich halte uns den weichsten Platz auf der Decke frei.',
-      'Purr! I saved us the softest spot on the blanket.'
-    ),
-  },
-  {
-    art: 'flower',
-    label: words('Ромашка в саду', 'Blume im Garten', 'Garden daisy'),
-    line: words(
-      'На ромашке спит шмель. Тихонько, пусть ему снится мёд!',
-      'Auf der Blüte schläft eine Hummel. Pst, sie träumt vom Honig!',
-      'A bumblebee is asleep on the daisy. Shh, let it dream of honey!'
-    ),
-  },
-  {
-    art: 'kite',
-    label: words('Змей над крышей', 'Drachen überm Dach', 'Kite over the roof'),
-    line: words(
-      'Вон наш змей! Его хвостик щекочет облако.',
-      'Da ist unser Drachen! Sein Schwanz kitzelt eine Wolke.',
-      'There’s our kite! Its tail is tickling a cloud.'
-    ),
-  },
-  {
-    art: 'moon',
-    label: words('Месяц в окошке', 'Mond im Fenster', 'Moon in the window'),
-    line: words(
-      'Месяц зажёг звёздочки. Видишь, как они мигают?',
-      'Der Mond hat die Sterne angeknipst. Siehst du sie blinken?',
-      'The moon switched on the stars. Can you see them twinkle?'
-    ),
-  },
-  {
-    art: 'bunny',
-    label: words('Зайчик в гостях', 'Hasenbesuch', 'Bunny’s visit'),
-    line: words(
-      'А вот и зайчик! Он принёс бумажные салфетки в горошек.',
-      'Da ist der Hase! Er bringt gepunktete Servietten mit.',
-      'Bunny is here! He brought paper napkins with polka dots.'
-    ),
-  },
-  {
-    art: 'boat',
-    label: words('Кораблик в ручье', 'Boot im Bach', 'Boat in the stream'),
-    line: words(
-      'Кораблик обогнул камешек. Смотри, на борту едет божья коровка!',
-      'Das Boot segelt um einen Stein. Schau, ein Marienkäfer fährt mit!',
-      'The boat sailed around a pebble. Look, a ladybird is riding on board!'
-    ),
-  },
-  {
-    art: 'cake',
-    label: words('Сюрприз к празднику', 'Überraschung zum Fest', 'Party surprise'),
-    line: words(
-      'За окном уже хлопают флажки. Скорее за стол, праздник начинается!',
-      'Draußen flattern schon die Wimpel. Schnell an den Tisch, das Fest beginnt!',
-      'The bunting is fluttering outside. Gather round, the party is starting!'
-    ),
-  },
 ]

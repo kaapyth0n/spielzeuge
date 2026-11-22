@@ -1,0 +1,400 @@
+/* The two fruit varieties have different markings as well as different colours. */
+.play-scene.orchard .falling {
+  top: 17%;
+  animation: apple-drift var(--fall) linear var(--elapsed) both;
+}
+@keyframes apple-drift {
+  0% {
+    top: 15%;
+    left: calc(20% + var(--start) * 30%);
+    transform: rotate(-16deg);
+  }
+  28% {
+    top: 30%;
+    left: calc(20% + var(--start) * 30%);
+  }
+  78% {
+    left: calc(20% + var(--lane) * 30%);
+  }
+  100% {
+    top: 72%;
+    left: calc(20% + var(--lane) * 30%);
+    transform: rotate(13deg);
+  }
+}
+.apple-ticket,
+.garnish-ticket,
+.wind-flag,
+.launch-boat,
+.baking-pan span,
+.garnish-tray button span {
+  border: 1.4px solid #8b7756;
+  border-radius: 8px 5px 6px 7px;
+  background: #fff0cd;
+  color: #3a4556;
+  font-family: var(--hand);
+}
+.apple-ticket {
+  position: absolute;
+  left: 2.2%;
+  top: 2.7%;
+  z-index: 3;
+  display: grid;
+  justify-items: center;
+  padding: 2px 5px;
+  width: 18%;
+  transform: rotate(-3deg);
+  pointer-events: none;
+}
+.apple-ticket span {
+  font-size: clamp(10px, 1.7cqw, 14px);
+}
+.apple-ticket b {
+  font: 400 clamp(11px, 1.9cqw, 16px) / 1.1 var(--hand);
+}
+.apple-ticket .sketch {
+  width: clamp(25px, 5.5cqw, 50px);
+  height: clamp(25px, 5.5cqw, 50px);
+}
+.wind-flag {
+  position: absolute;
+  top: 18%;
+  right: 2%;
+  background: #f7e09c;
+  padding: 0 0.4em;
+  font-size: clamp(12px, 2.2cqw, 18px);
+  transform: rotate(3deg);
+  pointer-events: none;
+}
+.fruit-progress {
+  display: flex;
+  gap: 2px;
+}
+.fruit-progress span {
+  width: 15%;
+  aspect-ratio: 1;
+  opacity: 0.32;
+}
+.fruit-progress .harvested {
+  opacity: 1;
+}
+.play-scene.orchard .orchard-lanes button.guided {
+  background: linear-gradient(to top, #ffdb6e6b, transparent 46%);
+}
+.job-reply {
+  font-family: var(--hand);
+  color: #465e69;
+}
+
+.bakery {
+  background-image: url('/devochka/home.webp');
+}
+.job-illustration.bakery .sketch {
+  width: 51%;
+  height: 99%;
+  filter: drop-shadow(1px 3px 1px #5b453c55);
+}
+.bakery-guest {
+  position: absolute;
+  left: 8%;
+  top: 26%;
+  width: 26%;
+  height: 53%;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+.bakery-guest > .sketch {
+  width: 95%;
+  height: 59%;
+}
+.garnish-ticket {
+  position: relative;
+  background: #fff7da;
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  transform: rotate(-3deg);
+}
+.garnish-ticket:after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 49%;
+  width: 9px;
+  height: 9px;
+  background: #fff7da;
+  border: solid #8b7756;
+  border-width: 0 1px 1px 0;
+  transform: rotate(45deg);
+}
+.garnish-ticket .sketch {
+  width: clamp(23px, 4.5cqw, 40px);
+  height: auto;
+}
+.garnish-ticket span {
+  font-size: clamp(12px, 2.15cqw, 20px);
+}
+.baking-stove {
+  position: absolute;
+  left: 37%;
+  bottom: 20%;
+  width: 45%;
+  height: 25%;
+  background: linear-gradient(174deg, #b8b8a6 0 20%, #748588 22% 76%, #5f7374 77%);
+  border: 2px solid #536267;
+  border-radius: 35% 31% 18% 17%;
+  transform: rotate(-5deg);
+}
+.baking-stove::before,
+.baking-stove::after {
+  content: '';
+  position: absolute;
+  width: 8%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid #5e5e64;
+  background: #dfac74;
+  bottom: 10%;
+  left: 25%;
+}
+.baking-stove::after {
+  left: 61%;
+}
+.pan-flame {
+  position: absolute;
+  inset: 8% 8% 24%;
+  border: 4px dashed #e58e51;
+  border-radius: 48%;
+  background: #e9b66a;
+}
+.baking-pan {
+  position: absolute;
+  left: 32%;
+  top: 22%;
+  width: 63%;
+  height: 58%;
+}
+.baking-pan .sketch {
+  width: 100%;
+  height: 100%;
+  filter: url(#pencil-grain) drop-shadow(1px 3px 1px #413a3444);
+}
+.baking-pan span {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: clamp(14px, 2.8cqw, 24px);
+  padding: 0.06em 0.65em;
+}
+.play-scene[data-stage='golden'] .baking-pan span {
+  background: #ffe191;
+  box-shadow: 0 0 0 3px #fff3c3;
+}
+.play-scene[data-stage='topping'] .baking-pan .sketch {
+  animation: pan-toss 0.45s ease-out 1;
+}
+@keyframes pan-toss {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  35% {
+    transform: translateY(-7%) rotate(-9deg);
+  }
+}
+.garnish-tray {
+  position: absolute;
+  bottom: 1%;
+  left: 17%;
+  right: 5%;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 4%;
+  height: 23%;
+}
+.garnish-tray button {
+  flex: 1;
+  min-height: 44px;
+  height: 100%;
+  display: grid;
+  justify-items: center;
+  grid-template-rows: minmax(10px, 1fr) auto;
+}
+.garnish-tray button span {
+  font-size: clamp(11px, 2.2cqw, 18px);
+  padding: 0 0.25em;
+  background: #fff6df;
+}
+.garnish-tray .sketch {
+  max-width: 74px;
+}
+
+.regatta {
+  background-color: #c0d7ba;
+  background-image: repeating-linear-gradient(178deg, transparent 0 8px, #758f8320 9px, transparent 11px),
+    radial-gradient(ellipse at 22% 18%, #eee0ae 2%, transparent 50%),
+    radial-gradient(ellipse at 86% 84%, #95bdaf 6%, transparent 45%);
+}
+.job-illustration.regatta {
+  background-color: #acd0c8;
+  background-image: repeating-linear-gradient(176deg, transparent 0 13px, #e6ead859 14px 17px, transparent 19px),
+    linear-gradient(160deg, #d9ce93 0 15%, #83a484 15% 20%, transparent 20% 78%, #91af8b 79% 84%, #cfce96 85%);
+}
+.job-illustration.regatta .sketch {
+  width: 55%;
+  height: 90%;
+  filter: url(#pencil-grain) drop-shadow(1px 2px 1px #586f6855);
+}
+.play-scene.regatta {
+  min-height: 300px;
+}
+.river-board {
+  position: absolute;
+  top: 16%;
+  height: 65%;
+  max-width: 90%;
+  aspect-ratio: 1;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  border: 2px solid #8c906e;
+  border-radius: 6px 9px 5px 8px;
+  box-shadow: 3px 4px 0 #7188755c;
+  background: #cdc995;
+}
+.river-tile,
+.river-bank {
+  position: relative;
+  border: 1px solid #9daa7880;
+  min-width: 0;
+  min-height: 0;
+  background: repeating-linear-gradient(45deg, #cbd4a3 0 3px, #c4ce9c 4px, #cbd4a3 6px);
+}
+.river-bank {
+  background: #b4c597;
+  display: grid;
+  place-items: center;
+}
+.river-bank .sketch {
+  width: 56%;
+  height: 56%;
+  opacity: 0.82;
+  transform: rotate(-14deg);
+}
+.river-tile > .sketch:first-child {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.river-tile.snag {
+  outline: 3px dashed #c16a4e;
+  outline-offset: -4px;
+  z-index: 1;
+}
+.river-tile .little-boat {
+  position: absolute;
+  width: 62%;
+  height: 62%;
+  left: 17%;
+  top: 9%;
+  transform: rotate(-7deg);
+  filter: drop-shadow(1px 1px 0 #fff8da);
+}
+.river-mark {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  transform: translateY(-50%);
+  font: 700 clamp(16px, 3.5cqw, 29px) var(--hand);
+  line-height: 1.12;
+  color: #ffffff;
+  border-radius: 4px;
+}
+.startDock {
+  left: -0.9em;
+  background: #607b59;
+}
+.endDock {
+  right: -0.8em;
+  background: #ad6858;
+}
+.launch-boat {
+  position: absolute;
+  bottom: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 14px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: clamp(14px, 2.6cqw, 23px);
+  box-shadow: 1px 2px 0 #8d9980;
+}
+@media (max-width: 540px) {
+  .play-scene.bakery {
+    min-height: 270px;
+  }
+  .play-scene.regatta .river-board {
+    height: 62%;
+    top: 17%;
+  }
+  .apple-ticket {
+    width: 19%;
+  }
+  .garnish-ticket {
+    flex-direction: column;
+    gap: 0;
+    line-height: 1.1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .play-scene.orchard .falling {
+    animation-timing-function: steps(6, end);
+  }
+  .play-scene[data-stage='topping'] .baking-pan .sketch {
+    animation: none;
+  }
+}
+
+.play-scene.regatta,
+.job-illustration.regatta {
+  background-image: linear-gradient(#f4eccb23, #ffe7ad20), url('/devochka/regatta.webp');
+  background-size: cover;
+  background-position: center;
+}
+/* Explicit width keeps the touch-sized river tiles and stove inside narrow phones. */
+.scene.play-scene {
+  width: 100%;
+}
+.baking-pan[data-game-action]::after {
+  pointer-events: none;
+  position: absolute;
+  left: 42%;
+  top: -4%;
+  font: 400 clamp(23px, 5cqw, 40px) / 1 var(--hand);
+}
+.play-scene[data-stage='pale'] .baking-pan::after {
+  content: '♨';
+  color: #8c958e;
+}
+.play-scene[data-stage='golden'] .baking-pan::after {
+  content: '✦';
+  transform: rotate(9deg);
+  color: #965613;
+  text-shadow: 0 0 3px #fff4cb;
+}
+.play-scene[data-stage='dark'] .baking-pan::after {
+  content: '♨';
+  color: #675c64;
+}

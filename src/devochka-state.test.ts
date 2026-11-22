@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { MEALS, type Food } from './devochka-copy.ts'
+import { pendingBowls } from './devochka-dining.ts'
 import { CAPACITY, checkout, fresh, matches, price, readBook, serve } from './devochka-state.ts'
 
 describe('Matryona’s shopping notebook', () => {
@@ -49,14 +50,49 @@ describe('Matryona’s shopping notebook', () => {
       s.cart = basket
       expect(basket.length).toBeLessThanOrEqual(CAPACITY)
       checkout(s, s.coins)
-      for (const item of [...s.table]) {
+      while (s.table.length) {
+        const item = s.table[0]
         if (item === 'chips') s.chipsOpen = true
-        serve(s, item)
+        expect(serve(s, item)).toBe(true)
       }
+      for (const guest of pendingBowls(s)) expect(serve(s, guest)).toBe(true)
       expect(s.day).toBe(i + 1)
       expect(readBook(JSON.stringify(s)).result).toBe(i)
     }
   })
+  it('keeps a last portion to share with the other girl at the courtyard party', () => {
+    const s = fresh()
+    s.day = 7
+    s.cart = ['water']
+    expect(checkout(s, 1)).toBe(true)
+    expect(serve(s, 'water', 'girl')).toBe(true)
+    expect(s.table).toEqual(['water'])
+    expect(serve(s, 'water', 'girl')).toBe(false)
+    const resumed = readBook(JSON.stringify(s))
+    expect(serve(resumed, 'water', 'friend')).toBe(true)
+    expect(resumed.result).toBe('free')
+    expect(resumed.day).toBe(7)
+  })
+
+  it('preserves a paid picnic while only the fish bowl is left', () => {
+    const s = fresh()
+    s.day = 1
+    s.cart = [...MEALS[1].list]
+    expect(checkout(s, price(s.cart))).toBe(true)
+    for (const food of [...s.table]) {
+      s.chipsOpen = food === 'chips'
+      expect(serve(s, food, 'girl')).toBe(true)
+    }
+    const picnic = readBook(JSON.stringify(s))
+    expect(pendingBowls(picnic)).toEqual(['cat'])
+    picnic.cart = ['water']
+    expect(checkout(picnic, 1)).toBe(false)
+    expect(serve(picnic, 'cat', 'girl')).toBe(false)
+    expect(serve(picnic, 'cat', 'cat')).toBe(true)
+    expect(serve(picnic, 'cat', 'cat')).toBe(false)
+    expect([picnic.day, picnic.result]).toEqual([2, 1])
+  })
+
   it('recovers from incomplete, damaged and older storage', () => {
     expect(readBook('{')).toEqual(fresh())
     const s = readBook(

@@ -1,3 +1,19 @@
+import { servingArt } from './devochka-bowls.ts'
+import {
+  hasMeal,
+  isBowl,
+  pendingBowls,
+  portionName,
+  recipients,
+  sceneOf,
+  seatName,
+  tableWords,
+  yummy,
+  type Seat,
+  type Portion,
+} from './devochka-dining.ts'
+import { MEAL_SCENES, starCounts, starLabels } from './devochka-scenes.ts'
+import { applyStudioChoice, newGuestMessage, studioTabName, type StudioTab } from './devochka-studio.ts'
 import '@fontsource/pangolin/cyrillic-400.css'
 import '@fontsource/pangolin/latin-400.css'
 import '@fontsource/nunito/cyrillic-600.css'
@@ -5,25 +21,12 @@ import '@fontsource/nunito/cyrillic-800.css'
 import '@fontsource/nunito/latin-600.css'
 import '@fontsource/nunito/latin-800.css'
 import './devochka.css'
+import './devochka-table.css'
 import { isLang, loadLang, saveLang, STORAGE_KEY } from './languages.ts'
 import { PuppyNarration } from './sobachka-narration.ts'
 import { LunchSounds } from './devochka-audio.ts'
-import { bite, pencilFilter } from './devochka-art.ts'
-import {
-  blurb,
-  COLOURS,
-  EYES,
-  FOOD,
-  JARS,
-  LANES,
-  MEALS,
-  MOUTHS,
-  T,
-  title,
-  WINDOW_STORIES,
-  type Food,
-  type TextKey,
-} from './devochka-copy.ts'
+import { pencilFilter } from './devochka-art.ts'
+import { blurb, FOOD, JARS, LANES, MEALS, T, title, type Food, type TextKey } from './devochka-copy.ts'
 import { Playroom } from './devochka-play.ts'
 import {
   CAPACITY,
@@ -52,12 +55,15 @@ try {
 }
 let lang = loadLang()
 saveLang(lang)
-let place: Place = book.table.length || book.result !== null ? 'home' : 'shop'
-let selected: Food | null = null
+let place: Place = hasMeal(book) || book.result !== null ? 'home' : 'shop'
+let selected: Portion | null = null
 let tender: number[] | null = null
+let studioTab: StudioTab = 'paint'
 let studio = false
-let stamp = Math.min(Math.max(0, book.day - 1), MEALS.length - 1)
+let stamp = typeof book.result === 'number' ? book.result : Math.max(0, book.day - 1) % MEALS.length
+let visitKitchen = false
 let windowOpen = false
+let countedStars: number[] = []
 let message = ''
 let hidden = false
 const enabled = () => !muted && !hidden
@@ -90,7 +96,7 @@ function feedback(text: string): void {
 const play = new Playroom({
   lang: () => lang,
   render,
-  say: (k) => say(tx(k)),
+  say,
   sound: (effect, i) => sound.play(effect, i),
   reward: (job) => {
     book.coins = Math.min(9999, book.coins + WAGES[job])
@@ -106,7 +112,21 @@ function render(): void {
       : []
   const focusedNav = focus?.closest('nav')
   const focusedHeader = focus?.closest('header')
-  const v: View = { book, lang, muted, place, selected, tender, studio, stamp, message, windowOpen }
+  const v: View = {
+    book,
+    lang,
+    muted,
+    place,
+    selected,
+    tender,
+    studio,
+    studioTab,
+    stamp,
+    message,
+    visitKitchen,
+    windowOpen,
+    countedStars,
+  }
   const page =
     place === 'shop'
       ? shopView(v)
@@ -131,12 +151,16 @@ function render(): void {
     area?.querySelector<HTMLElement>(selector)?.focus({ preventScroll: true })
   }
 }
-function go(next: Place): void {
+function go(next: Place, toKitchen = false): void {
+  visitKitchen = toKitchen
   cancelGesture()
   play.leave()
   sound.stop()
   place = next
   if (next === 'shop' && book.result !== null) {
+    book.seated = null
+    book.seatedPet = 'none'
+    book.tasted = []
     book.result = null
     save()
   }
@@ -147,8 +171,8 @@ function go(next: Place): void {
   message = ''
   render()
   window.scrollTo(0, 0)
-  if (next === 'home')
-    say(tx(book.table.length ? 'chooseFood' : book.result !== null ? 'finished' : 'emptyTable'))
+  if (next === 'home' && !toKitchen)
+    say(hasMeal(book) ? sceneOf(book).arrival[lang] : tx(book.result !== null ? 'finished' : 'emptyTable'))
 }
 function changeLang(next: typeof lang): void {
   if (next === lang) return
@@ -169,7 +193,7 @@ function changeLang(next: typeof lang): void {
   if (place === 'games') play.resume()
 }
 function add(food: Food): void {
-  if (place !== 'shop' || tender) return
+  if (place !== 'shop' || tender || hasMeal(book)) return
   if (book.cart.length >= CAPACITY) {
     feedback(tx('full'))
     render()
@@ -194,7 +218,7 @@ function requestWish(): void {
   }
 }
 function toCheckout(): void {
-  if (!book.cart.length || book.table.length || book.coins < price(book.cart)) return
+  if (!book.cart.length || hasMeal(book) || book.coins < price(book.cart)) return
   tender = []
   message = ''
   sound.play('tap')
@@ -234,18 +258,25 @@ function pay(): void {
   place = 'home'
   tender = null
   selected = null
-  message = tx('packed')
+  visitKitchen = false
+  windowOpen = false
+  countedStars = []
+  message = sceneOf(book).arrival[lang] + ' ' + tx('chooseFood')
   sound.play('till')
   say(message)
   render()
   window.scrollTo(0, 0)
 }
-function choose(food: Food): void {
-  if (!book.table.includes(food)) return
+function choose(food: Portion): void {
+  if (isBowl(food) ? !pendingBowls(book).includes(food) : !book.table.includes(food)) return
   windowOpen = false
   selected = food
-  message = food === 'chips' && book.chipsOpen ? tx('opened') : FOOD[food].hint[lang]
-  say(FOOD[food].name[lang] + '. ' + message)
+  message = isBowl(food)
+    ? tableWords.bowl[lang]
+    : food === 'chips' && book.chipsOpen
+    ? tx('opened')
+    : FOOD[food].hint[lang]
+  say(portionName(food, lang) + '. ' + message)
   sound.play('tap')
   render()
 }
@@ -258,17 +289,19 @@ function cut(): void {
   render()
 }
 let reactionTimer = 0
-function showBite(food: Food, from: DOMRect, to: DOMRect): void {
+function showBite(food: Portion, from: DOMRect, to: DOMRect): void {
   if (!document.body.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
   const part = document.createElement('div')
   part.className = 'serving-flight'
   part.setAttribute('aria-hidden', 'true')
-  part.innerHTML = bite(food)
+  part.innerHTML = servingArt(food)
   part.style.left = from.left + from.width / 2 + 'px'
   part.style.top = from.top + from.height / 2 + 'px'
   document.body.append(part)
-  const dx = to.left + to.width * 0.5 - from.left - from.width / 2
-  const dy = to.top + to.height * 0.64 - from.top - from.height / 2
+  const mouthX = food === 'cat' ? 0.43 : 0.5
+  const mouthY = food === 'cat' ? 0.39 : food === 'dog' ? 0.43 : 0.59
+  const dx = to.left + to.width * mouthX - from.left - from.width / 2
+  const dy = to.top + to.height * mouthY - from.top - from.height / 2
   const motion = part.animate(
     [
       { transform: 'translate(-50%, -50%) scale(.85)' },
@@ -282,42 +315,57 @@ function showBite(food: Food, from: DOMRect, to: DOMRect): void {
   )
   motion.onfinish = motion.oncancel = () => part.remove()
 }
-function feed(carried = false): void {
+function feed(seat?: Seat, carried = false): void {
   const food = selected
-  if (!food || !book.table.includes(food)) {
-    feedback(tx(book.table.length ? 'chooseFood' : 'emptyTable'))
+  if (!food) {
+    const hint = hasMeal(book) ? (book.table.length ? tx('chooseFood') : tableWords.stillHungry[lang]) : ''
+    if (seat === 'cat' || seat === 'dog') {
+      sound.play(seat)
+      feedback([tx(seat === 'cat' ? 'catTalk' : 'dogTalk'), hint].filter(Boolean).join(' '))
+    } else if (hint) feedback(hint)
+    else if (seat) say(seatName(seat, lang))
     render()
     return
   }
+  const target = seat ?? recipients(book, food)[0]
+  const wasLastHumanPortion = !isBowl(food) && book.table.length === 1
   const from = root.querySelector(`[data-table="${food}"]`)?.getBoundingClientRect()
-  const to = root.querySelector('.table-character')?.getBoundingClientRect()
-  if (!serve(book, food)) {
-    feedback(FOOD.chips.hint[lang])
+  const targetSelector = `.table-character[data-seat="${target}"]`
+  const to = root.querySelector(targetSelector)?.getBoundingClientRect()
+  if (!serve(book, food, target)) {
+    const who = recipients(book, food)
+      .map((s) => seatName(s, lang))
+      .join(', ')
+    feedback(food === 'chips' && !book.chipsOpen ? FOOD.chips.hint[lang] : tableWords.for[lang] + ' — ' + who)
     render()
     return
   }
   if (from && to && !carried && food !== 'water') showBite(food, from, to)
-  const happy = FOOD[food].happy[lang]
   selected = null
+  windowOpen = false
   save()
-  sound.play(food === 'water' ? 'drink' : 'eat')
-  const prize = typeof book.result === 'number' ? MEALS[book.result] : null
-  feedback(
-    book.table.length
-      ? happy + ' ' + tx('chooseFood')
-      : happy + ' ' + tx('finished') + (prize ? ' ' + prize.prize[lang] + '!' : '')
-  )
-  if (prize) sound.play('sticker')
+  sound.play(food === 'water' ? 'drink' : food === 'cat' || food === 'dog' ? food : 'eat')
+  let nextHint: string
+  if (typeof book.result === 'number') {
+    stamp = book.result
+    nextHint = [sceneOf(book).farewell[lang], MEALS[stamp].prize[lang], newGuestMessage(book, lang)]
+      .filter(Boolean)
+      .join(' ')
+    sound.play('sticker')
+  } else if (book.result === 'free') nextHint = tx('freeMeal')
+  else if (!book.table.length) nextHint = tableWords.stillHungry[lang]
+  else nextHint = wasLastHumanPortion ? tableWords.share[lang] : tx('chooseFood')
+  feedback(yummy(food, lang) + ' ' + nextHint)
   render()
-  const girl = root.querySelector('.table-character')
-  girl?.classList.add('delighted')
+  const diner = root.querySelector(targetSelector)
+  diner?.classList.add('delighted')
   clearTimeout(reactionTimer)
-  reactionTimer = window.setTimeout(() => girl?.classList.remove('delighted'), 720)
+  reactionTimer = window.setTimeout(() => diner?.classList.remove('delighted'), 720)
 }
 
 interface Carry {
   id: number
-  food: Food
+  food: Portion
   x: number
   y: number
   moved: boolean
@@ -325,7 +373,7 @@ interface Carry {
 }
 let carry: Carry | null = null
 let pourTimer = 0
-let pouring = false
+let pouring: Seat | null = null
 let pressMouth = -1
 let leverStart: { id: number; y: number } | null = null
 let ignorePointerClick = false
@@ -333,8 +381,8 @@ const POUR_MS = 720
 function stopPour(): void {
   clearTimeout(pourTimer)
   pourTimer = 0
-  pouring = false
-  root.querySelector('.table-character')?.classList.remove('pouring')
+  pouring = null
+  root.querySelector('.table-character.pouring')?.classList.remove('pouring')
 }
 function cancelGesture(): void {
   stopPour()
@@ -342,29 +390,31 @@ function cancelGesture(): void {
   carry = null
   pressMouth = -1
   leverStart = null
-  root.querySelector('.table-character')?.classList.remove('targeted')
+  root.querySelectorAll('.targeted').forEach((el) => el.classList.remove('targeted'))
 }
-function startPour(): void {
-  if (pouring || selected !== 'water') return
-  pouring = true
-  root.querySelector('.table-character')?.classList.add('pouring')
+function startPour(seat = recipients(book, 'water')[0]): void {
+  if (selected !== 'water' || pouring === seat) return
+  stopPour()
+  if (!recipients(book, 'water').includes(seat)) {
+    feed(seat)
+    return
+  }
+  pouring = seat
+  root.querySelector(`[data-seat="${seat}"]`)?.classList.add('pouring')
   pourTimer = window.setTimeout(() => {
     const heldByPointer = pressMouth !== -1 || carry?.moved === true
     cancelGesture()
     if (place !== 'home' || studio || document.hidden || selected !== 'water') return
     ignorePointerClick = heldByPointer
-    feed()
+    feed(seat)
   }, POUR_MS)
 }
-function nearFace(x: number, y: number): boolean {
-  const rect = root.querySelector('.table-character')?.getBoundingClientRect()
-  return (
-    !!rect &&
-    x >= rect.left - 8 &&
-    x <= rect.right + 8 &&
-    y >= rect.top + rect.height * 0.25 &&
-    y <= rect.bottom + 6
-  )
+function seatAt(x: number, y: number): Seat | undefined {
+  for (const el of root.querySelectorAll<HTMLElement>('.table-character')) {
+    const r = el.getBoundingClientRect()
+    if (x >= r.left - 4 && x <= r.right + 4 && y >= r.top + r.height * 0.18 && y <= r.bottom + 4)
+      return el.dataset.seat as Seat
+  }
 }
 root.addEventListener('pointerdown', (e) => {
   if (e.button !== 0 || !e.isPrimary || !(e.target instanceof Element)) return
@@ -377,13 +427,13 @@ root.addEventListener('pointerdown', (e) => {
   if (target.matches('.register') && tender) leverStart = { id: e.pointerId, y: e.clientY }
   if (place !== 'home' || studio) return
   const f = target.dataset.table
-  if (isFood(f)) {
+  if (isFood(f) || isBowl(f)) {
     cancelGesture()
     carry = { id: e.pointerId, food: f, x: e.clientX, y: e.clientY, moved: false, ghost: null }
   } else if (target.matches('.table-character') && selected === 'water') {
     voice.begin('')
     pressMouth = e.pointerId
-    startPour()
+    startPour(target.dataset.seat as Seat)
   }
 })
 window.addEventListener('pointermove', (e) => {
@@ -392,7 +442,7 @@ window.addEventListener('pointermove', (e) => {
     if (lanes && e.clientY >= lanes.top && e.clientY <= lanes.bottom)
       play.move(Math.floor(((e.clientX - lanes.left) / lanes.width) * 3))
   }
-  if (pressMouth === e.pointerId && !nearFace(e.clientX, e.clientY)) {
+  if (pressMouth === e.pointerId && seatAt(e.clientX, e.clientY) !== pouring) {
     stopPour()
     pressMouth = -1
   }
@@ -403,18 +453,25 @@ window.addEventListener('pointermove', (e) => {
     c.moved = true
     selected = c.food
     message = ''
-    voice.begin(FOOD[c.food].name[lang])
+    voice.begin(portionName(c.food, lang))
     sound.play('tap')
     c.ghost = document.createElement('div')
     c.ghost.className = 'carry-ghost'
-    c.ghost.innerHTML = c.food === 'chips' && !book.chipsOpen ? '<span>✂</span>' : bite(c.food)
+    c.ghost.innerHTML = c.food === 'chips' && !book.chipsOpen ? '<span>✂</span>' : servingArt(c.food)
     document.body.append(c.ghost)
     root.querySelector(`[data-table="${c.food}"]`)?.classList.add('chosen')
   }
   if (c.ghost) c.ghost.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -60%)`
-  const near = nearFace(e.clientX, e.clientY)
-  root.querySelector('.table-character')?.classList.toggle('targeted', near)
-  if (near && c.food === 'water') startPour()
+  const near = seatAt(e.clientX, e.clientY)
+  root
+    .querySelectorAll<HTMLElement>('.table-character')
+    .forEach((el) =>
+      el.classList.toggle(
+        'targeted',
+        el.dataset.seat === near && near !== undefined && recipients(book, c.food).includes(near)
+      )
+    )
+  if (near && c.food === 'water' && recipients(book, 'water').includes(near)) startPour(near)
   else if (pouring) stopPour()
 })
 window.addEventListener('pointerup', (e) => {
@@ -441,18 +498,26 @@ window.addEventListener('pointerup', (e) => {
   }
   const c = carry
   if (!c || c.id !== e.pointerId) return
-  const atMouth = nearFace(e.clientX, e.clientY)
+  const atMouth = seatAt(e.clientX, e.clientY)
   cancelGesture()
   if (!c.moved) return
   ignorePointerClick = true
   if (c.food === 'chips' && !book.chipsOpen && Math.abs(e.clientX - c.x) >= 24) cut()
-  else if (atMouth && c.food !== 'water') feed(true)
+  else if (atMouth && c.food !== 'water') feed(atMouth, true)
   else {
     message =
       c.food === 'water' && atMouth
-        ? tx('keepHolding')
+        ? recipients(book, 'water').includes(atMouth)
+          ? tx('keepHolding')
+          : tableWords.for[lang] +
+            ' — ' +
+            recipients(book, 'water')
+              .map((id) => seatName(id, lang))
+              .join(', ')
         : c.food === 'chips' && book.chipsOpen
         ? tx('opened')
+        : isBowl(c.food)
+        ? tableWords.bowl[lang]
         : FOOD[c.food].hint[lang]
     say(message)
     render()
@@ -486,7 +551,9 @@ root.addEventListener('click', (e) => {
   voice.begin('')
   if (d.nav) {
     go(d.nav as Place)
-    say(tx(d.nav as Place))
+    if (d.nav === 'shop' && hasMeal(book)) {
+      say(tx('orderPaid') + '. ' + sceneOf(book).name[lang] + '. ' + tableWords.returnMeal[lang])
+    } else if (d.nav !== 'home') say(tx(d.nav as Place))
     return
   }
   if (isFood(d.add)) {
@@ -494,6 +561,7 @@ root.addEventListener('click', (e) => {
     return
   }
   if (isFood(d.remove)) {
+    if (hasMeal(book)) return
     const i = book.cart.indexOf(d.remove)
     if (i >= 0) book.cart.splice(i, 1)
     save()
@@ -506,13 +574,17 @@ root.addEventListener('click', (e) => {
     deposit(Number(d.coin))
     return
   }
-  if (isFood(d.table)) {
+  if (isFood(d.table) || isBowl(d.table)) {
     choose(d.table)
     return
   }
-  if (d.job === 'jars' || d.job === 'orchard') {
+  if (d.job === 'jars' || d.job === 'orchard' || d.job === 'bakery' || d.job === 'regatta') {
     sound.stop()
     play.start(d.job)
+    return
+  }
+  if (d.gameAction) {
+    play.act(d.gameAction, Number(d.index))
     return
   }
   if (d.jar !== undefined) {
@@ -535,21 +607,15 @@ root.addEventListener('click', (e) => {
     render()
     return
   }
-  if (d.guest || d.style || d.pet) {
-    let label = ''
-    if (d.guest) {
-      book.friend = d.guest === 'friend'
-      label = tx(book.friend ? 'friend' : 'original')
-    }
-    if (d.style === 'eyes' || d.style === 'mouth' || d.style === 'colour') {
-      const i = Number(d.value)
-      book[d.style] = i
-      label = { eyes: EYES, mouth: MOUTHS, colour: COLOURS }[d.style][i][lang]
-    }
-    if (d.pet === 'cat' || d.pet === 'dog' || d.pet === 'none') {
-      book.pet = d.pet
-      label = tx(d.pet)
-    }
+  if (d.studioTab === 'paint' || d.studioTab === 'guests') {
+    studioTab = d.studioTab
+    sound.play('tap')
+    say(studioTabName(studioTab, lang))
+    render()
+    return
+  }
+  if (studio && (d.guest || d.style || d.pet || d.paint)) {
+    const label = applyStudioChoice(book, d, lang)
     save()
     sound.play('tap')
     say(label)
@@ -558,7 +624,7 @@ root.addEventListener('click', (e) => {
   }
   switch (d.action) {
     case 'counter':
-      if (book.table.length) go('home')
+      if (hasMeal(book)) go('home')
       else if (book.coins < price(book.cart)) {
         go('games')
         say(tx('short'))
@@ -604,33 +670,46 @@ root.addEventListener('click', (e) => {
       cut()
       return
     case 'mouth':
-      if (studio) {
-        say(tx('guest'))
+      if (d.seat && (studio || visitKitchen || !hasMeal(book))) {
+        if (d.seat === 'cat' || d.seat === 'dog') {
+          sound.play(d.seat)
+          say(tx(d.seat === 'cat' ? 'catTalk' : 'dogTalk'))
+        } else say(seatName(d.seat as Seat, lang))
         return
       }
-      if (selected === 'water') startPour()
-      else feed()
+      if (selected === 'water') startPour((d.seat ?? d.to) as Seat | undefined)
+      else feed((d.seat ?? d.to) as Seat | undefined)
       return
     case 'pour':
-      startPour()
+      startPour(d.to as Seat | undefined)
       return
-    case 'pet':
-      if (book.pet !== 'none') {
-        sound.play(book.pet)
-        say(tx(book.pet === 'cat' ? 'catTalk' : 'dogTalk'))
-        b.animate?.(
-          [{ transform: 'rotate(-6deg)' }, { transform: 'rotate(6deg)' }, { transform: 'rotate(0)' }],
-          { duration: 350 }
-        )
+    case 'star': {
+      const id = Number(d.star)
+      if (!windowOpen || studio || visitKitchen || sceneOf(book).id !== 'moonlight' || !starLabels[id]) return
+      if (!countedStars.includes(id)) {
+        countedStars.push(id)
+        sound.play(countedStars.length === starLabels.length ? 'sticker' : 'jar', countedStars.length - 1)
       }
+      say(starCounts[countedStars.length - 1][lang])
+      render()
+      return
+    }
+    case 'countAgain':
+      if (!windowOpen || sceneOf(book).id !== 'moonlight') return
+      countedStars = []
+      sound.play('tap')
+      say(sceneOf(book).discovery.line[lang])
+      render()
+      root.querySelector<HTMLElement>('[data-star]')?.focus({ preventScroll: true })
       return
     case 'window': {
       windowOpen = !windowOpen
-      const index = typeof book.result === 'number' ? book.result : book.day % MEALS.length
-      const story = WINDOW_STORIES[index]
+      const story = (visitKitchen || studio ? MEAL_SCENES[0] : sceneOf(book)).discovery
       say(windowOpen ? story.line[lang] : story.label[lang])
-      sound.play(story.art === 'cat' ? 'cat' : 'apple')
+      sound.play(story.art === 'basket' ? 'cat' : 'apple')
       render()
+      if (story.art === 'star' && windowOpen)
+        root.querySelector<HTMLElement>('[data-star]')?.focus({ preventScroll: true })
       return
     }
     case 'music':
@@ -642,6 +721,7 @@ root.addEventListener('click', (e) => {
       cancelGesture()
       selected = null
       message = ''
+      studioTab = 'paint'
       studio = true
       sound.play('tap')
       say(tx('studio'))
@@ -657,7 +737,7 @@ root.addEventListener('click', (e) => {
       if (stamp < book.day) {
         book.wall = stamp
         save()
-        go('home')
+        go('home', true)
         say(tx('hung'))
         sound.play('sticker')
       }

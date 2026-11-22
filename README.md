@@ -2,7 +2,7 @@
 
 A small catalog of calm toys for children. Web first, later on iPad.
 
-**Девочка** is Matryona’s illustrated shopping game. Pay the bunny cashier in exact change, carry lunch home and serve the four foods using the gestures she invented. Apple catching and musical jars earn coins. Eight lunch menus fill a sticker album, and the stickers can decorate the kitchen. [Game details and checks](docs/devochka.md).
+**Девочка** is Matryona’s illustrated shopping game. Pay Bunny in exact change and serve eight story meals, from a picnic on a striped blanket with the ginger cat to a courtyard party. Collect stickers, unlock dinner guests and repaint kitchen furnishings. The orchard, musical jars, pancake kitchen and paper boat puzzles pay for groceries. [Game details and checks](docs/devochka.md).
 
 Start page: choose a toy. The first toy is **Kuckuck**. The second is **Чуняшка**, a dress-up doll. Always clothed. Hearts after Ready stay in the game; nothing is posted. The third toy is **Собачка**, a puppy-care game inspired by a child’s drawing.
 

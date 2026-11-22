@@ -1,17 +1,19 @@
-import { art, bite, character, coin, foodImage, icon } from './devochka-art.ts'
+import { newGuestMessage, studioPanel, type StudioTab } from './devochka-studio.ts'
+import { tableStage, servingPanel } from './devochka-table-view.ts'
 import {
-  COLOURS,
-  EYES,
-  FOOD,
-  FOODS,
-  MEALS,
-  MOUTHS,
-  T,
-  title,
-  WINDOW_STORIES,
-  type Food,
-  type TextKey,
-} from './devochka-copy.ts'
+  hasMeal,
+  isBowl,
+  pendingBowls,
+  portionName,
+  sceneOf,
+  seatName,
+  seats,
+  tableWords,
+  type Portion,
+} from './devochka-dining.ts'
+import { bowlArt } from './devochka-bowls.ts'
+import { art, character, coin, foodImage, icon } from './devochka-art.ts'
+import { FOOD, FOODS, MEALS, T, title, type TextKey } from './devochka-copy.ts'
 import { CAPACITY, count, menu, price, type Notebook } from './devochka-state.ts'
 import { LANGS, LANG_LABEL, type Lang } from './languages.ts'
 
@@ -21,12 +23,15 @@ export interface View {
   lang: Lang
   place: Place
   muted: boolean
-  selected: Food | null
+  selected: Portion | null
   tender: number[] | null
   studio: boolean
+  studioTab: StudioTab
   stamp: number
   message: string
+  visitKitchen: boolean
   windowOpen: boolean
+  countedStars: readonly number[]
 }
 const copy = (v: View, k: TextKey) => T[k][v.lang]
 const small = (n: number) => String(n).padStart(2, '0')
@@ -63,10 +68,11 @@ export function top(v: View): string {
     <nav class="tabs" aria-label="${copy(v, 'sections')}">${(['shop', 'home', 'games', 'album'] as const)
     .map(
       (k) =>
-        `<button data-nav="${k}" ${v.place === k ? 'aria-current="page"' : ''}>${icon(k)}<span>${copy(
-          v,
-          k
-        )}</span>${k === 'home' && v.book.table.length ? '<i class="nav-dot"></i>' : ''}</button>`
+        `<button data-nav="${k}" ${v.place === k ? 'aria-current="page"' : ''}>${icon(k)}<span>${
+          k === 'home' && hasMeal(v.book) && sceneOf(v.book).background && !v.visitKitchen && !v.studio
+            ? T.meal[v.lang]
+            : copy(v, k)
+        }</span>${k === 'home' && hasMeal(v.book) ? '<i class="nav-dot"></i>' : ''}</button>`
     )
     .join('')}</nav>`
 }
@@ -91,8 +97,9 @@ function mealList(v: View): string {
   const bill = price(v.book.cart)
   const taken = v.book.cart
   const affordable = bill <= v.book.coins
-  const ready = v.book.table.length > 0
-  return note(`<div class="note-label">${icon('receipt', 18)} ${copy(v, 'meal')} ${small(v.book.day + 1)}</div>
+  return note(`<div class="note-label">${icon('receipt', 18)} ${copy(v, 'meal')} ${small(
+    v.book.day + 1
+  )}</div>
     <h2>${copy(v, 'list')}</h2><div class="order-title">${
     order.name[v.lang]
   }<button class="listen-btn" data-action="wish" aria-label="${copy(v, 'listen')} · ${
@@ -112,13 +119,35 @@ function mealList(v: View): string {
     order.prize[v.lang]
   }</strong></div></div>
     <div class="note-bottom"><div class="tally"><span>${copy(v, 'total')}</span><b>${bill} ${coin()}</b></div>
-    ${!affordable || ready ? `<p class="inline-tip">${copy(v, ready ? 'tableWaiting' : 'short')}</p>` : ''}
+    ${!affordable ? `<p class="inline-tip">${copy(v, 'short')}</p>` : ''}
     ${primary(
-      ready ? 'goHome' : affordable ? 'checkout' : 'earn',
-      copy(v, ready ? 'goHome' : affordable ? 'toTill' : 'earn'),
-      ready ? 'home' : affordable ? 'arrow' : 'games',
-      !ready && !taken.length
+      affordable ? 'checkout' : 'earn',
+      copy(v, affordable ? 'toTill' : 'earn'),
+      affordable ? 'arrow' : 'games',
+      !taken.length
     )}</div>`)
+}
+function paidOrder(v: View): string {
+  const { book, lang } = v
+  const scene = sceneOf(book)
+  const remaining: Portion[] = [...new Set(book.table), ...pendingBowls(book)]
+  const dishes = remaining
+    .map((id) => {
+      const quantity = isBowl(id) ? 1 : count(book.table, id)
+      const picture = isBowl(id) ? bowlArt(id) : foodImage(id)
+      return `<li>${picture}<span>${portionName(id, lang)}${quantity > 1 ? ' ×' + quantity : ''}</span></li>`
+    })
+    .join('')
+  const guests = seats(book)
+    .map((id) => seatName(id, lang))
+    .join(' · ')
+  return note(
+    `<div class="note-label">${icon('check', 18)} ${copy(v, 'orderPaid')}</div>
+    <h2>${scene.name[lang]}</h2><p class="seat-list">${guests}</p>
+    <h3>${copy(v, 'leftToServe')}</h3><ul class="checklist paid-portions">${dishes}</ul>
+    <div class="note-bottom">${primary('goHome', scene.serveAction[lang], 'basket')}</div>`,
+    'paid-order'
+  )
 }
 function basketStrip(v: View): string {
   return `<div class="basket-strip"><div class="basket-label">${icon('basket', 26)}<strong>${copy(
@@ -140,31 +169,37 @@ function basketStrip(v: View): string {
 export function shopView(v: View): string {
   if (v.tender) return cashView(v)
   const order = menu(v.book)
+  const paid = hasMeal(v.book)
+  const characterAction = paid ? 'goHome' : 'wish'
+  const characterLabel = paid ? tableWords.returnMeal[v.lang] : copy(v, 'listen') + ' · ' + order.name[v.lang]
+  const shopper = v.book.seated ?? v.book.diner
   const ready = FOODS.every((f) => count(v.book.cart, f) >= count(order.list, f))
   return `<div class="spread"><div class="picture-column"><div class="scene shop-scene">${sign(
     copy(v, 'storeName'),
     true
   )}
-    <button data-action="wish" class="stall-character" aria-label="${copy(v, 'listen')} · ${
-    order.name[v.lang]
-  }">${character(v.book)}</button>
-    <button class="speech-slip" data-action="wish">${
-      v.message || (ready ? listReady[v.lang] : greeting[v.lang])
-    }</button>
-    ${FOODS.map(
-      (f, i) =>
-        `<button class="shelf-item shelf-${i}" data-add="${f}" aria-label="${copy(v, 'add')} · ${
-          FOOD[f].name[v.lang]
-        } · ${copy(v, 'coins')} ${FOOD[f].price}">${foodImage(f)}<span class="price-tag"><span>${
-          FOOD[f].name[v.lang]
-        }</span><b>${FOOD[f].price} ${coin(15)}</b></span></button>`
-    ).join('')}
+    <button data-action="${characterAction}" class="stall-character" aria-label="${characterLabel}">${character(
+    v.book,
+    order === MEALS[1] || shopper !== 'friend' ? 'girl' : 'friend'
+  )}</button>
+    <button class="speech-slip" data-action="${characterAction}">${
+    paid ? tableWords.returnMeal[v.lang] : v.message || (ready ? listReady[v.lang] : greeting[v.lang])
+  }</button>
+    ${FOODS.map((f, i) => {
+      const product = foodImage(f)
+      if (paid) return `<span class="shelf-item shelf-${i}" aria-hidden="true">${product}</span>`
+      return `<button class="shelf-item shelf-${i}" data-add="${f}" aria-label="${copy(v, 'add')} · ${
+        FOOD[f].name[v.lang]
+      } · ${copy(v, 'coins')} ${FOOD[f].price}">${product}<span class="price-tag"><span>${
+        FOOD[f].name[v.lang]
+      }</span><b>${FOOD[f].price} ${coin(15)}</b></span></button>`
+    }).join('')}
     <button class="counter-till" data-action="counter"><span>${copy(
       v,
-      'till'
-    )}</span><img src="/devochka/till.webp" alt="" draggable="false"></button></div>${basketStrip(
-    v
-  )}</div>${mealList(v)}</div>`
+      paid ? 'orderPaid' : 'till'
+    )}</span><img src="/devochka/till.webp" alt="" draggable="false"></button></div>${
+    paid ? '' : basketStrip(v)
+  }</div>${paid ? paidOrder(v) : mealList(v)}</div>`
 }
 function cashView(v: View): string {
   const total = price(v.book.cart),
@@ -214,98 +249,19 @@ function cashView(v: View): string {
       'editCart'
     )}</button></div>`)}</div>`
 }
-function tableScene(v: View): string {
-  const s = v.book
-  const index = typeof s.result === 'number' ? s.result : s.day % MEALS.length
-  const visitor = WINDOW_STORIES[index]
-  return `<div class="scene home-scene colour-${s.colour} ${index === 4 ? 'moonlit' : ''}">${sign(
-    copy(v, 'homeName')
-  )}
-    <button class="avatar-chip" data-action="studio" aria-label="${copy(v, 'changeFriend')}">${character(
-    s
-  )}</button>
-    <button class="music-box" data-action="music" aria-label="${music[v.lang]}" title="${music[v.lang]}">${icon(
-    'note',
-    21
-  )}</button>
-    ${s.wall !== null ? `<span class="wall-picture">${art(MEALS[s.wall].sticker)}</span>` : ''}
-    <button class="window-visitor ${v.windowOpen ? 'peeking' : ''}" data-action="window" aria-label="${
-    visitor.label[v.lang]
-  }" title="${visitor.label[v.lang]}">${art(visitor.art)}</button>
-    ${v.windowOpen ? `<span class="window-message">${visitor.line[v.lang]}</span>` : ''}
-    <button class="table-character ${v.selected ? 'ready-to-eat' : ''}" data-action="mouth" aria-label="${copy(
-    v,
-    'serve'
-  )}">${character(s)}<span class="mouth-target">${icon(
-    v.selected === 'water' ? 'drop' : 'heart',
-    21
-  )}</span></button>
-    ${
-      s.pet !== 'none'
-        ? `<button class="home-pet" data-action="pet" aria-label="${copy(v, s.pet)}">${art(s.pet)}</button>`
-        : ''
-    }
-    <div class="table-tray">${FOODS.filter((f) => s.table.includes(f))
-      .map(
-        (f) =>
-          `<button data-table="${f}" class="table-food ${v.selected === f ? 'chosen' : ''}" aria-label="${
-            FOOD[f].name[v.lang]
-          }" aria-pressed="${v.selected === f}">${
-            f === 'chips' && s.chipsOpen ? bite('chips') : foodImage(f)
-          }<span class="table-count">×${count(s.table, f)}</span></button>`
-      )
-      .join('')}</div></div>`
-}
 function studioNote(v: View): string {
-  const s = v.book,
-    l = v.lang
-  const choices = (type: 'eyes' | 'mouth' | 'colour', values: typeof COLOURS, sample: string[]) =>
-    `<fieldset class="options"><legend>${copy(v, type === 'colour' ? 'room' : type)}</legend>${values
-      .map(
-        (n, i) =>
-          `<button data-style="${type}" data-value="${i}" aria-pressed="${s[type] === i}" aria-label="${
-            n[l]
-          }" title="${n[l]}">${sample[i]}</button>`
-      )
-      .join('')}</fieldset>`
   return note(
-    `<div class="note-label">${icon('brush', 18)} ${copy(v, 'home')}</div><h2>${copy(v, 'studio')}</h2>
-    <fieldset class="options residents"><legend>${copy(v, 'guest')}</legend>${[false, true]
-      .map(
-        (friend) =>
-          `<button data-guest="${friend ? 'friend' : 'girl'}" aria-pressed="${
-            s.friend === friend
-          }" aria-label="${copy(v, friend ? 'friend' : 'original')}">${character(s, !friend)}<span>${copy(
-            v,
-            friend ? 'friend' : 'original'
-          )}</span></button>`
-      )
-      .join('')}</fieldset>
-    ${s.friend ? choices('eyes', EYES, ['● ●', '⌒ ⌒', '✦ ✦']) + choices('mouth', MOUTHS, ['◡', '○', '◒']) : ''}
-    ${choices('colour', COLOURS, [
-      '<i class="swatch honey"></i>',
-      '<i class="swatch mint"></i>',
-      '<i class="swatch lilac"></i>',
-    ])}
-    <fieldset class="options"><legend>${copy(v, 'pet')}</legend>${(['none', 'cat', 'dog'] as const)
-      .map(
-        (p) =>
-          `<button data-pet="${p}" aria-pressed="${s.pet === p}" aria-label="${copy(v, p)}" title="${copy(
-            v,
-            p
-          )}">${p === 'none' ? icon('minus') : art(p)}</button>`
-      )
-      .join('')}</fieldset>
-    ${primary('studioDone', copy(v, 'done'), 'check')}`,
+    studioPanel(v.book, v.lang, v.studioTab) + primary('studioDone', copy(v, 'done'), 'check'),
     'studio-note'
   )
 }
 export function homeView(v: View): string {
   const s = v.book
   const mealResult = typeof s.result === 'number' ? MEALS[s.result] : null
+  const invitation = newGuestMessage(s, v.lang)
   let side: string
   if (v.studio) side = studioNote(v)
-  else if (s.result !== null)
+  else if (s.result !== null && !v.visitKitchen)
     side = note(`<div class="note-label">${icon('heart', 18)} ${copy(v, 'finished')}</div><h2>${copy(
       v,
       mealResult
@@ -318,47 +274,14 @@ export function homeView(v: View): string {
     )}</h2>
     <div class="prize-big">${art(mealResult?.sticker ?? 'bunny')}</div><h3>${
       mealResult ? mealResult.prize[v.lang] : ''
-    }</h3><p>${
-      mealResult ? mealResult.name[v.lang] : copy(v, 'freeMeal')
-    }</p><div class="note-bottom">${primary(
+    }</h3><p>${mealResult ? sceneOf(s).farewell[v.lang] : copy(v, 'freeMeal')}</p>${
+      invitation ? `<p class="unlocked-guest">${invitation}</p>` : ''
+    }<div class="note-bottom">${primary(
       'next',
       copy(v, 'another')
     )}<button class="secondary" data-nav="album">${icon('album')} ${copy(v, 'album')}</button></div>`)
-  else {
-    const f = v.selected
-    side = note(`<div class="note-label">${icon('home', 18)} ${copy(v, 'home')}</div><h2>${
-      s.table.length ? copy(v, 'table') : copy(v, 'homeName')
-    }</h2>
-      ${
-        f
-          ? `<div class="serving-preview">${f === 'chips' && s.chipsOpen ? bite(f) : foodImage(f)}<h3>${
-              FOOD[f].name[v.lang]
-            }</h3></div>`
-          : `<div class="home-doodle">${art(s.table.length ? 'teapot' : 'bunny')}</div>`
-      }
-      <p class="serving-hint">${
-        v.message ||
-        (f
-          ? f === 'chips' && s.chipsOpen
-            ? copy(v, 'opened')
-            : FOOD[f].hint[v.lang]
-          : copy(v, s.table.length ? 'chooseFood' : 'emptyTable'))
-      }</p>
-      ${f ? `<p class="small-copy">${copy(v, 'tapServe')}</p>` : ''}
-      <div class="note-bottom">${
-        f
-          ? primary(
-              f === 'chips' && !s.chipsOpen ? 'cut' : f === 'water' ? 'pour' : 'mouth',
-              copy(v, f === 'chips' && !s.chipsOpen ? 'cut' : f === 'water' ? 'helpPour' : 'serve'),
-              f === 'chips' && !s.chipsOpen ? 'scissors' : f === 'water' ? 'drop' : 'hand'
-            )
-          : !s.table.length
-          ? primary('shelves', copy(v, 'toShop'), 'shop')
-          : ''
-      }
-      <button class="secondary" data-action="studio">${icon('brush')} ${copy(v, 'studio')}</button></div>`)
-  }
-  return `<div class="spread"><div class="picture-column">${tableScene(v)}</div>${side}</div>`
+  else side = note(servingPanel(v))
+  return `<div class="spread"><div class="picture-column">${tableStage(v, music[v.lang])}</div>${side}</div>`
 }
 export function albumView(v: View): string {
   const index = v.stamp,
@@ -373,9 +296,11 @@ export function albumView(v: View): string {
       (item, i) =>
         `<button data-stamp="${i}" class="stamp ${i < v.book.day ? 'owned' : 'unearned'}" aria-pressed="${
           index === i
-        }" aria-label="${item.prize[v.lang]} · ${i < v.book.day ? item.name[v.lang] : copy(v, 'locked')}">${art(
-          item.sticker
-        )}<span>${i < v.book.day ? item.prize[v.lang] : icon('lock', 15) + ' ' + small(i + 1)}</span></button>`
+        }" aria-label="${item.prize[v.lang]} · ${
+          i < v.book.day ? item.name[v.lang] : copy(v, 'locked')
+        }">${art(item.sticker)}<span>${
+          i < v.book.day ? item.prize[v.lang] : icon('lock', 15) + ' ' + small(i + 1)
+        }</span></button>`
     ).join('')}</div></section>
     ${note(`<div class="note-label">${icon('album', 18)} ${copy(v, 'album')}</div><h2>${
       entry.prize[v.lang]

@@ -1,9 +1,27 @@
+import {
+  hasMeal,
+  isBowl,
+  pendingBowls,
+  recipients,
+  seats,
+  type Portion,
+  type Seat,
+} from './devochka-dining.ts'
+import {
+  canDine,
+  DINERS,
+  FURNISHINGS,
+  isDiner,
+  unpaintedRoom,
+  type Diner,
+  type RoomPaint,
+} from './devochka-guests.ts'
 import { FOOD, FOODS, MEALS, type Food } from './devochka-copy.ts'
 
 export const SAVE_KEY = 'spielzeuge.devochka.v1'
 export const SOUND_KEY = 'spielzeuge.devochka.muted'
 export const CAPACITY = 6
-export const WAGES = { orchard: 5, jars: 7 } as const
+export const WAGES = { orchard: 5, jars: 7, bakery: 6, regatta: 8 } as const
 export type Job = keyof typeof WAGES
 export type Pet = 'none' | 'cat' | 'dog'
 export interface Notebook {
@@ -11,13 +29,17 @@ export interface Notebook {
   day: number
   cart: Food[]
   table: Food[]
+  seated: Diner | null
+  seatedPet: Pet
+  tasted: Seat[]
   matched: boolean
   chipsOpen: boolean
   result: number | 'free' | null
-  friend: boolean
+  diner: Diner
+  knownGuests: Diner[]
   eyes: number
   mouth: number
-  colour: number
+  paint: RoomPaint
   pet: Pet
   wall: number | null
 }
@@ -27,13 +49,17 @@ export function fresh(): Notebook {
     day: 0,
     cart: [],
     table: [],
+    seated: null,
+    seatedPet: 'none',
+    tasted: [],
     matched: false,
     chipsOpen: false,
     result: null,
-    friend: false,
+    diner: 'girl',
+    knownGuests: [],
     eyes: 0,
     mouth: 0,
-    colour: 0,
+    paint: unpaintedRoom(),
     pet: 'none',
     wall: null,
   }
@@ -55,16 +81,37 @@ export function readBook(raw: string | null): Notebook {
     s.cart = Array.isArray(v.cart) ? v.cart.filter(isFood).slice(0, CAPACITY) : []
     s.table = Array.isArray(v.table) ? v.table.filter(isFood).slice(0, CAPACITY) : []
     s.chipsOpen = v.chipsOpen === true && s.table.includes('chips')
-    s.matched = v.matched === true && s.table.length > 0
+
     if (!s.table.length) {
       if (v.result === 'free') s.result = 'free'
       else if (inRange(v.result, Math.min(s.day, MEALS.length) - 1, -1) >= 0) s.result = v.result
     }
-    s.friend = v.friend === true
+    const legacy = !isDiner(v.diner)
+    // Keep characters that an older notebook had already made or invited.
+    s.knownGuests = Array.isArray(v.knownGuests) ? DINERS.filter((id) => v.knownGuests.includes(id)) : []
+    if (legacy && (v.friend === true || inRange(v.eyes, 2) > 0 || inRange(v.mouth, 2) > 0))
+      s.knownGuests.push('friend')
+    if (legacy && (v.pet === 'cat' || v.pet === 'dog')) s.knownGuests.push(v.pet)
+    const diner = isDiner(v.diner) ? v.diner : v.friend === true ? 'friend' : 'girl'
+    s.diner = canDine(s, diner) ? diner : 'girl'
+    if ((v.pet === 'cat' || v.pet === 'dog') && v.pet !== s.diner && canDine(s, v.pet)) s.pet = v.pet
+    s.seated = isDiner(v.seated) && canDine(s, v.seated) ? v.seated : s.table.length ? s.diner : null
+    if (s.seated !== null) {
+      const companion = v.seatedPet ?? s.pet
+      if ((companion === 'cat' || companion === 'dog') && canDine(s, companion)) s.seatedPet = companion
+    }
+    s.tasted = Array.isArray(v.tasted) ? seats(s).filter((id) => v.tasted.includes(id)) : []
+    if (!s.table.length && s.result === null && !pendingBowls(s).length) {
+      s.seated = null
+      s.seatedPet = 'none'
+    }
+    s.matched = v.matched === true && hasMeal(s)
     s.eyes = inRange(v.eyes, 2)
     s.mouth = inRange(v.mouth, 2)
-    s.colour = inRange(v.colour, 2)
-    if (v.pet === 'cat' || v.pet === 'dog') s.pet = v.pet
+    const legacyColour = inRange(v.colour, 2)
+    for (const part of FURNISHINGS) {
+      s.paint[part] = inRange(v.paint?.[part], 3, v.paint ? 0 : legacyColour)
+    }
     if (inRange(v.wall, Math.min(s.day, MEALS.length) - 1, -1) >= 0) s.wall = v.wall
   } catch {
     /* A fresh notebook also works with unavailable or damaged storage. */
@@ -79,24 +126,37 @@ export const matches = (items: readonly Food[], list: readonly Food[]) =>
 
 export function checkout(s: Notebook, tender: number): boolean {
   const bill = price(s.cart)
-  if (!bill || tender !== bill || s.coins < bill || s.table.length) return false
+  if (!bill || tender !== bill || s.coins < bill || hasMeal(s)) return false
   s.coins -= bill
   s.matched = matches(s.cart, menu(s).list)
+  s.seated = s.diner
+  s.seatedPet = s.pet
+  s.tasted = []
   s.table = s.cart
   s.cart = []
   s.chipsOpen = false
   s.result = null
   return true
 }
-export function serve(s: Notebook, food: Food): boolean {
-  const index = s.table.indexOf(food)
-  if (index === -1 || (food === 'chips' && !s.chipsOpen)) return false
-  s.table.splice(index, 1)
-  if (food === 'chips') s.chipsOpen = false
-  if (s.table.length === 0) {
+export function serve(s: Notebook, portion: Portion, seat = recipients(s, portion)[0]): boolean {
+  if (!hasMeal(s) || !recipients(s, portion).includes(seat)) return false
+  if (!isBowl(portion)) {
+    const i = s.table.indexOf(portion)
+    if (i < 0 || (portion === 'chips' && !s.chipsOpen)) return false
+    // A small free-choice meal can still be split between two hungry people.
+    const share =
+      s.table.length === 1 &&
+      seats(s).some((other) => !isBowl(other) && other !== seat && !s.tasted.includes(other))
+    if (!share) {
+      s.table.splice(i, 1)
+      if (portion === 'chips') s.chipsOpen = false
+    }
+  }
+  if (!s.tasted.includes(seat)) s.tasted.push(seat)
+  if (!s.table.length && !pendingBowls(s).length) {
     s.result = s.matched ? s.day % MEALS.length : 'free'
-    if (s.matched) {
-      s.wall ??= s.result as number
+    if (typeof s.result === 'number') {
+      s.wall ??= s.result
       s.day++
     }
     s.matched = false
