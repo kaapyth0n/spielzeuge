@@ -9,9 +9,10 @@ export type Bowl = 'cat' | 'dog' | 'bunny'
 export type Portion = Food | Bowl
 export const isBowl = (id: unknown): id is Bowl => id === 'cat' || id === 'dog' || id === 'bunny'
 export const hasMeal = (s: Notebook) => s.result === null && (s.seated !== null || s.table.length !== 0)
+export const orderIndex = (s: Notebook) => s.revisit ?? s.day % MEAL_SCENES.length
 export function sceneIndex(s: Notebook): number {
   if (typeof s.result === 'number') return s.result
-  return hasMeal(s) || s.result === 'free' ? s.day % MEAL_SCENES.length : 0
+  return hasMeal(s) || s.result === 'free' ? orderIndex(s) : 0
 }
 export const sceneOf = (s: Notebook) => MEAL_SCENES[sceneIndex(s)]
 export function seats(s: Notebook): Seat[] {

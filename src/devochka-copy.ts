@@ -172,6 +172,15 @@ export const T = {
   list: words('Список покупок', 'Einkaufsliste', 'Shopping list'),
   meal: words('Обед', 'Menü', 'Meal'),
   reward: words('Наклейка за обед', 'Sticker fürs Menü', 'Meal sticker'),
+  fromAlbum: words('Обед из альбома', 'Menü aus dem Album', 'Meal from the album'),
+  collected: words('Уже в альбоме', 'Schon im Album', 'Already in your album'),
+  revisit: words('Снова устроить этот обед', 'Noch einmal zu diesem Essen einladen', 'Have this meal again'),
+  cancelRevisit: words('К очередному обеду', 'Zurück zum aktuellen Menü', 'Back to the current menu'),
+  ownMenu: words(
+    'Сегодня мы сами выбрали угощение. Всё было вкусно!',
+    'Heute haben wir das Essen selbst ausgesucht. Das war lecker!',
+    'Today we chose our own treats. That was delicious!'
+  ),
   listen: words('Послушать', 'Anhören', 'Listen'),
   basket: words('Корзинка', 'Körbchen', 'Basket'),
   emptyCart: words('Выбери товар на полке', 'Such dir etwas im Regal aus', 'Pick something from a shelf'),

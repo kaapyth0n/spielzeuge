@@ -21,7 +21,7 @@ At every table the gestures also work in steps. Select the food and its diner. T
 
 ## The eight lunches
 
-The shopping list determines where everyone goes after payment. Extras are welcome. A free-choice lunch leaves the current sticker order available. After the eighth sticker the menus cycle again.
+The shopping list determines where everyone goes after payment. Extras are welcome. A free-choice lunch leaves the current sticker order available. After the eighth sticker the menus cycle again. A collected sticker also opens a replay of that lunch with its original shopping list, price, destination and guests. The next story and album progress stay available.
 
 | Order | Where the food goes |
 | --- | --- |

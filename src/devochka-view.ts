@@ -92,14 +92,17 @@ function primary(
 function note(content: string, cls = ''): string {
   return `<aside class="paper-note ${cls}"><div class="tape"></div>${content}</aside>`
 }
+function cancelRevisitButton(v: View): string {
+  return v.book.revisit === null ? '' : `<button class="text-button" data-action="cancelRevisit">${icon('back', 16)} ${copy(v, 'cancelRevisit')}</button>`
+}
 function mealList(v: View): string {
   const order = menu(v.book)
   const bill = price(v.book.cart)
   const taken = v.book.cart
   const affordable = bill <= v.book.coins
-  return note(`<div class="note-label">${icon('receipt', 18)} ${copy(v, 'meal')} ${small(
-    v.book.day + 1
-  )}</div>
+  const replay = v.book.revisit !== null
+  const heading = replay ? copy(v, 'fromAlbum') : copy(v, 'meal') + ' ' + small(v.book.day + 1)
+  return note(`<div class="note-label">${icon('receipt', 18)} ${heading}</div>
     <h2>${copy(v, 'list')}</h2><div class="order-title">${
     order.name[v.lang]
   }<button class="listen-btn" data-action="wish" aria-label="${copy(v, 'listen')} · ${
@@ -115,7 +118,7 @@ function mealList(v: View): string {
         }</span>${foodImage(f)}<span>${FOOD[f].name[v.lang]}${need > 1 ? ` <b>×${need}</b>` : ''}</span></li>`
       })
       .join('')}</ul>
-    <div class="prize-preview">${art(order.sticker)}<div><small>${copy(v, 'reward')}</small><strong>${
+    <div class="prize-preview">${art(order.sticker)}<div><small>${copy(v, replay ? 'collected' : 'reward')}</small><strong>${
     order.prize[v.lang]
   }</strong></div></div>
     <div class="note-bottom"><div class="tally"><span>${copy(v, 'total')}</span><b>${bill} ${coin()}</b></div>
@@ -125,7 +128,7 @@ function mealList(v: View): string {
       copy(v, affordable ? 'toTill' : 'earn'),
       affordable ? 'arrow' : 'games',
       !taken.length
-    )}</div>`)
+    )}${cancelRevisitButton(v)}</div>`)
 }
 function paidOrder(v: View): string {
   const { book, lang } = v
@@ -247,7 +250,7 @@ function cashView(v: View): string {
     )}<button class="text-button" data-action="shelves">${icon('back', 16)} ${copy(
       v,
       'editCart'
-    )}</button></div>`)}</div>`
+    )}</button>${cancelRevisitButton(v)}</div>`)}</div>`
 }
 function studioNote(v: View): string {
   return note(
@@ -261,6 +264,13 @@ export function homeView(v: View): string {
   const invitation = newGuestMessage(s, v.lang)
   let side: string
   if (v.studio) side = studioNote(v)
+  else if (s.revisit !== null && s.result !== null && !v.visitKitchen) {
+    const scene = sceneOf(s)
+    side = note(`<div class="note-label">${icon('album', 18)} ${copy(v, 'fromAlbum')}</div>
+      <h2>${scene.name[v.lang]}</h2><p>${s.result === 'free' ? copy(v, 'ownMenu') : scene.farewell[v.lang]}</p>
+      <div class="note-bottom">${primary('next', copy(v, 'another'))}
+        <button class="secondary" data-nav="album">${icon('album')} ${copy(v, 'album')}</button></div>`)
+  }
   else if (s.result !== null && !v.visitKitchen)
     side = note(`<div class="note-label">${icon('heart', 18)} ${copy(v, 'finished')}</div><h2>${copy(
       v,
@@ -311,5 +321,5 @@ export function albumView(v: View): string {
       owned
         ? primary('hang', copy(v, hung ? 'hung' : 'hang'), 'home', hung)
         : primary('shelves', copy(v, 'toShop'), 'shop')
-    }</div>`)}</div>`
+    }${owned && !hasMeal(v.book) ? `<button class="secondary" data-action="revisit">${icon('repeat', 18)} ${copy(v, 'revisit')}</button>` : ''}</div>`)}</div>`
 }

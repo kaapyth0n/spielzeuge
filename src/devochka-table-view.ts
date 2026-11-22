@@ -14,7 +14,7 @@ import {
   type Seat,
 } from './devochka-dining.ts'
 import { countAgain, MEAL_SCENES, starCounts, starLabels } from './devochka-scenes.ts'
-import { count } from './devochka-state.ts'
+import { count, menu } from './devochka-state.ts'
 import { roomPaint, studioGear } from './devochka-studio.ts'
 import type { View } from './devochka-view.ts'
 
@@ -186,7 +186,7 @@ export function servingPanel(v: View): string {
   return `<div class="note-label">${icon(active ? 'basket' : 'home', 18)} ${
     active ? tableWords.together[lang] : T.home[lang]
   }</div>
-    <h2>${active ? MEALS[book.day % MEALS.length].name[lang] : T.homeName[lang]}</h2>
+    <h2>${active ? menu(book).name[lang] : T.homeName[lang]}</h2>
     ${
       active && group.length > 1
         ? `<p class="seat-list">${group.map((id) => seatName(id, lang)).join(' · ')}</p>`

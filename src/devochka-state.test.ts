@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { MEALS, type Food } from './devochka-copy.ts'
 import { pendingBowls } from './devochka-dining.ts'
-import { CAPACITY, checkout, fresh, matches, price, readBook, serve } from './devochka-state.ts'
+import { CAPACITY, checkout, fresh, matches, price, readBook, selectOrder, serve } from './devochka-state.ts'
 
 describe('Matryona’s shopping notebook', () => {
   it('charges exactly once, safely resumes a half-eaten meal and awards the sticker once', () => {
@@ -91,6 +91,28 @@ describe('Matryona’s shopping notebook', () => {
     expect(serve(picnic, 'cat', 'cat')).toBe(true)
     expect(serve(picnic, 'cat', 'cat')).toBe(false)
     expect([picnic.day, picnic.result]).toEqual([2, 1])
+  })
+
+  it('can revisit only a collected menu and keeps the next order, sticker count and basket', () => {
+    const s = fresh()
+    s.day = 3
+    s.cart = ['water']
+    expect(selectOrder(s, 3)).toBe(false)
+    expect(selectOrder(s, 1)).toBe(true)
+    expect(s.cart).toEqual(['water'])
+    const resumed = readBook(JSON.stringify(s))
+    resumed.cart.push('chips', 'roll')
+    expect(checkout(resumed, 7)).toBe(true)
+    expect(selectOrder(resumed, null)).toBe(false)
+    for (const food of [...resumed.table]) {
+      resumed.chipsOpen = food === 'chips'
+      expect(serve(resumed, food)).toBe(true)
+    }
+    expect(serve(resumed, 'cat')).toBe(true)
+    expect([resumed.day, resumed.result, resumed.revisit]).toEqual([3, 1, 1])
+    const finished = readBook(JSON.stringify(resumed))
+    expect(selectOrder(finished, null)).toBe(true)
+    expect([finished.day, finished.revisit, finished.result]).toEqual([3, null, null])
   })
 
   it('recovers from incomplete, damaged and older storage', () => {

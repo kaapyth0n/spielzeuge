@@ -61,7 +61,7 @@ export function studioGear(lang: Lang): string {
 }
 
 export function newGuestMessage(s: Notebook, lang: Lang): string {
-  if (typeof s.result !== 'number') return ''
+  if (typeof s.result !== 'number' || s.revisit !== null) return ''
   const guest = DINERS.find((id) => id !== 'girl' && INVITATIONS[id] === s.day && !s.knownGuests.includes(id))
   if (!guest) return ''
   return {

@@ -40,6 +40,7 @@ import {
   price,
   readBook,
   serve,
+  selectOrder,
 } from './devochka-state.ts'
 import { albumView, homeView, musicName, shopView, top, type Place, type View } from './devochka-view.ts'
 
@@ -158,10 +159,7 @@ function go(next: Place, toKitchen = false): void {
   sound.stop()
   place = next
   if (next === 'shop' && book.result !== null) {
-    book.seated = null
-    book.seatedPet = 'none'
-    book.tasted = []
-    book.result = null
+    selectOrder(book, null)
     save()
   }
   studio = false
@@ -348,11 +346,12 @@ function feed(seat?: Seat, carried = false): void {
   let nextHint: string
   if (typeof book.result === 'number') {
     stamp = book.result
-    nextHint = [sceneOf(book).farewell[lang], MEALS[stamp].prize[lang], newGuestMessage(book, lang)]
-      .filter(Boolean)
-      .join(' ')
-    sound.play('sticker')
-  } else if (book.result === 'free') nextHint = tx('freeMeal')
+    nextHint = sceneOf(book).farewell[lang]
+    if (book.revisit === null) {
+      nextHint = [nextHint, MEALS[stamp].prize[lang], newGuestMessage(book, lang)].filter(Boolean).join(' ')
+      sound.play('sticker')
+    }
+  } else if (book.result === 'free') nextHint = tx(book.revisit !== null ? 'ownMenu' : 'freeMeal')
   else if (!book.table.length) nextHint = tableWords.stillHungry[lang]
   else nextHint = wasLastHumanPortion ? tableWords.share[lang] : tx('chooseFood')
   feedback(yummy(food, lang) + ' ' + nextHint)
@@ -732,6 +731,14 @@ root.addEventListener('click', (e) => {
       say(tx('done'))
       sound.play('tap')
       render()
+      return
+    case 'revisit':
+    case 'cancelRevisit':
+      if (selectOrder(book, d.action === 'revisit' ? stamp : null)) {
+        save()
+        go('shop')
+        requestWish()
+      }
       return
     case 'hang':
       if (stamp < book.day) {

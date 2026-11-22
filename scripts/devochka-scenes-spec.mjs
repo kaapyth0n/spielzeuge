@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { chromium } from 'playwright-core'
-import { FOOD, MEALS } from '../src/devochka-copy.ts'
+import { FOOD, MEALS, T } from '../src/devochka-copy.ts'
 import { MEAL_SCENES, starCounts } from '../src/devochka-scenes.ts'
 
 const base = (process.env.BASE_URL || 'http://localhost:5173').replace(/\/$/, '')
@@ -140,6 +140,36 @@ async function explore(page, scene, lang, reducedMotion) {
   await discovery.click()
 }
 
+async function revisitPicnic(page, lang) {
+  const picnic = MEALS[1]
+  const stickersBefore = await page.locator('.stamp.owned').allTextContents()
+  assert.equal(stickersBefore.length, 8)
+  await page.locator('[data-stamp="1"]').click()
+  await action(page, 'revisit').click()
+  assert.equal(await page.locator('.prize-preview strong').innerText(), picnic.prize[lang])
+  assert.equal((await page.locator('.prize-preview small').textContent()).trim(), T.collected[lang])
+  await shop(page, picnic, lang)
+  await stage(page, MEAL_SCENES[1], ['girl', 'cat'], lang)
+  assert.equal(await page.locator('.paper-note h2').innerText(), picnic.name[lang])
+  for (const food of picnic.list) await serveHuman(page, food, 'girl')
+  await foodButton(page, 'cat').click()
+  await chair(page, 'cat').click()
+
+  const finished = await book(page)
+  assert.equal(finished.day, 8, 'Replaying a picnic must preserve the completed album')
+  assert.equal(finished.result, 1)
+  assert.equal((await page.locator('.paper-note .note-label').textContent()).trim(), T.fromAlbum[lang])
+  assert.equal(await page.locator('.paper-note h2').innerText(), MEAL_SCENES[1].name[lang])
+  assert((await page.locator('.paper-note').innerText()).includes(MEAL_SCENES[1].farewell[lang]))
+  assert.equal((await action(page, 'next').innerText()).trim(), T.another[lang])
+  await action(page, 'next').click()
+  assert.equal((await page.locator('.order-title').innerText()).trim(), MEALS[0].name[lang])
+  await page.locator('.stall-character').click()
+  assert.equal(await page.locator('.speech-slip').innerText(), MEALS[0].wish[lang])
+  await page.locator('[data-nav="album"]').first().click()
+  assert.deepEqual(await page.locator('.stamp.owned').allTextContents(), stickersBefore)
+}
+
 async function picnicPortrait(page, filename) {
   await page.evaluate(async () => {
     await document.fonts.ready
@@ -204,8 +234,9 @@ async function playStories(lang, width, height, screenshotName) {
       assert((await page.locator(`[data-stamp="${index}"]`).innerText()).includes(menu.prize[lang]))
       if (index < stories.length - 1) await page.locator('[data-nav="shop"]').first().click()
     }
+    await revisitPicnic(page, lang)
     assert.deepEqual(errors, [])
-    console.log(`OK ${lang} ${width}×${height}: 8 stories, 8 stickers, all diners, picnic bowl restored`)
+    console.log(`OK ${lang} ${width}×${height}: 8 stories, 8 stickers, all diners, picnic bowl restored, album picnic replay`)
   } finally {
     await context.close()
   }

@@ -2,6 +2,7 @@ import {
   hasMeal,
   isBowl,
   pendingBowls,
+  orderIndex,
   recipients,
   seats,
   type Portion,
@@ -27,6 +28,7 @@ export type Pet = 'none' | 'cat' | 'dog'
 export interface Notebook {
   coins: number
   day: number
+  revisit: number | null
   cart: Food[]
   table: Food[]
   seated: Diner | null
@@ -47,6 +49,7 @@ export function fresh(): Notebook {
   return {
     coins: 12,
     day: 0,
+    revisit: null,
     cart: [],
     table: [],
     seated: null,
@@ -78,6 +81,8 @@ export function readBook(raw: string | null): Notebook {
     if (!v || typeof v !== 'object') return s
     s.coins = inRange(v.coins, 9999, 12)
     s.day = inRange(v.day, Number.MAX_SAFE_INTEGER - 1)
+    const revisit = inRange(v.revisit, Math.min(s.day, MEALS.length) - 1, -1)
+    if (revisit >= 0) s.revisit = revisit
     s.cart = Array.isArray(v.cart) ? v.cart.filter(isFood).slice(0, CAPACITY) : []
     s.table = Array.isArray(v.table) ? v.table.filter(isFood).slice(0, CAPACITY) : []
     s.chipsOpen = v.chipsOpen === true && s.table.includes('chips')
@@ -118,11 +123,22 @@ export function readBook(raw: string | null): Notebook {
   }
   return s
 }
-export const menu = (s: Notebook) => MEALS[s.day % MEALS.length]
+export const menu = (s: Notebook) => MEALS[orderIndex(s)]
 export const count = (items: readonly Food[], food: Food) => items.filter((item) => item === food).length
 export const price = (items: readonly Food[]) => items.reduce((n, item) => n + FOOD[item].price, 0)
 export const matches = (items: readonly Food[], list: readonly Food[]) =>
   FOODS.every((food) => count(items, food) >= count(list, food))
+
+export function selectOrder(s: Notebook, revisit: number | null): boolean {
+  if (hasMeal(s)) return false
+  if (revisit !== null && inRange(revisit, Math.min(s.day, MEALS.length) - 1, -1) < 0) return false
+  s.revisit = revisit
+  s.result = null
+  s.seated = null
+  s.seatedPet = 'none'
+  s.tasted = []
+  return true
+}
 
 export function checkout(s: Notebook, tender: number): boolean {
   const bill = price(s.cart)
@@ -154,8 +170,8 @@ export function serve(s: Notebook, portion: Portion, seat = recipients(s, portio
   }
   if (!s.tasted.includes(seat)) s.tasted.push(seat)
   if (!s.table.length && !pendingBowls(s).length) {
-    s.result = s.matched ? s.day % MEALS.length : 'free'
-    if (typeof s.result === 'number') {
+    s.result = s.matched ? orderIndex(s) : 'free'
+    if (typeof s.result === 'number' && s.revisit === null) {
       s.wall ??= s.result
       s.day++
     }
